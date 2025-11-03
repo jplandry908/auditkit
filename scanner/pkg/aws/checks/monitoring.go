@@ -3,21 +3,25 @@ package checks
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
+	"github.com/aws/aws-sdk-go-v2/service/securityhub"
 	"github.com/aws/aws-sdk-go-v2/service/sns"
 )
 
 type MonitoringChecks struct {
 	cwClient  *cloudwatch.Client
 	snsClient *sns.Client
+	shClient  *securityhub.Client
 }
 
-func NewMonitoringChecks(cwClient *cloudwatch.Client, snsClient *sns.Client) *MonitoringChecks {
+func NewMonitoringChecks(cwClient *cloudwatch.Client, snsClient *sns.Client, shClient *securityhub.Client) *MonitoringChecks {
 	return &MonitoringChecks{
 		cwClient:  cwClient,
 		snsClient: snsClient,
+		shClient:  shClient,
 	}
 }
 
@@ -33,6 +37,10 @@ func (c *MonitoringChecks) Run(ctx context.Context) ([]CheckResult, error) {
 	}
 
 	if result, err := c.CheckSNSTopics(ctx); err == nil {
+		results = append(results, result)
+	}
+
+	if result, err := c.CheckSecurityHubEnabled(ctx); err == nil {
 		results = append(results, result)
 	}
 
@@ -130,4 +138,104 @@ func (c *MonitoringChecks) CheckSNSTopics(ctx context.Context) (CheckResult, err
 
 func contains(str, substr string) bool {
 	return len(str) > 0 && len(substr) > 0 && (str == substr || len(str) > len(substr))
+}
+
+// CheckSecurityHubEnabled verifies AWS Security Hub is enabled (CIS 4.16)
+func (c *MonitoringChecks) CheckSecurityHubEnabled(ctx context.Context) (CheckResult, error) {
+	// Try to get the Security Hub status
+	hub, err := c.shClient.DescribeHub(ctx, &securityhub.DescribeHubInput{})
+
+	if err != nil {
+		// Check if the error is because Security Hub is not enabled
+		if strings.Contains(err.Error(), "not subscribed") ||
+		   strings.Contains(err.Error(), "InvalidAccessException") ||
+		   strings.Contains(err.Error(), "ResourceNotFoundException") {
+			return CheckResult{
+				Control:    "[CIS-4.16]",
+				Name:       "AWS Security Hub Enabled",
+				Status:     "FAIL",
+				Severity:   "MEDIUM",
+				Evidence:   "AWS Security Hub is NOT enabled in this region",
+				Remediation: "Enable AWS Security Hub to centralize security findings",
+				RemediationDetail: `AWS Security Hub aggregates, organizes, and prioritizes security findings from AWS services and third-party products.
+
+REMEDIATION STEPS:
+1. Open AWS Security Hub console
+2. Click "Go to Security Hub" or "Enable Security Hub"
+3. Choose security standards to enable (CIS AWS Foundations, AWS Foundational Security Best Practices)
+4. Click "Enable Security Hub"
+5. Repeat for all regions where you have resources
+
+AWS CLI:
+aws securityhub enable-security-hub --region <region>
+
+ENABLE IN ALL REGIONS:
+for region in $(aws ec2 describe-regions --query 'Regions[].RegionName' --output text); do
+  aws securityhub enable-security-hub --region $region
+done
+
+IMPORTANT: Security Hub requires AWS Config to be enabled first.
+Also consider enabling:
+- AWS Config (CIS 3.3)
+- Amazon GuardDuty
+- AWS Inspector
+- Amazon Macie`,
+				ScreenshotGuide: `AUDIT EVIDENCE:
+1. AWS Console → Security Hub → Summary dashboard
+2. Screenshot showing Security Hub is enabled with "Hub ARN" visible
+3. Screenshot of enabled security standards (CIS, AWS Foundational)
+4. Show findings summary and security score
+5. For multi-region: Screenshot showing Security Hub enabled in all active regions`,
+				ConsoleURL: "https://console.aws.amazon.com/securityhub/home",
+				Priority:   PriorityMedium,
+				Timestamp:  time.Now(),
+				Frameworks: GetFrameworkMappings("SECURITY_HUB"),
+			}, nil
+		}
+
+		// Other errors (permission issues, etc.)
+		return CheckResult{
+			Control:           "[CIS-4.16]",
+			Name:              "AWS Security Hub Enabled",
+			Status:            "FAIL",
+			Severity:          "MEDIUM",
+			Evidence:          fmt.Sprintf("Unable to check Security Hub status: %v", err),
+			Remediation:       "Verify IAM permissions to check Security Hub status",
+			RemediationDetail: "Ensure the IAM role has securityhub:DescribeHub permission",
+			Priority:          PriorityMedium,
+			Timestamp:         time.Now(),
+			Frameworks:        GetFrameworkMappings("SECURITY_HUB"),
+		}, nil
+	}
+
+	// Security Hub is enabled - check if it's active
+	if hub.HubArn == nil || *hub.HubArn == "" {
+		return CheckResult{
+			Control:    "[CIS-4.16]",
+			Name:       "AWS Security Hub Enabled",
+			Status:     "FAIL",
+			Severity:   "MEDIUM",
+			Evidence:   "Security Hub is enabled but Hub ARN is missing",
+			Remediation: "Verify Security Hub configuration",
+			Priority:   PriorityMedium,
+			Timestamp:  time.Now(),
+			Frameworks: GetFrameworkMappings("SECURITY_HUB"),
+		}, nil
+	}
+
+	// Success - Security Hub is enabled and configured
+	subscriptionDate := "unknown"
+	if hub.SubscribedAt != nil {
+		subscriptionDate = *hub.SubscribedAt
+	}
+
+	return CheckResult{
+		Control:    "[CIS-4.16]",
+		Name:       "AWS Security Hub Enabled",
+		Status:     "PASS",
+		Evidence:   fmt.Sprintf("AWS Security Hub is enabled | Hub ARN: %s | Subscribed: %s", *hub.HubArn, subscriptionDate),
+		Priority:   PriorityInfo,
+		Timestamp:  time.Now(),
+		Frameworks: GetFrameworkMappings("SECURITY_HUB"),
+	}, nil
 }

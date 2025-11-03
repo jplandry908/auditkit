@@ -135,10 +135,11 @@ AuditKit requires **READ-ONLY** Azure permissions via the built-in Reader role o
 
 ### GCP Permissions (Read-Only)
 
-**AuditKit Pro only** - GCP support is not available in the free version.
+GCP support is available in both **Free** and **Pro** versions as of v0.7.0.
 
-**Required GCP Roles:**
+**Required GCP Roles (Free & Pro):**
 - Built-in **"Viewer"** role at Project level
+- Built-in **"Security Reviewer"** role (recommended for enhanced security checks)
 
 **OR Custom Role with these permissions:**
 ```yaml
@@ -149,16 +150,21 @@ includedPermissions:
 - storage.buckets.get
 - iam.serviceAccounts.list
 - iam.serviceAccounts.get
+- iam.serviceAccountKeys.list
 - compute.instances.list
 - compute.instances.get
+- compute.disks.list
 - compute.firewalls.list
 - compute.networks.list
+- compute.subnetworks.list
 - sql.instances.list
 - cloudkms.keyRings.list
+- cloudkms.cryptoKeys.list
 - logging.logEntries.list
+- logging.sinks.list
 ```
 
-**For Pro - GKE Scanning:**
+**For Pro - GKE Advanced Scanning:**
 ```yaml
 includedPermissions:
 - container.clusters.list
@@ -166,6 +172,7 @@ includedPermissions:
 - container.nodes.list
 - container.pods.list
 - container.networkPolicies.list
+- container.podSecurityPolicies.list
 ```
 
 **For Pro - Vertex AI Scanning:**
@@ -176,6 +183,7 @@ includedPermissions:
 - aiplatform.endpoints.list
 - aiplatform.datasets.list
 - aiplatform.trainingPipelines.list
+- aiplatform.featurestores.list
 ```
 
 **For Pro - Multi-Project Scanning:**
@@ -218,13 +226,15 @@ az account set --subscription "sandbox-subscription-id"
 ./auditkit-pro scan -provider azure -verbose
 ```
 
-**GCP (Pro only):**
+**GCP (Free & Pro):**
 ```bash
 # Authenticate to sandbox project
 gcloud auth application-default login
 gcloud config set project sandbox-project-id
 
-# Run scan
+# Run scan (Free or Pro)
+./auditkit scan -provider gcp -verbose
+# or
 ./auditkit-pro scan -provider gcp -verbose
 ```
 
@@ -254,7 +264,7 @@ az ad sp create-for-rbac --name "auditkit-scanner" \
 # Output will show credentials to use
 ```
 
-**GCP - Create Read-Only Service Account (Pro only):**
+**GCP - Create Read-Only Service Account (Free & Pro):**
 ```bash
 # Create service account
 gcloud iam service-accounts create auditkit-scanner \
@@ -264,6 +274,11 @@ gcloud iam service-accounts create auditkit-scanner \
 gcloud projects add-iam-policy-binding PROJECT_ID \
   --member="serviceAccount:auditkit-scanner@PROJECT_ID.iam.gserviceaccount.com" \
   --role="roles/viewer"
+
+# Grant Security Reviewer role (recommended)
+gcloud projects add-iam-policy-binding PROJECT_ID \
+  --member="serviceAccount:auditkit-scanner@PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/iam.securityReviewer"
 
 # Create and download key
 gcloud iam service-accounts keys create ~/auditkit-key.json \
@@ -288,10 +303,15 @@ az monitor activity-log list \
   --status Succeeded
 ```
 
-**GCP - Check Cloud Audit Logs (Pro only):**
+**GCP - Check Cloud Audit Logs (Free & Pro):**
 ```bash
 # View recent admin activity
 gcloud logging read "protoPayload.serviceName=compute.googleapis.com" \
+  --limit 50 \
+  --format json
+
+# View recent IAM activity
+gcloud logging read "protoPayload.serviceName=iam.googleapis.com" \
   --limit 50 \
   --format json
 ```
@@ -315,11 +335,16 @@ aws iam simulate-principal-policy \
   --resource-arns "*"
 ```
 
-**GCP Policy Troubleshooter (Pro only):**
+**GCP Policy Troubleshooter (Free & Pro):**
 ```bash
 # Test permissions
 gcloud iam service-accounts get-iam-policy \
   auditkit-scanner@PROJECT_ID.iam.gserviceaccount.com
+
+# Test specific permissions
+gcloud projects get-iam-policy PROJECT_ID \
+  --flatten="bindings[].members" \
+  --filter="bindings.members:serviceAccount:auditkit-scanner@PROJECT_ID.iam.gserviceaccount.com"
 ```
 
 ---
@@ -332,17 +357,18 @@ gcloud iam service-accounts get-iam-policy \
 - Configuration metadata (bucket names, instance IDs, user names)
 - Security settings (encryption status, MFA status, firewall rules)
 - Compliance-relevant configuration (logging, monitoring, access controls)
-- Kubernetes cluster configuration (Pro only - GKE)
-- AI/ML model metadata (Pro only - Vertex AI)
+- Cloud resource metadata (all providers: AWS, Azure, GCP)
+- Kubernetes cluster configuration (Pro only - GKE advanced scanning)
+- AI/ML model metadata (Pro only - Vertex AI, Azure ML, SageMaker advanced features)
 
 **AuditKit does NOT read:**
 - Actual data stored in S3 buckets / Cloud Storage / Blob Storage
 - Database contents
-- Application logs content
+- Application logs content (only checks if logging is enabled)
 - Secrets or credentials (except to verify they exist/are rotated)
-- File contents
-- Container images (only metadata)
-- Model training data (only metadata)
+- File contents or application code
+- Container images (only metadata and scanning status)
+- Model training data (only metadata and access controls)
 
 ### Where Does Data Go?
 
@@ -421,26 +447,44 @@ AuditKit uses standard Azure SDK authentication:
    ./auditkit scan -provider azure
    ```
 
-### GCP Authentication (Pro only)
+### GCP Authentication (Free & Pro)
 
-AuditKit Pro uses standard GCP SDK authentication:
+AuditKit uses standard GCP SDK authentication:
 
 1. **Application Default Credentials** (recommended):
    ```bash
    gcloud auth application-default login
+   ./auditkit scan -provider gcp
+   # or
    ./auditkit-pro scan -provider gcp
    ```
 
 2. **Service Account Key File**:
    ```bash
    export GOOGLE_APPLICATION_CREDENTIALS="/path/to/key.json"
+   ./auditkit scan -provider gcp
+   # or
    ./auditkit-pro scan -provider gcp
    ```
 
 3. **Compute Engine Service Account** (when running on GCE):
    ```bash
    # Automatically uses instance metadata
+   ./auditkit scan -provider gcp
+   # or
    ./auditkit-pro scan -provider gcp
+   ```
+
+4. **Project ID Configuration**:
+   ```bash
+   # Set via environment variable
+   export GOOGLE_CLOUD_PROJECT="your-project-id"
+
+   # Or set via gcloud
+   gcloud config set project your-project-id
+
+   # Or pass via command line
+   ./auditkit scan -provider gcp -profile your-project-id
    ```
 
 ---
@@ -455,11 +499,19 @@ AuditKit Pro uses standard GCP SDK authentication:
 export AUDITKIT_PRO_LICENSE=AKP-XXXXXXXX-XXXXXXXXXX-XXXXXXXX
 ```
 
+**License Validation Security:**
+- License keys use HMAC-SHA256 signatures for integrity verification
+- The embedded HMAC key in the binary is for VERIFICATION ONLY (cannot create licenses)
+- License signing happens server-side on secure infrastructure
+- Hardware fingerprinting prevents unauthorized sharing
+- Offline validation after initial activation (no phone-home during scans)
+
 **Best Practices:**
 - Store license key in environment variable (not in code)
-- Use secrets management (AWS Secrets Manager, Azure Key Vault, etc.)
+- Use secrets management (AWS Secrets Manager, Azure Key Vault, GCP Secret Manager)
 - Don't commit license keys to version control
 - Rotate keys if compromised (contact support)
+- Use read-only filesystem mounts in containers when possible
 
 ### Hardware Lock
 
@@ -538,10 +590,13 @@ aws sts get-session-token --duration-seconds 3600
 az ad sp credential reset --name auditkit-scanner
 ```
 
-**GCP (Pro only):**
+**GCP (Free & Pro):**
 ```bash
-# Use short-lived tokens
+# Use short-lived tokens via Application Default Credentials
 gcloud auth application-default login --no-launch-browser
+
+# Refresh credentials
+gcloud auth application-default print-access-token
 ```
 
 ### 3. Rotate Credentials Regularly
@@ -589,12 +644,18 @@ az role assignment create \
   --scope /subscriptions/{sub-id}/resourceGroups/{rg-name}
 ```
 
-**GCP - Limit to specific project (Pro only):**
+**GCP - Limit to specific project (Free & Pro):**
 ```bash
 # Grant viewer at project level only
 gcloud projects add-iam-policy-binding PROJECT_ID \
   --member="serviceAccount:auditkit@PROJECT.iam.gserviceaccount.com" \
   --role="roles/viewer"
+
+# Limit to specific resources (example: storage only)
+gcloud projects add-iam-policy-binding PROJECT_ID \
+  --member="serviceAccount:auditkit@PROJECT.iam.gserviceaccount.com" \
+  --role="roles/storage.objectViewer" \
+  --condition='resource.type=="storage.googleapis.com/Bucket"'
 ```
 
 ---
@@ -609,25 +670,34 @@ gcloud projects add-iam-policy-binding PROJECT_ID \
 - No external dependencies after installation
 
 **AuditKit Pro:**
-- **Initial activation requires internet** (one-time only)
-- After activation, fully offline capable
-- License stored locally with hardware fingerprint
-- No phone-home during scans
-- Perfect for SCIFs and classified environments
+- **Fully offline capable** - No internet connection required for activation or scanning
+- License validation uses embedded HMAC key (offline verification)
+- Hardware fingerprint stored locally
+- No phone-home during scans or activation
+- Perfect for SCIFs, classified environments, and air-gapped networks
 
 **Air-Gap Installation Process (Pro):**
 ```bash
-# 1. On internet-connected machine:
-# Download binary and activate license
+# 1. Purchase license (requires internet to get license key)
+# You receive: AUDITKIT_PRO_LICENSE=AKP-XXXXXXXX-XXXXXXXXXX-XXXXXXXX
+
+# 2. On air-gapped machine (fully offline):
+# Set license key
+export AUDITKIT_PRO_LICENSE=AKP-XXXXXXXX-XXXXXXXXXX-XXXXXXXX
+
+# Activate license (offline - no internet required)
 ./auditkit-pro activate
 
-# 2. Copy to air-gapped machine:
-# Transfer binary + license file (~/.auditkit-pro/license.dat)
-
-# 3. On air-gapped machine:
-# Scanner works fully offline
+# Run scans (fully offline)
 ./auditkit-pro scan -provider aws -framework cmmc
 ```
+
+**How Offline Activation Works:**
+- License keys are pre-signed with HMAC-SHA256 on secure server
+- Binary contains verification key (can verify, cannot forge)
+- Activation validates signature locally
+- Creates hardware-locked files on disk
+- No network calls during activation or scanning
 
 ### Export Control Compliance
 
@@ -700,7 +770,7 @@ AuditKit is designed to help you achieve compliance, but the tool itself:
 - [Getting Started](https://github.com/guardian-nexus/auditkit/blob/main/docs/getting-started.md)
 - [AWS Setup Guide](https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/aws.md)
 - [Azure Setup Guide](https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/azure.md)
-- [GCP Setup Guide](https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/gcp.md) (Pro only)
+- [GCP Setup Guide](https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/gcp.md)
 
 ---
 
@@ -713,22 +783,5 @@ AuditKit is designed to help you achieve compliance, but the tool itself:
 
 ---
 
-## Changelog
-
-**Version 2.0 (October 2025):**
-- Added GCP permissions (Pro only)
-- Added GKE and Vertex AI security considerations (Pro only)
-- Added multi-account scanning security guidance
-- Added air-gapped environment support details
-- Updated authentication methods for all providers
-- Clarified Pro license security (offline validation)
-
-**Version 1.0 (October 2024):**
-- Initial release
-- AWS and Azure permissions documented
-- Basic security best practices
-
----
-
-**Last Updated:** October 19, 2025  
-**Version:** 2.0
+**Last Updated:** November 04, 2025
+**Version:** 3.0 (v0.7.0)

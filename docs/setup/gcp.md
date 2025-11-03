@@ -383,7 +383,7 @@ gcloud config get-value project
 ## GCP Service Coverage
 
 **Free version includes:**
-- Cloud Storage (20 checks)
+- Cloud Storage (29 checks)
 - Cloud IAM
 - Compute Engine
 - VPC Networks

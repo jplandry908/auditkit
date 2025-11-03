@@ -32,7 +32,7 @@ Free for most use cases. Pro for DoD contractors and advanced GCP users.
 - PCI-DSS v4.0 (30+ controls)
 - CMMC Level 1 (17 practices)
 - NIST 800-53 Rev 5 (~150 technical controls)
-- GCP Core Services (20 checks)
+- GCP Core Services (170+ checks)
 - PDF, HTML, JSON reports
 - Evidence collection tracker
 - CLI tool
@@ -107,8 +107,8 @@ Free for most use cases. Pro for DoD contractors and advanced GCP users.
 | **Cloud Providers** |
 | AWS | Full support | Full support |
 | Azure | Full support | Full support |
-| GCP Core | 20 checks | 20 checks |
-| GCP Advanced | - | GKE + Vertex AI (20 checks) |
+| GCP Core | 170+ checks | 170+ checks |
+| GCP Advanced | - | GKE + Vertex AI (32 checks) |
 | M365 (ScubaGear) | Full support | Full support |
 | **Frameworks** |
 | SOC2 Type II | 64 controls | 64 controls |

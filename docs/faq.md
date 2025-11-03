@@ -39,8 +39,8 @@ AuditKit can integrate with Prowler for complete NIST 800-53 coverage.
 | SOC2, PCI-DSS, NIST 800-53 | All frameworks | All frameworks |
 | CMMC Level 1 | 17 practices | 17 practices |
 | CMMC Level 2 | - | 110 practices (CUI) |
-| GCP Core | 20 checks | 20 checks |
-| GCP Advanced | - | GKE + Vertex AI (20 checks) |
+| GCP Core | 170+ checks | 170+ checks |
+| GCP Advanced | - | GKE + Vertex AI (32 checks) |
 | Multi-Account | One at a time | AWS Orgs, Azure Mgmt, GCP Folders |
 | Support | Community | Priority + 14-day trial |
 
@@ -73,12 +73,12 @@ Compare to traditional costs:
 **Coverage:**
 - AWS: 64+ SOC2 controls, 30+ PCI-DSS, 17 CMMC L1, 110 CMMC L2 (Pro)
 - Azure: 64+ SOC2 controls, 30+ PCI-DSS, 17 CMMC L1, 110 CMMC L2 (Pro)
-- GCP: 20 core checks (Free), +20 advanced checks (Pro)
+- GCP: 170+ core checks (Free), +32 advanced checks (Pro)
 - M365: 29+ Entra ID rules via ScubaGear
 
 ### Which GCP services are scanned?
 
-**Free version (20 checks):**
+**Free version (170+ checks):**
 - Cloud Storage (GCS)
 - Cloud IAM
 - Compute Engine

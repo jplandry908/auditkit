@@ -2,9 +2,40 @@
 
 All notable changes to AuditKit will be documented in this file.
 
-## [v0.7.0] - 2025-10-18
+## [v0.7.0] - 2025-11-04
 
 ### Added
+- **NIST 800-53 Rev 5 Support** - Federal contractor requirements / FedRAMP foundation
+  - ~150 automated technical controls across AWS, Azure, GCP
+  - Covers FedRAMP Low/Moderate/High baseline requirements
+  - Use `-framework 800-53`
+  - Note: Dedicated FedRAMP baseline filtering (fedramp-low/moderate/high) coming in v0.8.0
+- **ISO 27001:2022 Support** - International information security standard
+  - 93 controls mapped via 800-53 crosswalk
+  - Focus on Annex A technical controls (A.8)
+  - Includes organizational (A.5), people (A.6), and physical (A.7) controls
+  - Use `-framework iso27001`
+- **CIS Benchmarks Support** - Security hardening best practices
+  - AWS: 126+ automated controls (combines CIS v1.4 and v3.0)
+  - Azure: ~40+ automated controls (CIS Microsoft Azure Foundations v3.0)
+  - GCP: 61 automated controls (CIS Google Cloud Platform Foundations)
+  - Proactive security hardening complements compliance frameworks
+  - Use `-framework cis-aws`, `-framework cis-azure`, `-framework cis-gcp`
+- **Enhanced CIS AWS Controls** (2025-11-03)
+  - NEW: CIS-1.3 - Credentials unused for 45+ days (automated)
+  - NEW: CIS-1.16 - IAM policies on groups/roles only (automated)
+  - NEW: CIS-5.8 - VPC peering routing least access (manual)
+  - NEW: CIS-5.20 - VPC endpoints for S3 (manual)
+  - UPDATED: Added CIS labels to existing controls (CIS-1.5, CIS-1.14, CIS-3.1, CIS-3.9, CIS-1.11)
+  - Improved AWS CIS coverage from 121 to 129 unique controls
+  - Section 1 (IAM): 82% coverage (18/22 controls)
+  - Section 3 (Logging): 100% coverage (11/11 controls)
+  - Section 5 (Networking): 100% coverage (20/20 controls)
+- **CSV Export** - Spreadsheet-friendly report format
+  - Export compliance results to CSV for Excel/Google Sheets
+  - Includes: Control ID, Name, Status, Severity, Evidence, Remediation, URLs
+  - Proper CSV escaping for commas and quotes
+  - Use `-format csv -output report.csv`
 - **GCP Provider Support** - Complete Google Cloud Platform scanning
   - Cloud Storage (GCS) security checks (public access, encryption, versioning, logging)
   - IAM security checks (service account keys, MFA, primitive roles)
@@ -13,19 +44,49 @@ All notable changes to AuditKit will be documented in this file.
   - Cloud SQL security (public IP, backups, SSL enforcement)
   - Cloud KMS security (key rotation)
   - Cloud Logging security (audit logs, log retention)
-- Framework support for GCP: SOC2, PCI-DSS, CMMC Level 1, NIST 800-53
-- 20 automated security checks for GCP
+- Framework support for GCP: SOC2, PCI-DSS, CMMC Level 1, NIST 800-53, ISO 27001
+- 170+ automated security checks for GCP (FREE version)
 - Screenshot guides and remediation commands using `gcloud` CLI
+
+### Fixed Framework Gaps (2025-10-23)
+- **PCI-DSS Completion** - Filled in missing requirements across all clouds
+  - Added Requirement 2: Default Passwords & Configurations (2 controls per cloud)
+  - Added Requirement 5: Malware Protection (3 controls per cloud)
+  - Added Requirement 6: Secure Systems & Patching (3 controls per cloud)
+  - Added Requirement 9: Physical Access Controls (3-4 controls per cloud)
+  - Added Requirement 11: Security Testing & Scanning (4 controls per cloud)
+  - Added Requirement 12: Information Security Policy (7 controls per cloud)
+  - All new controls added as INFO/MANUAL with detailed remediation guidance
+  - All 12 PCI-DSS requirements now fully documented across AWS, GCP, Azure
+- **HIPAA Framework Mappings** - Completed control-to-framework mappings
+  - AWS: Expanded from partial to 70 HIPAA framework mappings
+  - GCP: Added all 40 HIPAA framework mappings (was 0)
+  - Azure: Expanded from partial to 62 HIPAA framework mappings
+  - Updated status from Experimental to Production for Technical Safeguards
+  - Note: Administrative and Physical Safeguards remain manual/organizational controls
+- **CMMC Level 1 Verification** - Confirmed complete coverage
+  - Verified all 17 official CMMC Level 1 controls present across all clouds
+  - Removed 3 mislabeled Level 2 controls (SC.L1-3.13.11, SC.L1-3.13.16, SI.L1-3.14.4)
+  - Added missing PS (Personnel Security) controls where gaps existed
 
 ### Technical
 - Added complete GCP SDK integration
 - Framework wrapper files matching AWS/Azure structure
 - Unified multi-cloud reporting (AWS + Azure + GCP)
+- Enhanced PCI-DSS coverage with organizational controls
+- Improved HIPAA framework crosswalk mappings
+- **Provider-Specific Scanners** - Separate binaries for faster builds and smaller deployments
+  - `auditkit-aws` - AWS-only scanner (~30% smaller than universal scanner)
+  - `auditkit-azure` - Azure-only scanner (~30% smaller than universal scanner)
+  - `auditkit-gcp` - GCP-only scanner (~30% smaller than universal scanner)
+  - Universal `auditkit` scanner supports all providers in single binary
+  - Build commands: `go build ./cmd/auditkit-{aws,azure,gcp}`
 
 ### Documentation
 - GCP usage examples
 - GCP authentication methods
 - GCP required permissions
+- Updated framework coverage tables to reflect accurate control counts
 
 ## [v0.6.8] - 2025-10-13
 
@@ -264,7 +325,7 @@ Market Timing: Release aligns with growing urgency around November 2025 deadline
 
 ## [0.4.0] - 2025-09-20
 ### Added
-- 🚀 Multi-framework support (SOC2, PCI-DSS, HIPAA)
+- Multi-framework support (SOC2, PCI-DSS, HIPAA)
 - Framework-specific priority mapping
 - Cross-framework control comparison
 - Framework-aware evidence collection
@@ -272,10 +333,10 @@ Market Timing: Release aligns with growing urgency around November 2025 deadline
 
 ## [0.3.0] - 2024-09-20
 ### Added
-- 📸 Evidence collection tracker (`auditkit evidence`)
-- 📊 Progress tracking over time (`auditkit progress`)
-- 🔧 Auto-generate remediation scripts (`auditkit fix`)
-- 📈 Compare scans (`auditkit compare`)
+- Evidence collection tracker (`auditkit evidence`)
+- Progress tracking over time (`auditkit progress`)
+- Auto-generate remediation scripts (`auditkit fix`)
+- Compare scans (`auditkit compare`)
 - 25+ SOC2 controls (up from ~10)
 - Enhanced PDF reports with screenshot guides
 - Success celebration at 90%+ compliance

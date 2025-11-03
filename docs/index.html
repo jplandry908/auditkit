@@ -64,26 +64,6 @@
             background: rgba(46, 213, 115, 0.3);
         }
         
-        .badge.warning {
-            background: rgba(255, 234, 167, 0.3);
-        }
-        
-        .badge.pro {
-            background: rgba(255, 107, 107, 0.3);
-            font-weight: 600;
-        }
-        
-        .badge.new {
-            background: rgba(46, 213, 115, 0.4);
-            font-weight: 600;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        
         .cmmc-alert {
             background: #ff6b6b;
             color: white;
@@ -218,91 +198,76 @@
         
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
         
         .card h3 {
-            color: #667eea;
+            font-size: 1.5em;
             margin-bottom: 15px;
-            font-size: 1.4em;
+            color: #2c3e50;
         }
         
-        .framework-table {
-            width: 100%;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin: 40px 0;
-        }
-        
-        .framework-table table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .framework-table th {
-            background: #667eea;
-            color: white;
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-        }
-        
-        .framework-table td {
-            padding: 15px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .framework-table tr:hover {
-            background: #f8f9fa;
+        .card p {
+            color: #555;
+            line-height: 1.8;
         }
         
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 30px;
-            margin: 40px 0;
-            text-align: center;
+            margin: 50px 0;
         }
         
         .stat {
-            background: white;
+            text-align: center;
             padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
         }
         
         .stat-number {
             font-size: 3em;
             font-weight: 700;
-            color: #667eea;
             margin-bottom: 10px;
         }
         
         .stat-label {
-            font-size: 1.1em;
-            color: #666;
+            font-size: 1em;
+            opacity: 0.9;
         }
         
         .features-list {
             list-style: none;
-            margin: 30px 0;
+            padding: 0;
         }
         
         .features-list li {
-            padding: 15px 0;
-            padding-left: 30px;
-            position: relative;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .features-list li:last-child {
+            border-bottom: none;
         }
         
         .features-list li:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #50fa7b;
+            content: "✓ ";
+            color: #28a745;
             font-weight: bold;
-            font-size: 1.2em;
+            margin-right: 8px;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 25px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            overflow-x: auto;
+            margin: 20px 0;
+            line-height: 1.8;
         }
         
         .installation {
@@ -314,268 +279,151 @@
             color: white;
         }
         
-        .code-block {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 25px;
-            border-radius: 8px;
-            margin: 20px 0;
-            overflow-x: auto;
-            font-family: 'Courier New', monospace;
-            line-height: 2;
-        }
-        
-        .privacy-notice {
-            background: #fffbea;
-            border-left: 4px solid #f1c40f;
-            padding: 20px;
-            margin: 30px 0;
-            border-radius: 4px;
-        }
-        
-        .reality-check {
-            background: #fff3cd;
-            border-left: 4px solid #ff9800;
-            padding: 20px;
-            margin: 30px 0;
-            border-radius: 4px;
-        }
-        
-        .reality-check strong {
-            color: #e65100;
-        }
-        
         .who-should-use {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 40px;
-            margin: 40px 0;
+            margin-top: 40px;
         }
         
         @media (max-width: 768px) {
             .who-should-use {
                 grid-template-columns: 1fr;
             }
-            
-            header h1 {
-                font-size: 2em;
-            }
-            
-            .cta-buttons {
-                flex-direction: column;
-            }
         }
         
-        .should-use {
-            background: #d4edda;
+        .should-use, .should-not-use {
+            background: white;
             padding: 30px;
             border-radius: 8px;
-            border-left: 4px solid #28a745;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         
-        .should-not-use {
-            background: #f8d7da;
+        .provider-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .provider-card {
+            background: white;
             padding: 30px;
             border-radius: 8px;
-            border-left: 4px solid #dc3545;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .provider-card h3 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+        
+        .provider-card .check-count {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #28a745;
+            margin: 20px 0;
         }
         
         footer {
             background: #2c3e50;
             color: white;
-            padding: 40px 20px;
+            padding: 60px 20px;
             text-align: center;
         }
         
         footer a {
-            color: #667eea;
+            color: #3498db;
             text-decoration: none;
         }
         
         footer a:hover {
             text-decoration: underline;
         }
-        
-        .pro-callout {
-            background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 8px;
-            margin: 30px 0;
-            text-align: center;
-        }
-        
-        .pro-callout h3 {
-            color: white;
-            margin-bottom: 15px;
-        }
     </style>
 </head>
 <body>
     <div class="cmmc-alert">
-        CMMC Requirements Now in DoD Contracts - Level 2 certification required for CUI handling. 
-        <a href="#cmmc-pro">Get CMMC Level 2 Pro</a> - 110 practices, $297/month
+        CMMC Level 2 Required for DoD Contracts by November 10, 2025 · 
+        <a href="/pro/">Get Assessment-Ready in 30 Days</a>
     </div>
 
     <header>
         <div class="container">
             <h1>AuditKit</h1>
-            <p class="subtitle">Multi-cloud compliance scanner - AWS, Azure, GCP, M365</p>
+            <p class="subtitle">
+                Stop paying $50K per framework. One scanner, five frameworks, four cloud providers.
+            </p>
             
             <div class="badges">
-                <span class="badge success">SOC2 Complete</span>
-                <span class="badge success">PCI-DSS Ready</span>
-                <span class="badge success">CMMC Level 1</span>
-                <span class="badge new">GCP Support NEW</span>
-                <span class="badge pro">PRO: CMMC Level 2</span>
-                <span class="badge warning">M365 Complete</span>
+                <span class="badge">SOC2</span>
+                <span class="badge">PCI-DSS</span>
+                <span class="badge">CMMC L1</span>
+                <span class="badge">HIPAA</span>
+                <span class="badge">NIST 800-53</span>
             </div>
-
+            
             <div class="cta-buttons">
                 <a href="https://github.com/guardian-nexus/auditkit" class="btn btn-primary">View on GitHub</a>
-                <a href="https://github.com/guardian-nexus/auditkit/releases" class="btn btn-secondary">Download v0.7.0</a>
+                <a href="#installation" class="btn btn-secondary">Quick Start</a>
                 <a href="/pro/" class="btn btn-pro">Get Pro ($297/mo)</a>
             </div>
         </div>
     </header>
 
-    <section>
-        <div class="container">
-            <div class="pro-callout">
-                <h3>Need CMMC Level 2 for DoD Contracts?</h3>
-                <p style="font-size: 1.1em; margin-bottom: 20px;">
-                    AuditKit Pro includes CMMC Level 2 (110 practices) for CUI handling
-                </p>
-                <p style="font-size: 1em; opacity: 0.9; margin-bottom: 20px;">
-                    Get assessment-ready in 30 days vs 6+ months traditional. $297/month vs $100K+ consultants.
-                </p>
-                <a href="/pro/" class="btn btn-primary">Start 14-Day Free Trial</a>
-            </div>
-
-            <h2>One Scan, All Frameworks</h2>
-            
-            <div class="demo-output"><span class="prompt">$</span> auditkit scan -framework all<br>
-<span class="comment"># Scanning AWS account 123456789...</span><br>
-<br>
-<span class="critical">X CRITICAL: Root account missing MFA</span><br>
-<span class="arrow">→</span> <span class="framework">SOC2: CC6.6 | PCI: 8.3.1 | CMMC: IA.L1-3.5.2 | HIPAA: §164.312(a)(2)(i)</span><br>
-  <span class="label">Console URL:</span> <span class="url">https://console.aws.amazon.com/iam/home#/security_credentials</span><br>
-  <span class="label">Screenshot:</span> Navigate to Security credentials → MFA → Screenshot "Assigned MFA device"<br>
-  <span class="label">Fix:</span> <span class="command">aws iam enable-mfa-device --user-name root</span><br>
-<br>
-<span class="critical">X CRITICAL: S3 bucket 'customer-data' public</span><br>
-<span class="arrow">→</span> <span class="framework">SOC2: CC6.3 | PCI: 1.3.1 | CMMC: SC.L1-3.13.16 | HIPAA: §164.312(a)(1)</span><br>
-  <span class="label">Console URL:</span> <span class="url">https://s3.console.aws.amazon.com/s3/buckets/customer-data</span><br>
-  <span class="label">Screenshot:</span> Permissions tab → Block public access → All 4 settings "On"<br>
-  <span class="label">Fix:</span> <span class="command">aws s3api put-public-access-block --bucket customer-data</span><br>
-<br>
-<span class="prompt">$</span> auditkit evidence -output evidence-tracker.html<br>
-<span class="success">Evidence tracker generated with 23 screenshot requirements</span></div>
-
-            <div class="privacy-notice">
-                <strong>Privacy:</strong> AuditKit runs entirely on your machine. No data leaves your infrastructure. No telemetry, no phone-home. Check the source code.
-            </div>
-        </div>
-    </section>
-
     <section class="problem-solution">
         <div class="container">
             <h2>The Problem</h2>
-            <p style="text-align: center; font-size: 1.2em; margin-bottom: 40px;">
-                Every compliance framework checks the same things with different names. You run separate tools for each one. 
-                Your auditor wants screenshots proving you fixed everything. But which screens? What format?
-            </p>
-
-            <div class="framework-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>What They Check</th>
-                            <th>SOC2</th>
-                            <th>PCI-DSS</th>
-                            <th>CMMC L1</th>
-                            <th>HIPAA</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>MFA enabled?</strong></td>
-                            <td>CC6.6</td>
-                            <td>Req 8.3</td>
-                            <td>IA.L1-3.5.2</td>
-                            <td>§164.312(a)(2)(i)</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Encryption at rest?</strong></td>
-                            <td>CC6.3</td>
-                            <td>Req 3.4</td>
-                            <td>SC.L1-3.13.16</td>
-                            <td>§164.312(a)(2)(iv)</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Audit logging?</strong></td>
-                            <td>CC7.1</td>
-                            <td>Req 10.1</td>
-                            <td>SI.L1-3.14.6</td>
-                            <td>§164.312(b)</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Access controls?</strong></td>
-                            <td>CC6.1</td>
-                            <td>Req 7.1</td>
-                            <td>AC.L1-3.1.1</td>
-                            <td>§164.312(a)(1)</td>
-                        </tr>
-                    </tbody>
-                </table>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3>Compliance is Expensive</h3>
+                    <p>Consultants charge $50K+ per framework. SOC2, PCI, HIPAA, CMMC? That's $200K just to understand what you're missing.</p>
+                </div>
+                
+                <div class="card">
+                    <h3>Tools Don't Tell You What to Fix</h3>
+                    <p>Cloud security scanners find issues but don't explain how to fix them or what evidence auditors need.</p>
+                </div>
+                
+                <div class="card">
+                    <h3>Manual Evidence Collection Sucks</h3>
+                    <p>Spending weeks taking screenshots and compiling evidence packages for auditors is mind-numbing work.</p>
+                </div>
             </div>
 
-            <p style="text-align: center; font-size: 1.1em; margin-top: 30px;">
-                <strong>AuditKit runs once, maps findings to all frameworks.</strong> No more juggling different scanners.
-            </p>
-
-            <div class="reality-check">
-                <strong>Reality Check:</strong> AuditKit automates technical controls but doesn't replace auditors. SOC2 needs a CPA. PCI needs a QSA. CMMC needs a C3PAO. 
-                You'll still need professional assessors, but AuditKit saves 200+ hours of prep work by showing exactly what evidence to collect.
+            <h2 style="margin-top: 60px;">The Solution</h2>
+            
+            <div class="demo-output">
+<span class="prompt">$</span> <span class="command">auditkit scan -provider aws -framework soc2 -verbose</span>
+<br>
+<span class="comment"># Scanning 64 SOC2 controls across AWS...</span>
+<br><br>
+<span class="critical">✗ FAIL</span> | <span class="framework">CC6.6</span> | MFA Not Enforced
+<span class="label">Evidence:</span> 3 IAM users without MFA: admin-user, deploy-bot, john.doe
+<span class="label">Remediation:</span> aws iam enable-mfa-device --user-name admin-user
+<span class="label">Screenshot Guide:</span> IAM → Users → Security credentials → Show MFA enabled
+<span class="label">Console URL:</span> <span class="url">https://console.aws.amazon.com/iam/home#/users</span>
+<br><br>
+<span class="success">✓ PASS</span> | <span class="framework">CC6.1</span> | CloudTrail Logging Enabled
+<span class="label">Evidence:</span> CloudTrail enabled in all regions, logs encrypted
+<span class="label">Frameworks:</span> SOC2 (CC6.1), PCI-DSS (10.2.2), CMMC (AU.L2-3.3.1)
+<br><br>
+<span class="comment"># Scan complete: 58/64 passing (91%)</span>
+<span class="comment"># PDF report: compliance-report.pdf</span>
+<span class="comment"># Evidence tracker: evidence-tracker.html</span>
             </div>
         </div>
     </section>
 
     <section>
         <div class="container">
-            <h2>What AuditKit Actually Does</h2>
-            
-            <div class="grid">
-                <div class="card">
-                    <h3>Multi-Cloud Coverage</h3>
-                    <p>Scans AWS, Azure, GCP, and M365 with unified reporting across all environments.</p>
-                </div>
-                
-                <div class="card">
-                    <h3>Framework Mapping</h3>
-                    <p>Maps each finding to SOC2, PCI-DSS, CMMC, HIPAA, and ISO 27001 requirements automatically.</p>
-                </div>
-                
-                <div class="card">
-                    <h3>Evidence Guides</h3>
-                    <p>Shows EXACTLY which console screens to screenshot with step-by-step instructions auditors accept.</p>
-                </div>
-                
-                <div class="card">
-                    <h3>Professional Reports</h3>
-                    <p>Generates PDF and interactive HTML reports with evidence checklists and remediation commands.</p>
-                </div>
-                
-                <div class="card">
-                    <h3>Progress Tracking</h3>
-                    <p>Tracks what evidence you've collected vs. what's missing across all frameworks.</p>
-                </div>
-                
-                <div class="card">
-                    <h3>GCP Support NEW</h3>
-                    <p>Free: 20 core checks (Storage, IAM, Compute, VPC). Pro: +20 advanced (GKE Security, Vertex AI).</p>
-                </div>
-            </div>
+            <h2>Multi-Cloud Coverage</h2>
+            <p style="text-align: center; font-size: 1.2em; margin-bottom: 40px; color: #666;">
+                One tool. Four cloud providers. Stop juggling separate scanners.
+            </p>
 
             <div class="stats">
                 <div class="stat">
@@ -583,8 +431,8 @@
                     <div class="stat-label">Cloud Providers</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number">64</div>
-                    <div class="stat-label">SOC2 Controls</div>
+                    <div class="stat-number">210+</div>
+                    <div class="stat-label">Total Checks</div>
                 </div>
                 <div class="stat">
                     <div class="stat-number">5</div>
@@ -592,59 +440,69 @@
                 </div>
                 <div class="stat">
                     <div class="stat-number">$0</div>
-                    <div class="stat-label">Level 1 Cost</div>
+                    <div class="stat-label">Free Version Cost</div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <section style="background: #f8f9fa;">
-        <div class="container">
-            <h2>GCP Support (v0.7.0)</h2>
-            <p style="text-align: center; font-size: 1.1em; margin-bottom: 30px;">
-                Now supporting Google Cloud Platform with 20 core checks in the free version, 40 total checks in Pro.
-            </p>
+            <div class="provider-grid">
+                <div class="provider-card">
+                    <h3>AWS</h3>
+                    <div class="check-count">64+</div>
+                    <p>IAM, S3, EC2, CloudTrail, KMS, RDS, VPC</p>
+                </div>
+                
+                <div class="provider-card">
+                    <h3>Azure</h3>
+                    <div class="check-count">64+</div>
+                    <p>Entra ID, Storage, NSGs, SQL, Key Vault</p>
+                </div>
+                
+                <div class="provider-card">
+                    <h3>GCP</h3>
+                    <div class="check-count">170+</div>
+                    <p>Cloud Storage, IAM, Compute, SQL, KMS, Logging</p>
+                </div>
+                
+                <div class="provider-card">
+                    <h3>Microsoft 365</h3>
+                    <div class="check-count">29+</div>
+                    <p>Entra ID via ScubaGear integration</p>
+                </div>
+            </div>
 
-            <div class="grid">
+            <div class="grid" style="margin-top: 50px;">
                 <div class="card">
-                    <h3>FREE Version (20 checks)</h3>
+                    <h3>Free Version</h3>
                     <ul class="features-list">
-                        <li>Cloud Storage bucket policies</li>
-                        <li>IAM & Service Account security</li>
-                        <li>Compute Engine configuration</li>
-                        <li>VPC firewall rules</li>
-                        <li>Cloud SQL security</li>
-                        <li>Cloud KMS encryption</li>
-                        <li>Cloud Logging enabled</li>
+                        <li>SOC2 complete (64 controls)</li>
+                        <li>PCI-DSS v4.0 (30+ controls)</li>
+                        <li>CMMC Level 1 (17 practices)</li>
+                        <li>AWS, Azure, GCP, M365</li>
+                        <li>PDF/HTML/JSON reports</li>
+                        <li>Evidence collection guides</li>
                     </ul>
                 </div>
                 
-                <div class="card">
-                    <h3>PRO Version (+20 advanced)</h3>
+                <div class="card" style="border: 2px solid #ff6b6b;">
+                    <h3>Pro Version <span style="color: #ff6b6b;">($297/mo)</span></h3>
                     <ul class="features-list">
-                        <li>GKE Security (10 checks)</li>
-                        <li>Container vulnerability scanning</li>
-                        <li>Pod security policies</li>
-                        <li>Network policies</li>
-                        <li>Vertex AI Compliance (10 checks)</li>
-                        <li>ML model governance</li>
-                        <li>Data access controls</li>
+                        <li>CMMC Level 2 (110 practices)</li>
+                        <li>GCP Advanced (GKE + Vertex AI)</li>
+                        <li>Multi-account scanning</li>
+                        <li>Evidence package generator</li>
+                        <li>Continuous monitoring daemon</li>
+                        <li>Drift detection</li>
+                        <li>Priority support</li>
                     </ul>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <a href="/pro/" class="btn btn-pro">Learn More</a>
+                    </div>
                 </div>
             </div>
-
-            <div class="code-block"><span style="color: #608b4e;"># Scan GCP project</span>
-gcloud auth application-default login
-export GOOGLE_CLOUD_PROJECT="your-project-id"
-<br>
-auditkit scan -provider gcp -framework soc2
-<br>
-<span style="color: #608b4e;"># Pro: Scan GKE and Vertex AI</span>
-auditkit-pro scan -provider gcp -framework soc2 --advanced</div>
         </div>
     </section>
 
-    <section class="installation">
+    <section id="installation" class="installation">
         <div class="container">
             <h2>Installation</h2>
             
@@ -655,19 +513,20 @@ go install github.com/guardian-nexus/auditkit/scanner/cmd/auditkit@latest
 git clone https://github.com/guardian-nexus/auditkit.git
 cd auditkit/scanner && go build ./cmd/auditkit
 <br>
-<span style="color: #608b4e;"># Run CMMC Level 1 assessment</span>
-./auditkit scan -framework cmmc -format pdf -output cmmc-evidence.pdf
+<span style="color: #608b4e;"># Run your first scan</span>
+./auditkit scan -framework soc2 -format pdf -output report.pdf
 <br>
 <span style="color: #608b4e;"># Multi-framework scan</span>
-./auditkit scan -framework all -format pdf -output compliance-report.pdf
+./auditkit scan -framework all -format pdf
 <br>
-<span style="color: #608b4e;"># Azure SOC2 scan</span>
+<span style="color: #608b4e;"># Azure scan</span>
 az login
 export AZURE_SUBSCRIPTION_ID="your-subscription-id"
 ./auditkit scan -provider azure -framework soc2
 <br>
-<span style="color: #608b4e;"># GCP scan (NEW in v0.7.0)</span>
+<span style="color: #608b4e;"># GCP scan</span>
 gcloud auth application-default login
+export GOOGLE_CLOUD_PROJECT="your-project-id"
 ./auditkit scan -provider gcp -framework soc2</div>
         </div>
     </section>
@@ -681,21 +540,20 @@ gcloud auth application-default login
                     <h3 style="color: #28a745; margin-bottom: 20px;">Perfect For</h3>
                     <ul class="features-list">
                         <li>Defense contractors needing CMMC compliance</li>
-                        <li>Startups facing multiple compliance requirements</li>
-                        <li>Teams juggling SOC2 + PCI + HIPAA + CMMC simultaneously</li>
-                        <li>Companies quoted $50K+ per framework for prep</li>
+                        <li>Startups facing SOC2 + PCI + HIPAA simultaneously</li>
+                        <li>Companies quoted $50K+ per framework</li>
                         <li>Engineers who prefer fixing things themselves</li>
-                        <li>Multi-cloud organizations (AWS + Azure + GCP)</li>
-                        <li>Anyone tired of running 5 different scanners</li>
+                        <li>Multi-cloud organizations</li>
+                        <li>Teams tired of running 5 different scanners</li>
                     </ul>
                 </div>
                 
                 <div class="should-not-use">
                     <h3 style="color: #dc3545; margin-bottom: 20px;">NOT For You If</h3>
                     <ul style="list-style: none;">
-                        <li style="padding: 15px 0;">You need someone to do compliance for you</li>
-                        <li style="padding: 15px 0;">You want a magic "pass audit" button</li>
-                        <li style="padding: 15px 0;">You need vendor certifications</li>
+                        <li style="padding: 15px 0; border-bottom: 1px solid #eee;">You need someone to do compliance for you</li>
+                        <li style="padding: 15px 0; border-bottom: 1px solid #eee;">You want a magic "pass audit" button</li>
+                        <li style="padding: 15px 0; border-bottom: 1px solid #eee;">You need vendor certifications</li>
                         <li style="padding: 15px 0;">You require hand-holding</li>
                     </ul>
                 </div>
@@ -705,9 +563,9 @@ gcloud auth application-default login
 
     <section id="cmmc-pro" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
         <div class="container">
-            <h2 style="color: white;">CMMC Level 2 Pro</h2>
-            <p style="text-align: center; font-size: 1.2em; margin-bottom: 40px;">
-                Required for DoD contractors handling CUI
+            <h2 style="color: white;">Need CMMC Level 2?</h2>
+            <p style="text-align: center; font-size: 1.3em; margin-bottom: 40px; opacity: 0.95;">
+                Required for DoD contractors handling CUI. Assessment-ready in 30 days vs 6+ months.
             </p>
 
             <div class="stats">
@@ -731,42 +589,7 @@ gcloud auth application-default login
 
             <div style="text-align: center; margin-top: 40px;">
                 <a href="/pro/" class="btn btn-primary" style="font-size: 1.2em; padding: 18px 40px;">Start 14-Day Free Trial</a>
-                <p style="margin-top: 20px; opacity: 0.9;">$297/month vs $100K+ traditional • Assessment-ready in 30 days vs 6 months</p>
-            </div>
-        </div>
-    </section>
-
-    <section style="background: #f8f9fa;">
-        <div class="container">
-            <h2>Current Status - v0.7.0</h2>
-            
-            <div class="card" style="max-width: 800px; margin: 0 auto;">
-                <h3 style="color: #28a745;">Production Ready</h3>
-                <ul class="features-list">
-                    <li><strong>SOC2</strong> - Complete (64 controls), AWS + Azure + GCP + M365</li>
-                    <li><strong>PCI-DSS v4.0</strong> - Complete (30+ technical controls)</li>
-                    <li><strong>CMMC Level 1</strong> - Complete (17 practices), AWS + Azure + GCP</li>
-                    <li><strong>GCP Support</strong> - 20 core checks (Free), +20 advanced (Pro)</li>
-                    <li><strong>M365 Coverage</strong> - All 7 domains via ScubaGear integration</li>
-                </ul>
-
-                <h3 style="color: #667eea; margin-top: 30px;">What's New in v0.7.0</h3>
-                <ul class="features-list">
-                    <li><strong>Google Cloud Platform Support</strong></li>
-                    <li>20 core GCP checks in FREE version</li>
-                    <li>GKE Security (10 checks) in PRO</li>
-                    <li>Vertex AI Compliance (10 checks) in PRO</li>
-                    <li>Multi-account scanning for all providers</li>
-                </ul>
-
-                <h3 style="color: #f1c40f; margin-top: 30px;">Pro Features</h3>
-                <ul class="features-list">
-                    <li><strong>CMMC Level 2</strong> - 110 practices for CUI handling</li>
-                    <li><strong>GCP Advanced</strong> - GKE + Vertex AI checks</li>
-                    <li><strong>Multi-Account Scanning</strong> - AWS Orgs, Azure Mgmt Groups, GCP Folders</li>
-                    <li>14-day free trial, $297/month</li>
-                    <li>Priority support (24-48 hour response)</li>
-                </ul>
+                <p style="margin-top: 20px; opacity: 0.9;">$297/month • Assessment-ready in 30 days • Cancel anytime</p>
             </div>
         </div>
     </section>
@@ -787,7 +610,7 @@ gcloud auth application-default login
                 <a href="/pro/" style="color: #ff6b6b; font-weight: 600;">Get Pro</a>
             </p>
             <p style="margin-top: 20px; font-size: 0.9em; color: #95a5a6;">
-                AuditKit v0.7.0 • October 2025
+                AuditKit v0.7.0 • November 2025
             </p>
         </div>
     </footer>

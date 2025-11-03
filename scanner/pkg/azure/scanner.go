@@ -1,451 +1,455 @@
 package azure
 
 import (
-    "context"
-    "fmt"
-    "os"
-    "strings"
+	"context"
+	"fmt"
+	"os"
+	"strings"
 
-    "github.com/Azure/azure-sdk-for-go/sdk/azcore"
-    "github.com/Azure/azure-sdk-for-go/sdk/azidentity"
-    "github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/storage/armstorage"
-    "github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork"
-    "github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute"
-    "github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/keyvault/armkeyvault"
-    "github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/monitor/armmonitor"
-    "github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql"
-    "github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/authorization/armauthorization"
-    
-    // Microsoft Graph SDK for Azure AD checks
-    msgraphsdk "github.com/microsoftgraph/msgraph-sdk-go"
-    
-    "github.com/guardian-nexus/auditkit/scanner/pkg/azure/checks"
+	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/authorization/armauthorization"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/keyvault/armkeyvault"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/monitor/armmonitor"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/storage/armstorage"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/security/armsecurity"
+	"github.com/guardian-nexus/auditkit/scanner/pkg/azure/checks"
+	msgraphsdk "github.com/microsoftgraph/msgraph-sdk-go"
 )
 
-// AzureScanner handles all Azure compliance scanning
 type AzureScanner struct {
-    subscriptionID string
-    tenantID       string
-    credential     azcore.TokenCredential
-    
-    // Azure service clients
-    storageClient       *armstorage.AccountsClient
-    networkClient       *armnetwork.SecurityGroupsClient
-    computeClient       *armcompute.VirtualMachinesClient
-    disksClient         *armcompute.DisksClient
-    keyVaultClient      *armkeyvault.VaultsClient
-    monitorClient       *armmonitor.ActivityLogsClient
-    sqlClient           *armsql.DatabasesClient
-    roleClient          *armauthorization.RoleAssignmentsClient
-    roleDefClient       *armauthorization.RoleDefinitionsClient
-    
-    // Microsoft Graph client for Azure AD operations
-    graphClient         *msgraphsdk.GraphServiceClient
+	subscriptionID    string
+	cred              *azidentity.DefaultAzureCredential
+	graphClient       *msgraphsdk.GraphServiceClient
+	storageClient     *armstorage.AccountsClient
+	computeClient     *armcompute.VirtualMachinesClient
+	disksClient       *armcompute.DisksClient
+	networkClient     *armnetwork.VirtualNetworksClient
+	nsgClient         *armnetwork.SecurityGroupsClient
+	sqlClient         *armsql.ServersClient
+	sqlDBClient       *armsql.DatabasesClient
+	keyVaultClient    *armkeyvault.VaultsClient
+	monitorClient     *armmonitor.ActivityLogsClient
+	roleClient        *armauthorization.RoleAssignmentsClient
+	roleDefClient     *armauthorization.RoleDefinitionsClient
+	securityClient    *armsecurity.PricingsClient           // NEW: For Defender checks
+	autoProvisionClient *armsecurity.AutoProvisioningSettingsClient // NEW: For auto-provisioning
+	contactsClient    *armsecurity.ContactsClient            // NEW: For security contacts
 }
 
-// ScanResult matches AWS structure for consistency
 type ScanResult struct {
-    Control           string
-    Status            string
-    Evidence          string
-    Remediation       string
-    RemediationDetail string
-    Severity          string
-    ScreenshotGuide   string
-    ConsoleURL        string
-    Frameworks        map[string]string
+	Control           string
+	Status            string
+	Evidence          string
+	Remediation       string
+	RemediationDetail string
+	Severity          string
+	ScreenshotGuide   string
+	ConsoleURL        string
+	Frameworks        map[string]string
 }
 
-// NewScanner creates a new Azure scanner with authentication
-func NewScanner(profile string) (*AzureScanner, error) {
-    // Get subscription ID from environment or profile
-    subscriptionID := os.Getenv("AZURE_SUBSCRIPTION_ID")
-    if subscriptionID == "" {
-        return nil, fmt.Errorf("AZURE_SUBSCRIPTION_ID environment variable not set")
-    }
-    
-    tenantID := os.Getenv("AZURE_TENANT_ID")
-    if tenantID == "" {
-        tenantID = "common"
-    }
-    
-    // Use DefaultAzureCredential which tries multiple auth methods
-    cred, err := azidentity.NewDefaultAzureCredential(nil)
-    if err != nil {
-        return nil, fmt.Errorf("failed to get Azure credentials: %v", err)
-    }
-    
-    scanner := &AzureScanner{
-        subscriptionID: subscriptionID,
-        tenantID:       tenantID,
-        credential:     cred,
-    }
-    
-    // Initialize all service clients
-    if err := scanner.initializeClients(); err != nil {
-        return nil, fmt.Errorf("failed to initialize Azure clients: %v", err)
-    }
-    
-    return scanner, nil
+func NewScanner(subscriptionID string) (*AzureScanner, error) {
+	cred, err := azidentity.NewDefaultAzureCredential(nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create Azure credential: %v", err)
+	}
+
+	// Create Microsoft Graph client
+	graphClient, err := msgraphsdk.NewGraphServiceClientWithCredentials(cred, []string{"https://graph.microsoft.com/.default"})
+	if err != nil {
+		return nil, fmt.Errorf("failed to create Graph client: %v", err)
+	}
+
+	// Create Azure Resource Manager clients
+	storageClient, err := armstorage.NewAccountsClient(subscriptionID, cred, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create storage client: %v", err)
+	}
+
+	computeClient, err := armcompute.NewVirtualMachinesClient(subscriptionID, cred, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create compute client: %v", err)
+	}
+
+	disksClient, err := armcompute.NewDisksClient(subscriptionID, cred, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create disks client: %v", err)
+	}
+
+	networkClient, err := armnetwork.NewVirtualNetworksClient(subscriptionID, cred, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create network client: %v", err)
+	}
+
+	nsgClient, err := armnetwork.NewSecurityGroupsClient(subscriptionID, cred, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create NSG client: %v", err)
+	}
+
+	sqlClient, err := armsql.NewServersClient(subscriptionID, cred, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create SQL client: %v", err)
+	}
+
+	sqlDBClient, err := armsql.NewDatabasesClient(subscriptionID, cred, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create SQL DB client: %v", err)
+	}
+
+	keyVaultClient, err := armkeyvault.NewVaultsClient(subscriptionID, cred, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create Key Vault client: %v", err)
+	}
+
+	monitorClient, err := armmonitor.NewActivityLogsClient(subscriptionID, cred, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create monitor client: %v", err)
+	}
+
+	roleClient, err := armauthorization.NewRoleAssignmentsClient(subscriptionID, cred, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create role assignments client: %v", err)
+	}
+
+	roleDefClient, err := armauthorization.NewRoleDefinitionsClient(cred, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create role definitions client: %v", err)
+	}
+
+	// FIXED: Security Center clients - removed subscriptionID from constructor
+	securityClient, err := armsecurity.NewPricingsClient(cred, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create security pricing client: %v", err)
+	}
+
+	autoProvisionClient, err := armsecurity.NewAutoProvisioningSettingsClient(subscriptionID, cred, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create auto-provisioning client: %v", err)
+	}
+
+	contactsClient, err := armsecurity.NewContactsClient(subscriptionID, cred, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create security contacts client: %v", err)
+	}
+
+	return &AzureScanner{
+		subscriptionID:      subscriptionID,
+		cred:                cred,
+		graphClient:         graphClient,
+		storageClient:       storageClient,
+		computeClient:       computeClient,
+		disksClient:         disksClient,
+		networkClient:       networkClient,
+		nsgClient:           nsgClient,
+		sqlClient:           sqlClient,
+		sqlDBClient:         sqlDBClient,
+		keyVaultClient:      keyVaultClient,
+		monitorClient:       monitorClient,
+		roleClient:          roleClient,
+		roleDefClient:       roleDefClient,
+		securityClient:      securityClient,
+		autoProvisionClient: autoProvisionClient,
+		contactsClient:      contactsClient,
+	}, nil
 }
 
-func (s *AzureScanner) initializeClients() error {
-    var err error
-    
-    // Storage client
-    s.storageClient, err = armstorage.NewAccountsClient(s.subscriptionID, s.credential, nil)
-    if err != nil {
-        return fmt.Errorf("failed to create storage client: %v", err)
-    }
-    
-    // Network client
-    s.networkClient, err = armnetwork.NewSecurityGroupsClient(s.subscriptionID, s.credential, nil)
-    if err != nil {
-        return fmt.Errorf("failed to create network client: %v", err)
-    }
-    
-    // Compute clients
-    s.computeClient, err = armcompute.NewVirtualMachinesClient(s.subscriptionID, s.credential, nil)
-    if err != nil {
-        return fmt.Errorf("failed to create compute client: %v", err)
-    }
-    
-    s.disksClient, err = armcompute.NewDisksClient(s.subscriptionID, s.credential, nil)
-    if err != nil {
-        return fmt.Errorf("failed to create disks client: %v", err)
-    }
-    
-    // Key Vault client
-    s.keyVaultClient, err = armkeyvault.NewVaultsClient(s.subscriptionID, s.credential, nil)
-    if err != nil {
-        return fmt.Errorf("failed to create keyvault client: %v", err)
-    }
-    
-    // Monitor client
-    s.monitorClient, err = armmonitor.NewActivityLogsClient(s.subscriptionID, s.credential, nil)
-    if err != nil {
-        return fmt.Errorf("failed to create monitor client: %v", err)
-    }
-    
-    // SQL client
-    s.sqlClient, err = armsql.NewDatabasesClient(s.subscriptionID, s.credential, nil)
-    if err != nil {
-        return fmt.Errorf("failed to create SQL client: %v", err)
-    }
-    
-    // Authorization clients
-    s.roleClient, err = armauthorization.NewRoleAssignmentsClient(s.subscriptionID, s.credential, nil)
-    if err != nil {
-        return fmt.Errorf("failed to create role assignments client: %v", err)
-    }
-    
-    s.roleDefClient, err = armauthorization.NewRoleDefinitionsClient(s.credential, nil)
-    if err != nil {
-        return fmt.Errorf("failed to create role definitions client: %v", err)
-    }
-    
-    // Microsoft Graph client for Azure AD operations
-    s.graphClient, err = msgraphsdk.NewGraphServiceClientWithCredentials(s.credential, []string{"https://graph.microsoft.com/.default"})
-    if err != nil {
-        return fmt.Errorf("failed to create Graph client: %v", err)
-    }
-    
-    return nil
+func (s *AzureScanner) GetSubscriptionID() string {
+	return s.subscriptionID
 }
 
-// GetAccountID returns the subscription ID for Azure
 func (s *AzureScanner) GetAccountID(ctx context.Context) string {
-    return s.subscriptionID
+	return s.subscriptionID
 }
 
-// ScanServices runs Azure compliance checks based on framework
 func (s *AzureScanner) ScanServices(ctx context.Context, services []string, verbose bool, framework string) ([]ScanResult, error) {
-    // Test Azure connectivity first
-    if verbose {
-        fmt.Println("Checking Azure connectivity...")
-    }
-    
-    // Try to list storage accounts as a connectivity test
-    pager := s.storageClient.NewListPager(nil)
-    _, err := pager.NextPage(ctx)
-    if err != nil {
-        if verbose {
-            fmt.Println("   Error: Not connected to Azure. Please configure Azure credentials.")
-            fmt.Println("   Run: az login")
-            fmt.Println("   Or set: AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID")
-        }
-        return nil, fmt.Errorf("Azure connection failed: %v. Please configure Azure credentials", err)
-    }
-    
-    var results []ScanResult
-    
-    // Normalize framework name
-    framework = strings.ToLower(framework)
-    
-    if verbose {
-        if framework == "pci" {
-            fmt.Println("Running PCI-DSS v4.0 compliance scan for Azure...")
-        } else if framework == "soc2" {
-            fmt.Println("Running SOC2 compliance scan for Azure...")
-        } else if framework == "cmmc" {
-            fmt.Println("Running CMMC Level 1 compliance scan for Azure...")
-            fmt.Println("For Level 2 upgrade to Pro")
-        } else if framework == "all" {
-            fmt.Println("Running multi-framework compliance scan for Azure...")
-        }
-    }
-    
-    // Run framework-specific checks
-    switch framework {
-    case "soc2":
-        results = append(results, s.runSOC2Checks(ctx, verbose)...)
-    case "pci", "pci-dss":
-        results = append(results, s.runPCIChecks(ctx, verbose)...)
-    case "cmmc":
-        results = append(results, s.runCMMCChecks(ctx, verbose)...)
-        if verbose {
-            fmt.Println("Azure CMMC Level 1 scan complete")
-        }
-    case "hipaa":
-        results = append(results, s.runBasicChecks(ctx, services, verbose)...)
-        if verbose {
-            fmt.Println("HIPAA checks are experimental for Azure - limited coverage")
-        }
-    case "all":
-        results = append(results, s.runSOC2Checks(ctx, verbose)...)
-        results = append(results, s.runPCIChecks(ctx, verbose)...)
-        results = append(results, s.runCMMCChecks(ctx, verbose)...)
-    default:
-        results = append(results, s.runSOC2Checks(ctx, verbose)...)
-    }
-    
-    if verbose {
-        fmt.Printf("Azure scan complete - %d total checks performed\n", len(results))
-    }
-    
-    return results, nil
+	// Check if Azure credentials are configured
+	if os.Getenv("AZURE_SUBSCRIPTION_ID") == "" {
+		if verbose {
+			fmt.Println("Error: Not connected to Azure. Please configure Azure credentials.")
+			fmt.Println("Set AZURE_SUBSCRIPTION_ID, AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET")
+		}
+		return nil, fmt.Errorf("Azure connection failed: credentials not configured")
+	}
+
+	var results []ScanResult
+	framework = strings.ToLower(framework)
+
+	switch framework {
+	case "soc2":
+		results = append(results, s.runSOC2Checks(ctx, verbose)...)
+	case "pci", "pci-dss":
+		results = append(results, s.runPCIChecks(ctx, verbose)...)
+	case "cmmc":
+		results = append(results, s.runCMMCChecks(ctx, verbose)...)
+	case "cis", "cis-azure":
+		results = append(results, s.runCISChecks(ctx, verbose)...)
+	case "all":
+		results = append(results, s.runSOC2Checks(ctx, verbose)...)
+		results = append(results, s.runPCIChecks(ctx, verbose)...)
+		results = append(results, s.runCMMCChecks(ctx, verbose)...)
+		results = append(results, s.runCISChecks(ctx, verbose)...)
+	default:
+		results = append(results, s.runSOC2Checks(ctx, verbose)...)
+	}
+
+	return results, nil
 }
 
-// runCMMCChecks executes CMMC Level 1 checks for Azure with real API calls
-func (s *AzureScanner) runCMMCChecks(ctx context.Context, verbose bool) []ScanResult {
-    var results []ScanResult
-    
-    if verbose {
-        fmt.Println("Running CMMC Level 1 (17 practices) for Azure with automated checks")
-        fmt.Println("")
-        fmt.Println("⚠️  IMPORTANT DISCLAIMER:")
-        fmt.Println("═══════════════════════════════════════════════════════════")
-        fmt.Println("This scanner tests technical controls that can be automated.")
-        fmt.Println("")
-        fmt.Println("CMMC Level 1 requires 17 practices. Many controls require")
-        fmt.Println("organizational documentation and policies that cannot be")
-        fmt.Println("verified through automated scanning.")
-        fmt.Println("")
-        fmt.Println("A high automated check score does NOT mean you are CMMC")
-        fmt.Println("compliant. This is a technical assessment tool, not a")
-        fmt.Println("compliance certification.")
-        fmt.Println("")
-        fmt.Println("You still need to document policies, training, incident")
-        fmt.Println("response procedures, and other organizational controls.")
-        fmt.Println("═══════════════════════════════════════════════════════════")
-        fmt.Println("")
-    }
-    
-    // Pass all necessary clients to CMMC checker including subscription ID
-	level1 := checks.NewAzureCMMCLevel1Checks(
-	    s.roleClient,        // 1st param
-	    s.storageClient,     // 2nd param
-	    s.networkClient,     // 3rd param
-	    s.graphClient,       // 4th param
-	    s.subscriptionID,    // 5th param
-	)
-    
-    checkResults, err := level1.Run(ctx)
-    if err != nil && verbose {
-        fmt.Printf("Warning in Azure CMMC Level 1: %v\n", err)
-    }
-    
-    for _, cr := range checkResults {
-        results = append(results, ScanResult{
-            Control:           cr.Control,
-            Status:            cr.Status,
-            Evidence:          cr.Evidence,
-            Remediation:       cr.Remediation,
-            RemediationDetail: cr.RemediationDetail,
-            Severity:          cr.Severity,
-            ScreenshotGuide:   cr.ScreenshotGuide,
-            ConsoleURL:        cr.ConsoleURL,
-            Frameworks:        cr.Frameworks,
-        })
-    }
-    
-    if verbose {
-        fmt.Printf("\nCMMC Level 1 complete: %d controls tested\n", len(results))
-        fmt.Println("")
-        fmt.Println("🔓 UNLOCK CMMC LEVEL 2:")
-        fmt.Println("  • 110 additional Level 2 practices for CUI")
-        fmt.Println("  • Required for DoD contractors handling CUI")
-        fmt.Println("  • Complete evidence collection guides")
-        fmt.Println("  • November 10, 2025 deadline compliance")
-        fmt.Println("")
-        fmt.Println("Visit https://auditkit.io/pro for full CMMC Level 2")
-    }
-    
-    return results
-}
-
-// runSOC2Checks executes SOC2 compliance checks for Azure
 func (s *AzureScanner) runSOC2Checks(ctx context.Context, verbose bool) []ScanResult {
-    var results []ScanResult
-    
-    azureChecks := []checks.Check{
-        checks.NewAzureCC1Checks(s.roleClient, s.roleDefClient),
-        checks.NewAzureCC2Checks(),
-        checks.NewAzureCC3Checks(s.monitorClient),
-        checks.NewAzureCC4Checks(s.monitorClient),
-        checks.NewAzureCC5Checks(s.keyVaultClient),
-        checks.NewAzureCC6Wrapper(),
-        checks.NewAzureCC7Checks(),
-        checks.NewAzureCC8Checks(),
-        checks.NewAzureCC9Checks(),
-        checks.NewStorageChecks(s.storageClient),
-        checks.NewAADChecks(s.roleClient, s.roleDefClient),
-        checks.NewNetworkChecks(s.networkClient),
-        checks.NewComputeChecks(s.computeClient, s.disksClient),
-        checks.NewKeyVaultChecks(s.keyVaultClient),
-        checks.NewMonitoringChecks(s.monitorClient),
-        checks.NewSQLChecks(s.sqlClient),
-    }
-    
-    for _, check := range azureChecks {
-        if verbose {
-            fmt.Printf("   Running %s...\n", check.Name())
-        }
-        
-        checkResults, err := check.Run(ctx)
-        if err != nil && verbose {
-            fmt.Printf("     Warning in %s: %v\n", check.Name(), err)
-        }
-        
-        for _, cr := range checkResults {
-            results = append(results, ScanResult{
-                Control:           cr.Control,
-                Status:            cr.Status,
-                Evidence:          cr.Evidence,
-                Remediation:       cr.Remediation,
-                RemediationDetail: cr.RemediationDetail,
-                Severity:          cr.Severity,
-                ScreenshotGuide:   cr.ScreenshotGuide,
-                ConsoleURL:        cr.ConsoleURL,
-                Frameworks:        cr.Frameworks,
-            })
-        }
-    }
-    
-    return results
+	var results []ScanResult
+
+	if verbose {
+		fmt.Println("Running SOC2 compliance checks for Azure...")
+	}
+
+	// Run SOC2 CC1-CC9 check modules
+	soc2Checks := []checks.Check{
+		checks.NewAzureCC1Checks(s.roleClient, s.roleDefClient),
+		checks.NewAzureCC2Checks(),
+		checks.NewAzureCC3Checks(s.monitorClient),
+		checks.NewAzureCC4Checks(s.monitorClient),
+		checks.NewAzureCC5Checks(s.keyVaultClient),
+		checks.NewAzureCC6Wrapper(),
+		checks.NewAzureCC7Checks(),
+		checks.NewAzureCC8Checks(),
+		checks.NewAzureCC9Checks(),
+		checks.NewStorageChecks(s.storageClient),
+		checks.NewAADChecks(s.roleClient, s.roleDefClient, s.graphClient),
+		checks.NewComputeChecks(s.computeClient, s.disksClient),
+		checks.NewNetworkChecks(s.nsgClient),
+		checks.NewSQLChecks(s.sqlDBClient, s.sqlClient),
+		checks.NewKeyVaultChecks(s.keyVaultClient),
+		checks.NewMonitoringChecks(s.monitorClient, s.subscriptionID),
+		checks.NewIdentityChecks(s.subscriptionID),
+	}
+
+	for _, check := range soc2Checks {
+		if verbose {
+			fmt.Printf("  Running %s...\n", check.Name())
+		}
+
+		checkResults, err := check.Run(ctx)
+		if err != nil && verbose {
+			fmt.Printf("    Warning in %s: %v\n", check.Name(), err)
+		}
+
+		for _, cr := range checkResults {
+			results = append(results, ScanResult{
+				Control:           cr.Control,
+				Status:            cr.Status,
+				Evidence:          cr.Evidence,
+				Remediation:       cr.Remediation,
+				RemediationDetail: cr.RemediationDetail,
+				Severity:          cr.Priority.Level,
+				ScreenshotGuide:   cr.ScreenshotGuide,
+				ConsoleURL:        cr.ConsoleURL,
+				Frameworks:        cr.Frameworks,
+			})
+		}
+	}
+
+	return results
 }
 
-// runPCIChecks executes PCI-DSS specific checks for Azure
 func (s *AzureScanner) runPCIChecks(ctx context.Context, verbose bool) []ScanResult {
-    var results []ScanResult
-    
-    pciChecks := checks.NewAzurePCIChecks(
-        s.storageClient,
-        s.networkClient,
-        s.roleClient,
-        s.sqlClient,
-        s.monitorClient,
-    )
-    
-    if verbose {
-        fmt.Printf("   Running Azure PCI-DSS v4.0 requirements...\n")
-    }
-    
-    checkResults, err := pciChecks.Run(ctx)
-    if err != nil && verbose {
-        fmt.Printf("      Warning in PCI-DSS checks: %v\n", err)
-    }
-    
-    for _, cr := range checkResults {
-        results = append(results, ScanResult{
-            Control:           cr.Control,
-            Status:            cr.Status,
-            Evidence:          cr.Evidence,
-            Remediation:       cr.Remediation,
-            RemediationDetail: cr.RemediationDetail,
-            Severity:          cr.Severity,
-            ScreenshotGuide:   cr.ScreenshotGuide,
-            ConsoleURL:        cr.ConsoleURL,
-            Frameworks:        cr.Frameworks,
-        })
-    }
-    
-    basicChecks := []checks.Check{
-        checks.NewStorageChecks(s.storageClient),
-        checks.NewAADChecks(s.roleClient, s.roleDefClient),
-        checks.NewNetworkChecks(s.networkClient),
-    }
-    
-    for _, check := range basicChecks {
-        checkResults, _ := check.Run(ctx)
-        for _, cr := range checkResults {
-            if cr.Frameworks != nil && cr.Frameworks["PCI-DSS"] != "" {
-                results = append(results, ScanResult{
-                    Control:           cr.Control,
-                    Status:            cr.Status,
-                    Evidence:          cr.Evidence + " | PCI-DSS: " + cr.Frameworks["PCI-DSS"],
-                    Remediation:       cr.Remediation,
-                    RemediationDetail: cr.RemediationDetail,
-                    Severity:          cr.Severity,
-                    ScreenshotGuide:   cr.ScreenshotGuide,
-                    ConsoleURL:        cr.ConsoleURL,
-                    Frameworks:        cr.Frameworks,
-                })
-            }
-        }
-    }
-    
-    return results
+	var results []ScanResult
+
+	if verbose {
+		fmt.Println("Running PCI-DSS v4.0 checks for Azure...")
+		fmt.Println("Note: PCI-DSS specific checks not yet implemented for Azure")
+		fmt.Println("Using basic checks with PCI framework mappings...")
+	}
+
+	basicChecks := []checks.Check{
+		checks.NewAADChecks(s.roleClient, s.roleDefClient, s.graphClient),
+		checks.NewStorageChecks(s.storageClient),
+		checks.NewNetworkChecks(s.nsgClient),
+		checks.NewMonitoringChecks(s.monitorClient, s.subscriptionID),
+	}
+
+	for _, check := range basicChecks {
+		checkResults, _ := check.Run(ctx)
+		for _, cr := range checkResults {
+			if cr.Frameworks != nil && cr.Frameworks["PCI-DSS"] != "" {
+				results = append(results, ScanResult{
+					Control:           cr.Control,
+					Status:            cr.Status,
+					Evidence:          cr.Evidence,
+					Remediation:       cr.Remediation,
+					RemediationDetail: cr.RemediationDetail,
+					Severity:          cr.Priority.Level,
+					ScreenshotGuide:   cr.ScreenshotGuide,
+					ConsoleURL:        cr.ConsoleURL,
+					Frameworks:        cr.Frameworks,
+				})
+			}
+		}
+	}
+
+	return results
 }
 
-// runBasicChecks runs the core Azure checks
-func (s *AzureScanner) runBasicChecks(ctx context.Context, services []string, verbose bool) []ScanResult {
-    var results []ScanResult
-    
-    basicChecks := []checks.Check{
-        checks.NewStorageChecks(s.storageClient),
-        checks.NewAADChecks(s.roleClient, s.roleDefClient),
-        checks.NewNetworkChecks(s.networkClient),
-        checks.NewComputeChecks(s.computeClient, s.disksClient),
-        checks.NewKeyVaultChecks(s.keyVaultClient),
-        checks.NewMonitoringChecks(s.monitorClient),
-        checks.NewSQLChecks(s.sqlClient),
-    }
-    
-    for _, check := range basicChecks {
-        if verbose {
-            fmt.Printf("   Running %s...\n", check.Name())
-        }
-        
-        checkResults, err := check.Run(ctx)
-        if err != nil && verbose {
-            fmt.Printf("     Warning in %s: %v\n", check.Name(), err)
-        }
-        
-        for _, cr := range checkResults {
-            results = append(results, ScanResult{
-                Control:           cr.Control,
-                Status:            cr.Status,
-                Evidence:          cr.Evidence,
-                Remediation:       cr.Remediation,
-                RemediationDetail: cr.RemediationDetail,
-                Severity:          cr.Severity,
-                ScreenshotGuide:   cr.ScreenshotGuide,
-                ConsoleURL:        cr.ConsoleURL,
-                Frameworks:        cr.Frameworks,
-            })
-        }
-    }
-    
-    return results
+func (s *AzureScanner) runCMMCChecks(ctx context.Context, verbose bool) []ScanResult {
+	var results []ScanResult
+
+	if verbose {
+		fmt.Println("Running CMMC Level 1 (17 practices) - Open Source")
+		fmt.Println("")
+		fmt.Println("IMPORTANT DISCLAIMER:")
+		fmt.Println("This scanner tests technical controls that can be automated.")
+		fmt.Println("")
+		fmt.Println("CMMC Level 1 requires 17 practices. Many controls require")
+		fmt.Println("organizational documentation and policies that cannot be")
+		fmt.Println("verified through automated scanning.")
+		fmt.Println("")
+		fmt.Println("A high automated check score does NOT mean you are CMMC")
+		fmt.Println("compliant. This is a technical assessment tool, not a")
+		fmt.Println("compliance certification.")
+		fmt.Println("")
+	}
+
+	level1 := checks.NewAzureCMMCLevel1Checks(s.roleClient, s.storageClient, s.nsgClient, s.graphClient, s.subscriptionID)
+	results1, _ := level1.Run(ctx)
+	for _, cr := range results1 {
+		results = append(results, ScanResult{
+			Control:           cr.Control,
+			Status:            cr.Status,
+			Evidence:          cr.Evidence,
+			Remediation:       cr.Remediation,
+			RemediationDetail: cr.RemediationDetail,
+			Severity:          cr.Severity,
+			ScreenshotGuide:   cr.ScreenshotGuide,
+			ConsoleURL:        cr.ConsoleURL,
+			Frameworks:        cr.Frameworks,
+		})
+	}
+
+	if verbose {
+		fmt.Printf("\nCMMC Level 1 scan complete: %d controls tested\n", len(results))
+		fmt.Println("")
+		fmt.Println("UNLOCK CMMC LEVEL 2:")
+		fmt.Println("  - 110 additional Level 2 practices for CUI")
+		fmt.Println("  - Required for DoD contractors handling CUI")
+		fmt.Println("  - Complete evidence collection guides")
+		fmt.Println("  - November 10, 2025 deadline compliance")
+		fmt.Println("")
+		fmt.Println("Visit https://auditkit.io/pro for full CMMC Level 2")
+	}
+
+	return results
+}
+
+func (s *AzureScanner) runCISChecks(ctx context.Context, verbose bool) []ScanResult {
+	var results []ScanResult
+
+	if verbose {
+		fmt.Println("Running CIS Microsoft Azure Foundations Benchmark v3.0")
+		fmt.Println("")
+	}
+
+	// Run existing Azure check modules - they now return results with CIS mappings
+	checkModules := []checks.Check{
+		checks.NewAADChecks(s.roleClient, s.roleDefClient, s.graphClient),
+		checks.NewStorageChecks(s.storageClient),
+		checks.NewComputeChecks(s.computeClient, s.disksClient),
+		checks.NewNetworkChecks(s.nsgClient),
+		checks.NewSQLChecks(s.sqlDBClient, s.sqlClient),
+		checks.NewKeyVaultChecks(s.keyVaultClient),
+		checks.NewMonitoringChecks(s.monitorClient, s.subscriptionID),
+		checks.NewIdentityChecks(s.subscriptionID),
+		// Add CIS manual checks for Azure Monitor alerts
+		checks.NewAzureCISManualChecks(s.subscriptionID),
+		// Add Microsoft Defender for Cloud checks - NOW AUTOMATED!
+		checks.NewDefenderChecks(s.subscriptionID, s.securityClient, s.autoProvisionClient, s.contactsClient),
+		// Add App Service checks
+		checks.NewAppServiceChecks(s.subscriptionID),
+	}
+
+	// Track which CIS sections we're covering
+	sectionCounts := make(map[string]int)
+
+	for _, check := range checkModules {
+		if verbose {
+			fmt.Printf("  Running %s...\n", check.Name())
+		}
+
+		checkResults, checkErr := check.Run(ctx)
+		if checkErr != nil && verbose {
+			fmt.Printf("    Warning: %v\n", checkErr)
+		}
+
+		for _, cr := range checkResults {
+			// Check if this control has CIS-Azure mapping in Frameworks
+			if cr.Frameworks != nil && cr.Frameworks["CIS-Azure"] != "" {
+				cisControls := cr.Frameworks["CIS-Azure"]
+
+				// Track section coverage - parse section number from control ID or framework value
+				// Handle various formats: "1.1", "1.1, 1.2", "2.1.1", etc.
+				section := ""
+				if strings.HasPrefix(cr.Control, "CIS-") {
+					// Extract from Control ID like "CIS-1.1" or "CIS-2.1.1"
+					parts := strings.Split(cr.Control, "-")
+					if len(parts) > 1 {
+						// Get first character after "CIS-"
+						section = string(parts[1][0])
+					}
+				} else if len(cisControls) > 0 {
+					// Extract from Frameworks value like "1.1" or "2.1.1"
+					section = string(cisControls[0])
+				}
+
+				// Map section number to section name
+				switch section {
+				case "1":
+					sectionCounts["Identity and Access Management"]++
+				case "2":
+					sectionCounts["Microsoft Defender for Cloud"]++
+				case "3":
+					sectionCounts["Storage Accounts"]++
+				case "4":
+					sectionCounts["Database Services"]++
+				case "5":
+					sectionCounts["Logging and Monitoring"]++
+				case "6":
+					sectionCounts["Networking"]++
+				case "7":
+					sectionCounts["Virtual Machines"]++
+				case "8":
+					sectionCounts["Key Vault"]++
+				case "9":
+					sectionCounts["AppService"]++
+				}
+
+				results = append(results, ScanResult{
+					Control:           cr.Control,
+					Status:            cr.Status,
+					Evidence:          cr.Evidence,
+					Remediation:       cr.Remediation,
+					RemediationDetail: cr.RemediationDetail,
+					Severity:          cr.Priority.Level,
+					ScreenshotGuide:   cr.ScreenshotGuide,
+					ConsoleURL:        cr.ConsoleURL,
+					Frameworks:        cr.Frameworks,
+				})
+			}
+		}
+	}
+
+	if verbose {
+		fmt.Printf("\nCIS Azure scan complete: %d controls tested\n", len(results))
+		if len(sectionCounts) > 0 {
+			fmt.Println("\nSection Coverage:")
+			for section, count := range sectionCounts {
+				fmt.Printf("  %s: %d controls\n", section, count)
+			}
+		}
+		fmt.Println("\nNote: CIS Azure Benchmark v3.0 has ~100 total controls")
+		fmt.Println("This scan covers controls automatable via Azure API")
+		fmt.Println("")
+	}
+
+	return results
 }

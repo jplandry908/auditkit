@@ -47,25 +47,25 @@ func (c *AWSCMMCLevel1Checks) Run(ctx context.Context) ([]CheckResult, error) {
 	// MEDIA PROTECTION - 1 INFO
 	results = append(results, c.CheckMP_L1_001(ctx))
 
-	// PHYSICAL PROTECTION - 4 INFO
+	// PHYSICAL PROTECTION - 6 INFO
 	results = append(results, c.CheckPE_L1_001(ctx))
 	results = append(results, c.CheckPE_L1_002(ctx))
 	results = append(results, c.CheckPE_L1_003(ctx))
 	results = append(results, c.CheckPE_L1_004(ctx))
+	results = append(results, c.CheckPE_L1_005(ctx))
+	results = append(results, c.CheckPE_L1_006(ctx))
 
 	// PERSONNEL SECURITY - 2 INFO
 	results = append(results, c.CheckPS_L1_001(ctx))
 	results = append(results, c.CheckPS_L1_002(ctx))
 
-	// SYSTEM AND COMMUNICATIONS PROTECTION - 3 automated
+	// SYSTEM AND COMMUNICATIONS PROTECTION - 2 INFO
 	results = append(results, c.CheckSC_L1_001(ctx))
 	results = append(results, c.CheckSC_L1_002(ctx))
-	results = append(results, c.CheckSC_L1_003(ctx))
 
-	// SYSTEM AND INFORMATION INTEGRITY - 3 automated
+	// SYSTEM AND INFORMATION INTEGRITY - 2 automated
 	results = append(results, c.CheckSI_L1_001(ctx))
 	results = append(results, c.CheckSI_L1_002(ctx))
-	results = append(results, c.CheckSI_L1_003(ctx))
 
 	return results, nil
 }
@@ -348,6 +348,36 @@ func (c *AWSCMMCLevel1Checks) CheckPE_L1_004(ctx context.Context) CheckResult {
 	}
 }
 
+func (c *AWSCMMCLevel1Checks) CheckPE_L1_005(ctx context.Context) CheckResult {
+	return CheckResult{
+		Control:     "PE.L1-3.10.2",
+		Name:        "[CMMC L1] Protect and Monitor Physical Facility",
+		Status:      "INFO",
+		Evidence:    "MANUAL: AWS data centers have monitoring and protection (inherited control)",
+		Remediation: "Review AWS compliance documentation for physical facility monitoring",
+		Priority:    PriorityMedium,
+		Timestamp:   time.Now(),
+		ScreenshotGuide: "AWS Artifact → Screenshot SOC 2 report showing physical monitoring controls",
+		ConsoleURL: "https://console.aws.amazon.com/artifact/home",
+		Frameworks: map[string]string{"CMMC": "PE.L1-3.10.2", "NIST 800-171": "3.10.2"},
+	}
+}
+
+func (c *AWSCMMCLevel1Checks) CheckPE_L1_006(ctx context.Context) CheckResult {
+	return CheckResult{
+		Control:     "PE.L1-3.10.6",
+		Name:        "[CMMC L1] Enforce Safeguarding Measures for CUI",
+		Status:      "INFO",
+		Evidence:    "MANUAL: AWS enforces physical safeguarding measures (inherited control)",
+		Remediation: "Review AWS compliance documentation for physical safeguarding measures",
+		Priority:    PriorityMedium,
+		Timestamp:   time.Now(),
+		ScreenshotGuide: "AWS Artifact → Screenshot showing physical safeguarding measures",
+		ConsoleURL: "https://console.aws.amazon.com/artifact/home",
+		Frameworks: map[string]string{"CMMC": "PE.L1-3.10.6", "NIST 800-171": "3.10.6"},
+	}
+}
+
 // PS.L1 - 2 INFO (personnel screening - manual)
 func (c *AWSCMMCLevel1Checks) CheckPS_L1_001(ctx context.Context) CheckResult {
 	return CheckResult{
@@ -441,75 +471,17 @@ func (c *AWSCMMCLevel1Checks) CheckSC_L1_001(ctx context.Context) CheckResult {
 }
 
 func (c *AWSCMMCLevel1Checks) CheckSC_L1_002(ctx context.Context) CheckResult {
-	buckets, err := c.s3Client.ListBuckets(ctx, &s3.ListBucketsInput{})
-	if err != nil {
-		return CheckResult{
-			Control:     "SC.L1-3.13.16",
-			Name:        "[CMMC L1] Protect CUI at Rest",
-			Status:      "FAIL",
-			Evidence:    fmt.Sprintf("Unable to verify S3 encryption: %v", err),
-			Remediation: "Enable encryption for all S3 buckets",
-			Priority:    PriorityCritical,
-			Timestamp:   time.Now(),
-			ScreenshotGuide: "AWS Console → S3 → Bucket encryption → Screenshot",
-			ConsoleURL: "https://console.aws.amazon.com/s3/home",
-			Frameworks: map[string]string{"CMMC": "SC.L1-3.13.16", "NIST 800-171": "3.13.16"},
-		}
-	}
-
-	unencrypted := 0
-	var unencryptedNames []string
-	for _, bucket := range buckets.Buckets {
-		encryption, err := c.s3Client.GetBucketEncryption(ctx, &s3.GetBucketEncryptionInput{
-			Bucket: bucket.Name,
-		})
-		if err != nil || encryption.ServerSideEncryptionConfiguration == nil {
-			unencrypted++
-			unencryptedNames = append(unencryptedNames, *bucket.Name)
-		}
-	}
-
-	if unencrypted > 0 {
-		return CheckResult{
-			Control:     "SC.L1-3.13.16",
-			Name:        "[CMMC L1] Protect CUI at Rest",
-			Status:      "FAIL",
-			Evidence:    fmt.Sprintf("%d S3 buckets without encryption: %s", unencrypted, strings.Join(unencryptedNames, ", ")),
-			Remediation: "Enable default encryption on all S3 buckets",
-			Priority:    PriorityCritical,
-			Timestamp:   time.Now(),
-			ScreenshotGuide: "AWS Console → S3 → Properties → Default encryption → Screenshot showing encryption enabled",
-			ConsoleURL: "https://console.aws.amazon.com/s3/home",
-			Frameworks: map[string]string{"CMMC": "SC.L1-3.13.16", "NIST 800-171": "3.13.16"},
-		}
-	}
-
 	return CheckResult{
-		Control:     "SC.L1-3.13.16",
-		Name:        "[CMMC L1] Protect CUI at Rest",
-		Status:      "PASS",
-		Evidence:    fmt.Sprintf("All %d S3 buckets have encryption enabled", len(buckets.Buckets)),
-		Remediation: "Continue ensuring encryption at rest",
-		Priority:    PriorityCritical,
+		Control:     "SC.L1-3.13.5",
+		Name:        "[CMMC L1] Implement Subnetworks for Public Systems",
+		Status:      "INFO",
+		Evidence:    "MANUAL: Verify public-facing systems are in separate subnets from internal systems",
+		Remediation: "Use VPC subnets to separate public and internal systems with appropriate security groups",
+		Priority:    PriorityHigh,
 		Timestamp:   time.Now(),
-		ScreenshotGuide: "AWS Console → S3 → Properties → Screenshot showing encryption enabled",
-		ConsoleURL: "https://console.aws.amazon.com/s3/home",
-		Frameworks: map[string]string{"CMMC": "SC.L1-3.13.16", "NIST 800-171": "3.13.16"},
-	}
-}
-
-func (c *AWSCMMCLevel1Checks) CheckSC_L1_003(ctx context.Context) CheckResult {
-	return CheckResult{
-		Control:     "SC.L1-3.13.11",
-		Name:        "[CMMC L1] Use FIPS Cryptography",
-		Status:      "PASS",
-		Evidence:    "AWS KMS uses FIPS 140-2 validated cryptographic modules",
-		Remediation: "Continue using AWS KMS for cryptographic operations",
-		Priority:    PriorityCritical,
-		Timestamp:   time.Now(),
-		ScreenshotGuide: "AWS Artifact → Screenshot showing FIPS 140-2 compliance documentation",
-		ConsoleURL: "https://console.aws.amazon.com/artifact/home",
-		Frameworks: map[string]string{"CMMC": "SC.L1-3.13.11", "NIST 800-171": "3.13.11"},
+		ScreenshotGuide: "AWS Console → VPC → Subnets → Screenshot showing subnet separation strategy",
+		ConsoleURL: "https://console.aws.amazon.com/vpc/home#subnets:",
+		Frameworks: map[string]string{"CMMC": "SC.L1-3.13.5", "NIST 800-171": "3.13.5"},
 	}
 }
 
@@ -544,17 +516,3 @@ func (c *AWSCMMCLevel1Checks) CheckSI_L1_002(ctx context.Context) CheckResult {
 	}
 }
 
-func (c *AWSCMMCLevel1Checks) CheckSI_L1_003(ctx context.Context) CheckResult {
-	return CheckResult{
-		Control:     "SI.L1-3.14.4",
-		Name:        "[CMMC L1] Update Malicious Code Protection",
-		Status:      "INFO",
-		Evidence:    "MANUAL: Document malicious code protection update procedures",
-		Remediation: "Enable automatic updates for GuardDuty threat intelligence and endpoint protection",
-		Priority:    PriorityMedium,
-		Timestamp:   time.Now(),
-		ScreenshotGuide: "AWS Console → GuardDuty → Settings → Screenshot showing automatic updates enabled",
-		ConsoleURL: "https://console.aws.amazon.com/guardduty/home",
-		Frameworks: map[string]string{"CMMC": "SI.L1-3.14.4", "NIST 800-171": "3.14.4"},
-	}
-}

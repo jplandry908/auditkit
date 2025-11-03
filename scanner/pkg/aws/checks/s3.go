@@ -25,7 +25,7 @@ func (c *S3Checks) Name() string {
 func (c *S3Checks) Run(ctx context.Context) ([]CheckResult, error) {
 	results := []CheckResult{}
 
-	// Run individual checks
+	// Existing checks
 	if result, err := c.CheckPublicAccess(ctx); err == nil {
 		results = append(results, result)
 	}
@@ -39,6 +39,28 @@ func (c *S3Checks) Run(ctx context.Context) ([]CheckResult, error) {
 	}
 
 	if result, err := c.CheckLogging(ctx); err == nil {
+		results = append(results, result)
+	}
+
+	// NEW CIS checks
+	if result, err := c.CheckMFADelete(ctx); err == nil {
+		results = append(results, result)
+	}
+
+	if result, err := c.CheckServerAccessLogging(ctx); err == nil {
+		results = append(results, result)
+	}
+
+	if result, err := c.CheckObjectLock(ctx); err == nil {
+		results = append(results, result)
+	}
+
+	if result, err := c.CheckS3LifecyclePolicy(ctx); err == nil {
+		results = append(results, result)
+	}
+
+	// Additional CIS AWS controls
+	if result, err := c.CheckAccountPublicAccessBlock(ctx); err == nil {
 		results = append(results, result)
 	}
 
@@ -242,15 +264,299 @@ func (c *S3Checks) CheckVersioning(ctx context.Context) (CheckResult, error) {
 }
 
 func (c *S3Checks) CheckLogging(ctx context.Context) (CheckResult, error) {
-	// Implementation for S3 access logging check
-	// TODO: Add actual implementation
+	resp, err := c.client.ListBuckets(ctx, &s3.ListBucketsInput{})
+	if err != nil {
+		return CheckResult{
+			Control:    "CC7.1",
+			Name:       "S3 Access Logging",
+			Status:     "FAIL",
+			Evidence:   fmt.Sprintf("Unable to check S3 buckets: %v", err),
+			Severity:   "HIGH",
+			Priority:   PriorityHigh,
+			Timestamp:  time.Now(),
+			Frameworks: GetFrameworkMappings("S3_LOGGING"),
+		}, err
+	}
+
+	if len(resp.Buckets) == 0 {
+		return CheckResult{
+			Control:    "CC7.1",
+			Name:       "S3 Access Logging",
+			Status:     "PASS",
+			Evidence:   "No S3 buckets found",
+			Priority:   PriorityInfo,
+			Timestamp:  time.Now(),
+			Frameworks: GetFrameworkMappings("S3_LOGGING"),
+		}, nil
+	}
+
+	bucketsWithoutLogging := []string{}
+	checkedCount := 0
+
+	for _, bucket := range resp.Buckets {
+		checkedCount++
+		logging, err := c.client.GetBucketLogging(ctx, &s3.GetBucketLoggingInput{
+			Bucket: bucket.Name,
+		})
+
+		// If error or no logging enabled, add to list
+		if err != nil || logging.LoggingEnabled == nil {
+			bucketsWithoutLogging = append(bucketsWithoutLogging, *bucket.Name)
+		}
+	}
+
+	if len(bucketsWithoutLogging) > 0 {
+		bucketList := strings.Join(bucketsWithoutLogging, ", ")
+		if len(bucketsWithoutLogging) > 3 {
+			bucketList = strings.Join(bucketsWithoutLogging[:3], ", ") + fmt.Sprintf(" +%d more", len(bucketsWithoutLogging)-3)
+		}
+
+		return CheckResult{
+			Control:           "CC7.1",
+			Name:              "S3 Access Logging",
+			Status:            "FAIL",
+			Severity:          "MEDIUM",
+			Evidence:          fmt.Sprintf("%d/%d S3 buckets lack access logging: %s | Violates PCI DSS 10.2 (audit trail requirements)", len(bucketsWithoutLogging), checkedCount, bucketList),
+			Remediation:       fmt.Sprintf("Enable server access logging on bucket: %s", bucketsWithoutLogging[0]),
+			RemediationDetail: fmt.Sprintf("aws s3api put-bucket-logging --bucket %s --bucket-logging-status '{\"LoggingEnabled\":{\"TargetBucket\":\"my-log-bucket\",\"TargetPrefix\":\"%s/\"}}'", bucketsWithoutLogging[0], bucketsWithoutLogging[0]),
+			ScreenshotGuide:   "1. Open S3 Console\n2. Click bucket '" + bucketsWithoutLogging[0] + "'\n3. Go to 'Properties' tab\n4. Scroll to 'Server access logging'\n5. Screenshot showing 'Server access logging: Enabled'\n6. For PCI DSS: Document log retention period",
+			ConsoleURL:        fmt.Sprintf("https://s3.console.aws.amazon.com/s3/buckets/%s?tab=properties", bucketsWithoutLogging[0]),
+			Priority:          PriorityMedium,
+			Timestamp:         time.Now(),
+			Frameworks:        GetFrameworkMappings("S3_LOGGING"),
+		}, nil
+	}
+
 	return CheckResult{
 		Control:    "CC7.1",
 		Name:       "S3 Access Logging",
 		Status:     "PASS",
-		Evidence:   "S3 logging check placeholder | Required for PCI DSS 10.2 (implement audit trails)",
+		Evidence:   fmt.Sprintf("All %d S3 buckets have access logging enabled | Meets SOC2 CC7.1, PCI DSS 10.2", checkedCount),
 		Priority:   PriorityInfo,
 		Timestamp:  time.Now(),
 		Frameworks: GetFrameworkMappings("S3_LOGGING"),
+	}, nil
+}
+
+// NEW CIS-SPECIFIC CHECKS
+
+// CIS 2.1.2 - Ensure S3 Bucket has MFA Delete enabled
+func (c *S3Checks) CheckMFADelete(ctx context.Context) (CheckResult, error) {
+	resp, err := c.client.ListBuckets(ctx, &s3.ListBucketsInput{})
+	if err != nil {
+		return CheckResult{}, err
+	}
+
+	bucketsWithoutMFADelete := []string{}
+
+	for _, bucket := range resp.Buckets {
+		versioning, err := c.client.GetBucketVersioning(ctx, &s3.GetBucketVersioningInput{
+			Bucket: bucket.Name,
+		})
+
+		if err != nil || versioning.MFADelete != "Enabled" {
+			bucketsWithoutMFADelete = append(bucketsWithoutMFADelete, *bucket.Name)
+		}
+	}
+
+	if len(bucketsWithoutMFADelete) > 0 {
+		return CheckResult{
+			Control:           "[CIS-2.1.2]",
+			Name:              "S3 MFA Delete",
+			Status:            "FAIL",
+			Severity:          "MEDIUM",
+			Evidence:          fmt.Sprintf("%d S3 buckets lack MFA Delete protection", len(bucketsWithoutMFADelete)),
+			Remediation:       "Enable MFA Delete on critical S3 buckets",
+			RemediationDetail: "1. MFA Delete can only be enabled by root account\n2. Sign in as root with MFA\n3. Run: aws s3api put-bucket-versioning --bucket [BUCKET] --versioning-configuration Status=Enabled,MFADelete=Enabled --mfa 'arn:aws:iam::ACCOUNT:mfa/root-account-mfa-device MFACODE'",
+			ScreenshotGuide:   "S3 Console → Bucket → Properties → Bucket Versioning → Screenshot showing 'MFA delete: Enabled'",
+			ConsoleURL:        "https://s3.console.aws.amazon.com/s3/buckets",
+			Priority:          PriorityMedium,
+			Timestamp:         time.Now(),
+			Frameworks:        GetFrameworkMappings("S3_MFA_DELETE"),
+		}, nil
+	}
+
+	return CheckResult{
+		Control:    "[CIS-2.1.2]",
+		Name:       "S3 MFA Delete",
+		Status:     "PASS",
+		Evidence:   "All S3 buckets have MFA Delete enabled",
+		Priority:   PriorityInfo,
+		Timestamp:  time.Now(),
+		Frameworks: GetFrameworkMappings("S3_MFA_DELETE"),
+	}, nil
+}
+
+// CIS 2.1.4 - Ensure S3 bucket logging is enabled
+func (c *S3Checks) CheckServerAccessLogging(ctx context.Context) (CheckResult, error) {
+	resp, err := c.client.ListBuckets(ctx, &s3.ListBucketsInput{})
+	if err != nil {
+		return CheckResult{}, err
+	}
+
+	bucketsWithoutLogging := []string{}
+
+	for _, bucket := range resp.Buckets {
+		_, err := c.client.GetBucketLogging(ctx, &s3.GetBucketLoggingInput{
+			Bucket: bucket.Name,
+		})
+
+		if err != nil {
+			bucketsWithoutLogging = append(bucketsWithoutLogging, *bucket.Name)
+		}
+	}
+
+	if len(bucketsWithoutLogging) > 0 {
+		firstBucket := bucketsWithoutLogging[0]
+		return CheckResult{
+			Control:           "[CIS-2.1.4]",
+			Name:              "S3 Server Access Logging",
+			Status:            "FAIL",
+			Severity:          "MEDIUM",
+			Evidence:          fmt.Sprintf("%d S3 buckets don't have access logging enabled: %s", len(bucketsWithoutLogging), firstBucket),
+			Remediation:       "Enable S3 server access logging",
+			RemediationDetail: fmt.Sprintf("aws s3api put-bucket-logging --bucket %s --bucket-logging-status '{\"LoggingEnabled\":{\"TargetBucket\":\"my-log-bucket\",\"TargetPrefix\":\"%s/\"}}'", firstBucket, firstBucket),
+			ScreenshotGuide:   "S3 Console → Bucket → Properties → Server access logging → Screenshot showing 'Enabled'",
+			ConsoleURL:        fmt.Sprintf("https://s3.console.aws.amazon.com/s3/buckets/%s?tab=properties", firstBucket),
+			Priority:          PriorityMedium,
+			Timestamp:         time.Now(),
+			Frameworks:        GetFrameworkMappings("S3_LOGGING"),
+		}, nil
+	}
+
+	return CheckResult{
+		Control:    "[CIS-2.1.4]",
+		Name:       "S3 Server Access Logging",
+		Status:     "PASS",
+		Evidence:   "All S3 buckets have server access logging enabled",
+		Priority:   PriorityInfo,
+		Timestamp:  time.Now(),
+		Frameworks: GetFrameworkMappings("S3_LOGGING"),
+	}, nil
+}
+
+// CIS 2.1.6 - Ensure S3 bucket has Object Lock enabled (for compliance)
+func (c *S3Checks) CheckObjectLock(ctx context.Context) (CheckResult, error) {
+	return CheckResult{
+		Control:           "[CIS-2.1.6]",
+		Name:              "S3 Object Lock",
+		Status:            "INFO",
+		Evidence:          "MANUAL CHECK: Verify S3 Object Lock is enabled for buckets storing compliance data",
+		Remediation:       "Enable Object Lock on S3 buckets that require WORM (write-once-read-many) protection",
+		RemediationDetail: "1. Object Lock can only be enabled during bucket creation\n2. Create new bucket with: aws s3api create-bucket --bucket [NAME] --object-lock-enabled-for-bucket\n3. Configure retention: aws s3api put-object-lock-configuration --bucket [NAME] --object-lock-configuration ...",
+		ScreenshotGuide:   "S3 Console → Bucket → Properties → Object Lock → Screenshot showing 'Enabled' with retention configuration",
+		ConsoleURL:        "https://s3.console.aws.amazon.com/s3/buckets",
+		Priority:          PriorityLow,
+		Timestamp:         time.Now(),
+		Frameworks:        GetFrameworkMappings("S3_OBJECT_LOCK"),
+	}, nil
+}
+
+// S3 Lifecycle Policies (informational)
+func (c *S3Checks) CheckS3LifecyclePolicy(ctx context.Context) (CheckResult, error) {
+	return CheckResult{
+		Control:           "INFO",
+		Name:              "S3 Lifecycle Policies",
+		Status:            "INFO",
+		Evidence:          "MANUAL CHECK: Verify S3 buckets have appropriate lifecycle policies for data retention",
+		Remediation:       "Configure lifecycle policies for data retention and cost optimization",
+		RemediationDetail: "1. Identify buckets needing lifecycle management\n2. Create lifecycle policy based on retention requirements\n3. Configure transitions to IA/Glacier for cost savings\n4. Set expiration rules for compliance",
+		ScreenshotGuide:   "S3 Console → Bucket → Management → Lifecycle rules → Screenshot showing configured lifecycle policies",
+		ConsoleURL:        "https://s3.console.aws.amazon.com/s3/buckets",
+		Priority:          PriorityMedium,
+		Timestamp:         time.Now(),
+		Frameworks:        GetFrameworkMappings("S3_LIFECYCLE"),
+	}, nil
+}
+
+// CheckAccountPublicAccessBlock verifies S3 Block Public Access is enabled at account level (CIS 2.1.7)
+func (c *S3Checks) CheckAccountPublicAccessBlock(ctx context.Context) (CheckResult, error) {
+	// Get account-level public access block configuration
+	config, err := c.client.GetPublicAccessBlock(ctx, &s3.GetPublicAccessBlockInput{})
+	if err != nil {
+		// If error is "NoSuchPublicAccessBlockConfiguration", it means it's not configured
+		if strings.Contains(err.Error(), "NoSuchPublicAccessBlockConfiguration") {
+			return CheckResult{
+				Control:           "[CIS-2.1.7]",
+				Name:              "S3 Account Public Access Block",
+				Status:            "FAIL",
+				Severity:          "CRITICAL",
+				Evidence:          "S3 Block Public Access is NOT configured at account level | Violates CIS 2.1.7 (account-wide protection missing)",
+				Remediation:       "Enable S3 Block Public Access for the entire AWS account",
+				RemediationDetail: `# Enable S3 Block Public Access at account level
+aws s3control put-public-access-block \
+  --account-id $(aws sts get-caller-identity --query Account --output text) \
+  --public-access-block-configuration \
+    BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+
+# This protects all S3 buckets in the account from public access`,
+				ScreenshotGuide:   "S3 Console → Block Public Access settings for this account → Screenshot showing ALL 4 settings enabled",
+				ConsoleURL:        "https://s3.console.aws.amazon.com/s3/settings",
+				Priority:          PriorityCritical,
+				Timestamp:         time.Now(),
+				Frameworks:        map[string]string{"CIS-AWS": "2.1.7", "SOC2": "CC6.1", "PCI-DSS": "1.2.1"},
+			}, nil
+		}
+
+		return CheckResult{
+			Control:    "[CIS-2.1.7]",
+			Name:       "S3 Account Public Access Block",
+			Status:     "FAIL",
+			Evidence:   fmt.Sprintf("Unable to check account-level public access block: %v", err),
+			Priority:   PriorityHigh,
+			Timestamp:  time.Now(),
+			Frameworks: map[string]string{"CIS-AWS": "2.1.7", "SOC2": "CC6.1"},
+		}, nil
+	}
+
+	// Check if all 4 settings are enabled
+	pab := config.PublicAccessBlockConfiguration
+	allEnabled := pab.BlockPublicAcls != nil && *pab.BlockPublicAcls &&
+		pab.IgnorePublicAcls != nil && *pab.IgnorePublicAcls &&
+		pab.BlockPublicPolicy != nil && *pab.BlockPublicPolicy &&
+		pab.RestrictPublicBuckets != nil && *pab.RestrictPublicBuckets
+
+	if !allEnabled {
+		settings := []string{}
+		if pab.BlockPublicAcls == nil || !*pab.BlockPublicAcls {
+			settings = append(settings, "BlockPublicAcls=false")
+		}
+		if pab.IgnorePublicAcls == nil || !*pab.IgnorePublicAcls {
+			settings = append(settings, "IgnorePublicAcls=false")
+		}
+		if pab.BlockPublicPolicy == nil || !*pab.BlockPublicPolicy {
+			settings = append(settings, "BlockPublicPolicy=false")
+		}
+		if pab.RestrictPublicBuckets == nil || !*pab.RestrictPublicBuckets {
+			settings = append(settings, "RestrictPublicBuckets=false")
+		}
+
+		return CheckResult{
+			Control:           "[CIS-2.1.7]",
+			Name:              "S3 Account Public Access Block",
+			Status:            "FAIL",
+			Severity:          "HIGH",
+			Evidence:          fmt.Sprintf("S3 Block Public Access not fully enabled: %s | Violates CIS 2.1.7", strings.Join(settings, ", ")),
+			Remediation:       "Enable all 4 Block Public Access settings at account level",
+			RemediationDetail: `aws s3control put-public-access-block \
+  --account-id $(aws sts get-caller-identity --query Account --output text) \
+  --public-access-block-configuration \
+    BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true`,
+			ScreenshotGuide:   "S3 Console → Block Public Access settings → Screenshot showing ALL 4 checkboxes enabled",
+			ConsoleURL:        "https://s3.console.aws.amazon.com/s3/settings",
+			Priority:          PriorityHigh,
+			Timestamp:         time.Now(),
+			Frameworks:        map[string]string{"CIS-AWS": "2.1.7", "SOC2": "CC6.1", "PCI-DSS": "1.2.1"},
+		}, nil
+	}
+
+	return CheckResult{
+		Control:    "[CIS-2.1.7]",
+		Name:       "S3 Account Public Access Block",
+		Status:     "PASS",
+		Evidence:   "S3 Block Public Access is enabled at account level (all 4 settings) | Meets CIS 2.1.7",
+		Priority:   PriorityInfo,
+		Timestamp:  time.Now(),
+		Frameworks: map[string]string{"CIS-AWS": "2.1.7", "SOC2": "CC6.1", "PCI-DSS": "1.2.1"},
 	}, nil
 }

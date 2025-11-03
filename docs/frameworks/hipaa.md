@@ -8,25 +8,31 @@ Health Insurance Portability and Accountability Act guide.
 
 **HIPAA** protects Protected Health Information (PHI) in the United States.
 
-**Who needs it:** Healthcare providers, health plans, healthcare clearinghouses, business associates  
-**Status in AuditKit:** Experimental - technical safeguards only  
-**Coverage:** ~10 automated technical controls  
+**Who needs it:** Healthcare providers, health plans, healthcare clearinghouses, business associates
+**Status in AuditKit:** Production - Technical Safeguards
+**Coverage:** 40-70 framework mappings per cloud (AWS: 70, Azure: 62, GCP: 40)
 **What's not covered:** Administrative and physical safeguards
 
 ---
 
 ## Important Disclaimer
 
-**AuditKit's HIPAA support is EXPERIMENTAL and NOT recommended for HIPAA certification.**
+**AuditKit's HIPAA support covers Technical Safeguards only - NOT sufficient for HIPAA certification.**
 
-**Why experimental:**
-- Only covers technical safeguards (~10% of HIPAA)
-- Does not cover administrative safeguards
-- Does not cover physical safeguards
-- Not validated by healthcare compliance experts
+**What AuditKit covers:**
+- Technical Safeguards (164.312) - Fully mapped across all cloud providers
+- Framework crosswalk to existing SOC2/PCI-DSS controls
+- Automated scanning of technical configurations
 
-**Use for:** Initial assessment only  
-**Don't use for:** HIPAA certification or compliance attestation
+**What AuditKit does NOT cover:**
+- Administrative Safeguards (164.308) - Policies, procedures, training
+- Physical Safeguards (164.310) - Facility access, workstation security
+- Business Associate Agreements
+- Risk assessments and documentation
+
+**Use for:** Technical infrastructure assessment as part of HIPAA compliance program
+**Don't use for:** Sole evidence of HIPAA certification or compliance attestation
+**Hire a consultant for:** Complete HIPAA compliance program including administrative and physical safeguards
 
 ---
 
@@ -154,16 +160,17 @@ AuditKit does NOT check:
 | Framework | Coverage | Status |
 |-----------|----------|--------|
 | **SOC2** | Security controls | Production |
-| **HIPAA** | Healthcare-specific | Experimental |
-| **Overlap** | ~10 technical controls | Limited |
+| **HIPAA** | Healthcare-specific Technical Safeguards | Production |
+| **Overlap** | Significant - most technical controls map across both | Strong |
 
 **Key differences:**
 - HIPAA is healthcare-specific
 - HIPAA requires 6-year log retention (vs 90 days for SOC2)
 - HIPAA has specific PHI requirements
 - HIPAA requires business associate agreements
+- HIPAA requires extensive administrative and physical safeguards
 
-**Recommendation:** Get SOC2 first, then add HIPAA-specific requirements
+**Recommendation:** Get SOC2 first (covers many technical controls), then add HIPAA-specific requirements (administrative, physical, BAAs)
 
 ---
 
@@ -231,11 +238,11 @@ Based on OCR enforcement actions:
 
 ## FAQ
 
-**Q: Can I use AuditKit for HIPAA compliance?**  
-A: For initial technical assessment only. Hire a HIPAA consultant for full compliance.
+**Q: Can I use AuditKit for HIPAA compliance?**
+A: Yes, for the Technical Safeguards portion (164.312). You must separately address Administrative Safeguards (164.308) and Physical Safeguards (164.310) with policies, procedures, and a HIPAA consultant.
 
-**Q: Is AuditKit HIPAA-compliant?**  
-A: AuditKit is a tool. Your organization must achieve HIPAA compliance through proper policies, procedures, and technical controls.
+**Q: Is AuditKit HIPAA-compliant?**
+A: AuditKit is a tool. Your organization must achieve HIPAA compliance through proper policies, procedures, and technical controls. AuditKit helps scan and document the technical controls portion.
 
 **Q: What's a business associate agreement (BAA)?**  
 A: Legal contract requiring vendors to protect PHI. You need BAAs with:
@@ -271,9 +278,9 @@ A: Report to OCR within 60 days. Notify affected individuals. May face fines up 
 
 ## Next Steps
 
-- **[Run experimental HIPAA scan →](../getting-started.md)**
+- **[Run HIPAA Technical Safeguards scan →](../getting-started.md)**
 - **[Compare to SOC2 →](./soc2.md)**
 - **[Find HIPAA consultant →](https://www.hhs.gov/hipaa)**
 - **[HHS HIPAA guidance →](https://www.hhs.gov/hipaa/for-professionals/security/index.html)**
 
-**Remember:** This is experimental. Hire a HIPAA compliance expert for actual compliance.
+**Remember:** AuditKit covers Technical Safeguards. Hire a HIPAA compliance expert for Administrative and Physical Safeguards required for full compliance.

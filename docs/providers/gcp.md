@@ -6,8 +6,8 @@ What AuditKit scans in Google Cloud Platform.
 
 ## Overview
 
-**Free version:** 20 automated checks across 7 core services  
-**Pro version:** 40 automated checks (20 core + 20 advanced)
+**Free version:** 170+ automated checks across 8 core services  
+**Pro version:** 210+ automated checks (178 core + 32 advanced)
 
 **Supported frameworks:**
 - SOC2 Type II
