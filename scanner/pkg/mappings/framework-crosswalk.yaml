@@ -63,8 +63,10 @@ pci_to_800_53:
   PCI-1.3.2: [SC-7(11)]         # Restrict inbound traffic
   
   # Requirement 2: Secure Configuration
+  PCI-2.1: [CM-6]               # Configuration standards
+  PCI-2.2: [CM-7]               # Disable unnecessary services
   PCI-2.2.2: [CM-6, CM-7]       # Remove default accounts
-  
+
   # Requirement 3: Protect Cardholder Data
   PCI-3.4: [SC-13, SC-28]       # Encryption at rest
   PCI-3.5: [SC-12]              # Cryptographic key management
@@ -72,7 +74,17 @@ pci_to_800_53:
   
   # Requirement 4: Encryption in Transit
   PCI-4.1: [SC-8, SC-8(1)]      # TLS/encryption in transit
-  
+
+  # Requirement 5: Malware Protection
+  PCI-5.1: [SI-3]               # Anti-malware protection
+  PCI-5.2.3: [SI-3]             # Anti-malware updates
+  PCI-5.3.2: [AU-2, SI-3]       # Anti-malware logging
+
+  # Requirement 6: Secure Systems and Patching
+  PCI-6.2: [SI-2]               # Security patching
+  PCI-6.3.2: [SA-11]            # Secure SDLC
+  PCI-6.4.3: [SC-7(10)]         # Web application firewall
+
   # Requirement 7: Access Control
   PCI-7.1: [AC-6]               # Least privilege
   
@@ -83,7 +95,13 @@ pci_to_800_53:
   PCI-8.2.4: [IA-5(1)]          # Password rotation (90 days)
   PCI-8.2.5: [IA-5(1)]          # Password reuse prevention
   PCI-8.3.1: [IA-2(1), IA-2(2)] # MFA for all access
-  
+
+  # Requirement 9: Physical Access Controls
+  PCI-9.1: [PE-2, PE-3]         # Physical access controls
+  PCI-9.2: [PE-2, PE-3]         # Physical access procedures
+  PCI-9.3: [PE-3, PE-8]         # Visitor management
+  PCI-9.4: [PE-4, MP-6]         # Media security and destruction
+
   # Requirement 10: Logging
   PCI-10.1: [AU-2, AU-3]        # Audit trail
   PCI-10.2: [AU-2]              # Log critical events
@@ -91,8 +109,22 @@ pci_to_800_53:
   PCI-10.5.3: [AU-11]           # Log retention (12 months)
   PCI-10.5.5: [AU-9]            # Log integrity protection
   
-  # Requirement 11: Security Testing
+  # Requirement 11: Security Testing and Scanning
   PCI-11.2.2: [RA-5]            # Quarterly vulnerability scans
+  PCI-11.3.1: [CA-8]            # Annual penetration testing
+  PCI-11.4: [SI-4]              # Intrusion detection/prevention
+  PCI-11.5: [SI-7]              # File integrity monitoring
+  PCI-11.5.1: [SI-7]            # FIM on critical files
+
+  # Requirement 12: Information Security Policy
+  PCI-12.1: [PL-1]              # Security policy establishment
+  PCI-12.2: [RA-1, RA-3]        # Annual risk assessment
+  PCI-12.3: [PS-8]              # Acceptable use policies
+  PCI-12.4: [SA-9]              # Vendor management responsibilities
+  PCI-12.5: [PM-1]              # Information security responsibilities
+  PCI-12.6: [AT-2, AT-3]        # Security awareness training
+  PCI-12.8: [SA-9]              # Service provider management
+  PCI-12.10: [IR-8]             # Incident response plan
 
 # CMMC → NIST 800-53 Rev 5
 # CMMC is based on NIST SP 800-171, which derives from 800-53
@@ -221,6 +253,71 @@ cmmc_to_800_53:
   SI.L2-3.14.3: [SI-3]                  # Malicious code at entry/exit
   SI.L2-3.14.6: [SI-4]                  # Monitor communications
   SI.L2-3.14.7: [SI-4(2)]               # Automated tools
+
+# ISO 27001:2022 Annex A → NIST 800-53 Rev 5
+# Focus on technical controls (A.8) that can be automated
+iso27001_to_800_53:
+  # A.5: Organizational Controls
+  A.5.1: [PL-1, PM-1]              # Information security policies
+  A.5.2: [AT-2, AT-3]              # Information security roles
+  A.5.7: [AT-2]                    # Threat intelligence
+  A.5.9: [SI-4]                    # Asset inventory
+  A.5.10: [AC-3]                   # Acceptable use
+  A.5.14: [MP-6]                   # Information transfer
+  A.5.23: [SI-4]                   # Information security for cloud
+  A.5.30: [CP-2, CP-9]             # ICT readiness for business continuity
+
+  # A.6: People Controls
+  A.6.1: [PS-3]                    # Screening
+  A.6.2: [PS-7]                    # Terms and conditions of employment
+  A.6.3: [AT-2, AT-3]              # Information security awareness
+  A.6.5: [PS-8]                    # Responsibilities after termination
+
+  # A.7: Physical Controls
+  A.7.1: [PE-2]                    # Physical security perimeters
+  A.7.2: [PE-3]                    # Physical entry
+  A.7.3: [PE-3]                    # Securing offices, rooms, facilities
+  A.7.4: [PE-6, SI-4]              # Physical security monitoring
+  A.7.7: [PE-16]                   # Clear desk and screen
+  A.7.8: [PE-18]                   # Equipment siting and protection
+  A.7.11: [CP-9]                   # Supporting utilities
+  A.7.13: [MP-3, MP-4]             # Equipment maintenance
+
+  # A.8: Technological Controls (Primary focus - most automatable)
+  A.8.1: [IA-2]                    # User endpoint devices
+  A.8.2: [AC-6]                    # Privileged access rights
+  A.8.3: [AC-2, IA-4]              # Information access restriction
+  A.8.4: [IA-5, SC-13]             # Access to source code
+  A.8.5: [IA-2, IA-2(1)]           # Secure authentication
+  A.8.6: [AU-2, AU-3, AU-12]       # Capacity management
+  A.8.7: [SI-3]                    # Protection against malware
+  A.8.8: [SI-2, SI-7]              # Management of technical vulnerabilities
+  A.8.9: [CM-2, CM-6]              # Configuration management
+  A.8.10: [AC-2, AC-2(3)]          # Information deletion
+  A.8.11: [MP-6]                   # Data masking
+  A.8.12: [AU-9]                   # Data leakage prevention
+  A.8.13: [CP-9, CP-10]            # Information backup
+  A.8.14: [CP-8]                   # Redundancy of information processing
+  A.8.15: [AU-2, AU-3]             # Logging
+  A.8.16: [CA-7, SI-4]             # Monitoring activities
+  A.8.17: [AU-6]                   # Clock synchronization
+  A.8.18: [AC-17]                  # Use of privileged utility programs
+  A.8.19: [CM-3, SA-10]            # Installation of software
+  A.8.20: [SC-7]                   # Networks security
+  A.8.21: [SC-7, AC-4]             # Security of network services
+  A.8.22: [SC-7, SC-7(3)]          # Segregation of networks
+  A.8.23: [SC-8]                   # Web filtering
+  A.8.24: [SC-13, SC-28]           # Use of cryptography
+  A.8.25: [SA-8]                   # Secure development life cycle
+  A.8.26: [SA-11]                  # Application security requirements
+  A.8.27: [CM-2]                   # Secure system architecture
+  A.8.28: [SA-11]                  # Secure coding
+  A.8.29: [SA-11]                  # Security testing in development
+  A.8.30: [SA-10]                  # Outsourced development
+  A.8.31: [CM-3]                   # Separation of development, test, production
+  A.8.32: [CM-3, CM-9]             # Change management
+  A.8.33: [CA-8]                   # Test information
+  A.8.34: [AU-9]                   # Protection of information systems during audit
 
 # HIPAA Security Rule → NIST 800-53 Rev 5 (Experimental)
 hipaa_to_800_53:

@@ -59,15 +59,17 @@ func (c *AzureCMMCLevel1Checks) Run(ctx context.Context) ([]CheckResult, error) 
 	results = append(results, c.CheckPE_L1_005(ctx))
 	results = append(results, c.CheckPE_L1_006(ctx))
 
-	// SYSTEM AND COMMUNICATIONS PROTECTION - 2 automated, 1 INFO
+	// PERSONNEL SECURITY - 2 INFO (organizational controls)
+	results = append(results, c.CheckPS_L1_001(ctx))
+	results = append(results, c.CheckPS_L1_002(ctx))
+
+	// SYSTEM AND COMMUNICATIONS PROTECTION - 1 automated, 1 INFO
 	results = append(results, c.CheckSC_L1_001(ctx))
 	results = append(results, c.CheckSC_L1_002(ctx))
-	results = append(results, c.CheckSC_L1_003(ctx))
 
-	// SYSTEM AND INFORMATION INTEGRITY - 3 INFO
+	// SYSTEM AND INFORMATION INTEGRITY - 2 INFO
 	results = append(results, c.CheckSI_L1_001(ctx))
 	results = append(results, c.CheckSI_L1_002(ctx))
-	results = append(results, c.CheckSI_L1_003(ctx))
 
 	return results, nil
 }
@@ -383,6 +385,37 @@ func (c *AzureCMMCLevel1Checks) CheckPE_L1_006(ctx context.Context) CheckResult 
 	}
 }
 
+// PS.L1 - Personnel Security (organizational controls)
+func (c *AzureCMMCLevel1Checks) CheckPS_L1_001(ctx context.Context) CheckResult {
+	return CheckResult{
+		Control:     "PS.L1-3.9.1",
+		Name:        "[CMMC L1] Screen Personnel",
+		Status:      "INFO",
+		Evidence:    "MANUAL: Document personnel screening procedures for CUI access",
+		Remediation: "Implement background checks for personnel with CUI access",
+		Priority:    PriorityHigh,
+		Timestamp:   time.Now(),
+		ScreenshotGuide: "HR Documentation → Screenshot showing personnel screening procedures and background check records",
+		ConsoleURL: "https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/Overview",
+		Frameworks: map[string]string{"CMMC": "PS.L1-3.9.1", "NIST 800-171": "3.9.1"},
+	}
+}
+
+func (c *AzureCMMCLevel1Checks) CheckPS_L1_002(ctx context.Context) CheckResult {
+	return CheckResult{
+		Control:     "PS.L1-3.9.2",
+		Name:        "[CMMC L1] Ensure CUI Access Authorization",
+		Status:      "INFO",
+		Evidence:    "MANUAL: Document authorization process for CUI access",
+		Remediation: "Implement formal authorization process before granting CUI access",
+		Priority:    PriorityHigh,
+		Timestamp:   time.Now(),
+		ScreenshotGuide: "Documentation → Screenshot showing CUI access authorization procedures and approval records",
+		ConsoleURL: "https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/Overview",
+		Frameworks: map[string]string{"CMMC": "PS.L1-3.9.2", "NIST 800-171": "3.9.2"},
+	}
+}
+
 // SC.L1-3.13.1 - AUTOMATED (NSG check)
 func (c *AzureCMMCLevel1Checks) CheckSC_L1_001(ctx context.Context) CheckResult {
 	pager := c.networkClient.NewListAllPager(nil)
@@ -463,66 +496,6 @@ func (c *AzureCMMCLevel1Checks) CheckSC_L1_002(ctx context.Context) CheckResult 
 	}
 }
 
-// SC.L1-3.13.16 - AUTOMATED (Storage encryption)
-func (c *AzureCMMCLevel1Checks) CheckSC_L1_003(ctx context.Context) CheckResult {
-	pager := c.storageClient.NewListPager(nil)
-	page, err := pager.NextPage(ctx)
-	
-	if err != nil {
-		return CheckResult{
-			Control:     "SC.L1-3.13.16",
-			Name:        "[CMMC L1] Protect CUI at Rest",
-			Status:      "FAIL",
-			Evidence:    fmt.Sprintf("Unable to verify storage encryption: %v", err),
-			Remediation: "Enable encryption for all storage accounts",
-			Priority:    PriorityCritical,
-			Timestamp:   time.Now(),
-			ScreenshotGuide: "Azure Portal → Storage → Encryption → Screenshot",
-			ConsoleURL: "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FStorageAccounts",
-			Frameworks: map[string]string{"CMMC": "SC.L1-3.13.16", "NIST 800-171": "3.13.16"},
-		}
-	}
-
-	storageCount := len(page.Value)
-	unencrypted := 0
-	
-	for _, account := range page.Value {
-		if account.Properties == nil || account.Properties.Encryption == nil {
-			unencrypted++
-		} else if account.Properties.Encryption.Services == nil {
-			unencrypted++
-		}
-	}
-
-	if unencrypted > 0 {
-		return CheckResult{
-			Control:     "SC.L1-3.13.16",
-			Name:        "[CMMC L1] Protect CUI at Rest",
-			Status:      "FAIL",
-			Evidence:    fmt.Sprintf("%d storage accounts without encryption", unencrypted),
-			Remediation: "Enable encryption on all storage accounts",
-			Priority:    PriorityCritical,
-			Timestamp:   time.Now(),
-			ScreenshotGuide: "Azure Portal → Storage → Encryption → Screenshot encryption enabled",
-			ConsoleURL: "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FStorageAccounts",
-			Frameworks: map[string]string{"CMMC": "SC.L1-3.13.16", "NIST 800-171": "3.13.16"},
-		}
-	}
-
-	return CheckResult{
-		Control:     "SC.L1-3.13.16",
-		Name:        "[CMMC L1] Protect CUI at Rest",
-		Status:      "PASS",
-		Evidence:    fmt.Sprintf("All %d storage accounts have encryption enabled", storageCount),
-		Remediation: "Continue ensuring encryption at rest",
-		Priority:    PriorityCritical,
-		Timestamp:   time.Now(),
-		ScreenshotGuide: "Azure Portal → Storage → Screenshot encryption status",
-		ConsoleURL: "https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Storage%2FStorageAccounts",
-		Frameworks: map[string]string{"CMMC": "SC.L1-3.13.16", "NIST 800-171": "3.13.16"},
-	}
-}
-
 // SI.L1 - All 3 are INFO
 func (c *AzureCMMCLevel1Checks) CheckSI_L1_001(ctx context.Context) CheckResult {
 	return CheckResult{
@@ -554,17 +527,3 @@ func (c *AzureCMMCLevel1Checks) CheckSI_L1_002(ctx context.Context) CheckResult 
 	}
 }
 
-func (c *AzureCMMCLevel1Checks) CheckSI_L1_003(ctx context.Context) CheckResult {
-	return CheckResult{
-		Control:     "SI.L1-3.14.4",
-		Name:        "[CMMC L1] Update Protection",
-		Status:      "INFO",
-		Evidence:    "MANUAL: Verify automatic updates for malicious code protection",
-		Remediation: "Configure automatic updates for Defender and endpoint protection",
-		Priority:    PriorityMedium,
-		Timestamp:   time.Now(),
-		ScreenshotGuide: "Azure Portal → Defender → Settings → Screenshot automatic updates",
-		ConsoleURL: "https://portal.azure.com/#blade/Microsoft_Azure_Security/SecurityMenuBlade/0",
-		Frameworks: map[string]string{"CMMC": "SI.L1-3.14.4", "NIST 800-171": "3.14.4"},
-	}
-}

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuditKit Pro - CMMC Level 2 + NIST 800-53 Compliance</title>
-    <meta name="description" content="Complete CMMC Level 2 + NIST 800-53 Rev 5 compliance automation for defense contractors. 110 CMMC practices + 150 800-53 controls. $297/month vs $100K+ assessments.">
+    <title>AuditKit Pro - CMMC Level 2 Compliance in 30 Days</title>
+    <meta name="description" content="Complete CMMC Level 2 compliance automation for defense contractors. 110 practices automated. $297/month vs $150K+ traditional assessments. Assessment-ready in 30 days.">
     <style>
         * {
             margin: 0;
@@ -114,30 +114,6 @@
             color: #2c3e50;
         }
         
-        .deadline-warning {
-            background: #fff3cd;
-            border-left: 4px solid #ff9800;
-            padding: 30px;
-            margin: 40px 0;
-            border-radius: 8px;
-        }
-        
-        .deadline-warning h3 {
-            color: #e65100;
-            font-size: 1.8em;
-            margin-bottom: 15px;
-        }
-        
-        .new-badge {
-            background: #28a745;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            font-weight: 600;
-            margin-left: 10px;
-        }
-        
         .cost-comparison {
             background: #f8f9fa;
             padding: 60px 20px;
@@ -193,27 +169,23 @@
         
         .comparison-card ul {
             list-style: none;
-            margin: 20px 0;
+            padding: 0;
         }
         
         .comparison-card ul li {
-            padding: 10px 0;
-            padding-left: 25px;
-            position: relative;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
         }
         
-        .comparison-card ul li:before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            font-weight: bold;
+        .comparison-card ul li:last-child {
+            border-bottom: none;
         }
         
-        .features-grid {
+        .feature-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
-            margin: 40px 0;
+            margin-top: 40px;
         }
         
         .feature-card {
@@ -221,24 +193,46 @@
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
         }
         
         .feature-card h3 {
-            color: #dc3545;
+            font-size: 1.5em;
             margin-bottom: 15px;
+            color: #dc3545;
+        }
+        
+        .feature-card p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+        
+        .code-example {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            margin-top: 15px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
         }
         
         .code-block {
             background: #1e1e1e;
             color: #d4d4d4;
-            padding: 30px;
+            padding: 25px;
             border-radius: 8px;
             font-family: 'Courier New', monospace;
             font-size: 0.95em;
             overflow-x: auto;
-            line-height: 2;
-            margin: 20px 0;
-            white-space: pre-wrap;
+            margin: 30px 0;
+            line-height: 1.8;
         }
         
         .faq {
@@ -247,26 +241,46 @@
         
         .faq-item {
             background: white;
-            padding: 25px;
-            margin: 20px 0;
+            padding: 30px;
+            margin-bottom: 20px;
             border-radius: 8px;
-            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .faq-item h3 {
-            color: #2c3e50;
+            font-size: 1.3em;
+            color: #dc3545;
+            margin-bottom: 15px;
+        }
+        
+        .faq-item p {
+            color: #555;
+            line-height: 1.8;
+        }
+        
+        .value-prop {
+            background: #fff3cd;
+            border-left: 4px solid #ff9800;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 8px;
+        }
+        
+        .value-prop h3 {
+            color: #e65100;
+            font-size: 1.5em;
             margin-bottom: 15px;
         }
         
         footer {
             background: #2c3e50;
             color: white;
-            padding: 40px 20px;
+            padding: 60px 20px;
             text-align: center;
         }
         
         footer a {
-            color: #dc3545;
+            color: #3498db;
             text-decoration: none;
         }
         
@@ -277,13 +291,15 @@
 </head>
 <body>
     <div class="alert-bar">
-        New: NIST 800-53 Rev 5 support now available. CMMC Level 2 + 800-53 in one tool.
+        CMMC Level 2 Required for DoD Contracts by November 10, 2025
     </div>
 
     <header>
         <div class="container">
             <h1>AuditKit Pro</h1>
-            <p class="subtitle">CMMC Level 2 + NIST 800-53 Rev 5 Compliance</p>
+            <p class="subtitle">
+                CMMC Level 2 assessment-ready in 30 days. Not 6 months.
+            </p>
             
             <div class="hero-stats">
                 <div class="hero-stat">
@@ -291,90 +307,44 @@
                     <div class="hero-stat-label">CMMC Level 2 Practices</div>
                 </div>
                 <div class="hero-stat">
-                    <div class="hero-stat-number">~150</div>
-                    <div class="hero-stat-label">NIST 800-53 Controls</div>
+                    <div class="hero-stat-number">30</div>
+                    <div class="hero-stat-label">Days to Assessment-Ready</div>
                 </div>
                 <div class="hero-stat">
-                    <div class="hero-stat-number">$297/mo</div>
-                    <div class="hero-stat-label">vs $100K+ Traditional</div>
+                    <div class="hero-stat-number">$297</div>
+                    <div class="hero-stat-label">Per Month</div>
                 </div>
                 <div class="hero-stat">
-                    <div class="hero-stat-number">30 Days</div>
-                    <div class="hero-stat-label">To Assessment-Ready</div>
+                    <div class="hero-stat-number">$146K+</div>
+                    <div class="hero-stat-label">Savings vs Traditional</div>
                 </div>
             </div>
-
-            <div>
-                <a href="https://buy.stripe.com/28E14m5MS5xM0mj4r7gnK01" class="btn btn-primary">Start 14-Day Free Trial</a>
-                <a href="#comparison" class="btn btn-secondary">See Pricing</a>
-            </div>
+            
+            <a href="https://buy.stripe.com/28E14m5MS5xM0mj4r7gnK01" class="btn btn-primary" style="font-size: 1.3em; padding: 20px 50px;">
+                Start 14-Day Free Trial
+            </a>
+            <p style="margin-top: 20px; font-size: 0.95em; opacity: 0.9;">
+                14-day free trial • $297/month after trial • Cancel anytime
+            </p>
         </div>
     </header>
 
-    <section>
-        <div class="container">
-            <div class="deadline-warning">
-                <h3>CMMC Compliance Deadline</h3>
-                <p style="font-size: 1.1em; margin-bottom: 15px;">
-                    CMMC requirements are now appearing in DoD contracts. Level 2 certification requires 110 practices for CUI handling.
-                </p>
-                <p style="font-size: 1.1em;">
-                    <strong>Get assessment-ready in 30 days vs 6+ months with traditional consultants.</strong>
-                </p>
-            </div>
-
-            <h2>What You Get with Pro</h2>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <h3>Complete CMMC Level 2 <span class="new-badge" style="font-size: 0.6em;">PROD</span></h3>
-                    <p>All 110 practices for CUI (Controlled Unclassified Information) handling, not just the 17 Level 1 basics.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <h3>NIST 800-53 Rev 5 <span class="new-badge" style="font-size: 0.6em;">NEW</span></h3>
-                    <p>~150 automated controls via framework crosswalk. Maps your SOC2/PCI/CMMC checks to 800-53 families (AC, AU, IA, SC, SI).</p>
-                </div>
-                
-                <div class="feature-card">
-                    <h3>Automated Evidence Collection</h3>
-                    <p>Step-by-step screenshot guides for every practice with exact AWS/Azure console URLs.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <h3>Audit-Ready Reports</h3>
-                    <p>Professional PDF and HTML reports formatted for C3PAO assessors with all required evidence.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <h3>Multi-Cloud Support</h3>
-                    <p>Scan AWS, Azure, and M365 environments with unified CMMC Level 2 + 800-53 reporting.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <h3>Priority Support</h3>
-                    <p>Direct email support with responses within 24-48 hours from the developer.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <section id="comparison" class="cost-comparison">
         <div class="container">
-            <h2>Cost Comparison</h2>
+            <h2>The Math is Simple</h2>
             
             <div class="comparison-grid">
                 <div class="comparison-card traditional">
-                    <h3>Traditional CMMC Assessment</h3>
+                    <h3>Traditional CMMC Prep</h3>
                     <div class="price">$150,000+</div>
                     <ul>
                         <li>6+ months timeline</li>
                         <li>Consultant fees: $50K-100K</li>
                         <li>C3PAO assessment: $50K-75K</li>
                         <li>Multiple site visits required</li>
-                        <li>Extensive documentation overhead</li>
+                        <li>Extensive manual documentation</li>
                         <li>Manual evidence collection</li>
-                        <li>800-53 not included</li>
+                        <li>GCP compliance extra cost</li>
                     </ul>
                 </div>
                 
@@ -386,16 +356,88 @@
                         <li>$297/month subscription</li>
                         <li>Self-assessment with validation</li>
                         <li>Automated gap identification</li>
-                        <li>Evidence collection guides</li>
+                        <li>Evidence collection automation</li>
                         <li>Unlimited re-scans</li>
-                        <li>CMMC + 800-53 included</li>
+                        <li>All cloud providers included</li>
                     </ul>
                 </div>
             </div>
 
-            <p style="text-align: center; font-size: 1.3em; margin-top: 40px; color: #28a745; font-weight: 600;">
-                Your Savings: $146,436 and 5 months
+            <p style="text-align: center; font-size: 1.4em; margin-top: 40px; color: #28a745; font-weight: 600;">
+                Save $146,436 and 5 months
             </p>
+            
+            <div class="value-prop" style="max-width: 800px; margin: 40px auto;">
+                <h3>Important: AuditKit Pro is NOT a C3PAO Replacement</h3>
+                <p style="font-size: 1.05em; color: #555; line-height: 1.8;">
+                    You still need a C3PAO for official CMMC certification (~$25K-$75K). AuditKit Pro automates the self-assessment, identifies gaps, and generates evidence packages - dramatically reducing prep time and consultant costs. You arrive at your C3PAO assessment already knowing you'll pass.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <h2>Core Features</h2>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>CMMC Level 2 Complete</h3>
+                    <p>All 110 CMMC Level 2 practices automated across AWS, Azure, GCP, and Microsoft 365. Real-time gap identification with specific remediation steps.</p>
+                    <div class="code-example">./auditkit-pro scan -framework cmmc -verbose</div>
+                </div>
+
+                <div class="feature-card">
+                    <h3>Multi-Account Scanning</h3>
+                    <p>Scan entire AWS Organizations, Azure Management Groups, and GCP Folders with one command. Unified compliance reports across all accounts.</p>
+                    <div class="code-example">./auditkit-pro scan -framework cmmc --org-scan</div>
+                </div>
+
+                <div class="feature-card">
+                    <h3>GCP Advanced (NEW)</h3>
+                    <p><strong>GKE Security:</strong> 10 checks for pod policies, network policies, RBAC, binary authorization.<br><br><strong>Vertex AI Compliance:</strong> 10 checks for ML model governance, data access controls, audit logging.</p>
+                    <div class="code-example">./auditkit-pro scan -provider gcp --advanced</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section style="background: #f8f9fa;">
+        <div class="container">
+            <h2>New: Professional Audit Workflow</h2>
+            <p style="text-align: center; font-size: 1.15em; margin-bottom: 40px; color: #666;">
+                Four new features designed for C3PAO assessments. All work offline for air-gapped environments.
+            </p>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>Evidence Package Generator</h3>
+                    <p>Generates auditor-ready ZIP files with screenshots, configuration dumps, logs, and documentation in the exact format C3PAOs expect. Saves 40+ hours of manual evidence collection per assessment.</p>
+                    <div class="code-example">./auditkit-pro evidence-package -framework cmmc -output ./audit-package</div>
+                </div>
+
+                <div class="feature-card">
+                    <h3>Exception & Waiver Management</h3>
+                    <p>Track approved exceptions with compensating controls, expiration dates, and risk acceptance documentation. Maintains audit trail for C3PAO review.</p>
+                    <div class="code-example">./auditkit-pro exception add -control AC.1.001 -reason "Legacy system"</div>
+                </div>
+
+                <div class="feature-card">
+                    <h3>Continuous Monitoring Daemon</h3>
+                    <p>Scheduled scans with automated alerting via syslog, email, or webhook. Detects compliance drift in real-time. Air-gapped friendly for CMMC environments.</p>
+                    <div class="code-example">./auditkit-pro daemon start -schedule "0 2 * * *" -framework cmmc</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 30px;">
+                <div></div>
+                <div class="feature-card">
+                    <h3>Multi-Environment Drift Detection</h3>
+                    <p>Compare dev/staging/prod environments to identify configuration drift. Ensures consistent security posture across all environments before assessment.</p>
+                    <div class="code-example">./auditkit-pro drift-check -framework cmmc -environments "dev,prod"</div>
+                </div>
+                <div></div>
+            </div>
         </div>
     </section>
 
@@ -404,16 +446,22 @@
             <h2>How It Works</h2>
             
             <div style="max-width: 800px; margin: 0 auto;">
-                <div class="code-block"><span style="color: #608b4e;"># Install AuditKit Pro</span><br>git clone git@github.com:guardian-nexus/auditkit-pro.git<br>cd auditkit-pro/scanner<br>go build ./cmd/auditkit<br><br><span style="color: #608b4e;"># Run complete CMMC Level 2 scan</span><br>./auditkit scan -provider aws -framework cmmc -verbose<br><br><span style="color: #608b4e;"># Run NIST 800-53 assessment (NEW in v0.6.8)</span><br>./auditkit scan -provider aws -framework 800-53 -verbose<br><br><span style="color: #608b4e;"># Scanning for 800-53 controls...</span><br><span style="color: #608b4e;"># ✓ IA-2, IA-2(1), IA-5 - Authentication Controls (via CC6.6)</span><br><span style="color: #608b4e;"># ✓ AC-2, AC-3 - Access Control (via CMMC AC.L1-3.1.1)</span><br><span style="color: #608b4e;"># X AU-12 - Audit Generation - NEEDS CONFIGURATION</span><br><br><span style="color: #608b4e;"># Generate C3PAO-ready report</span><br>./auditkit scan -framework cmmc -format pdf -output cmmc-l2-assessment.pdf<br><br><span style="color: #608b4e;"># Track remediation progress</span><br>./auditkit progress</div>
-
-                <div style="margin-top: 40px; padding: 30px; background: #fff3cd; border-left: 4px solid #ff9800; border-radius: 4px;">
-                    <p style="font-size: 1.1em; margin-bottom: 15px;">
-                        <strong>Important:</strong> AuditKit Pro automates the self-assessment and evidence collection process. 
-                    </p>
-                    <p style="font-size: 1.1em;">
-                        You still need a C3PAO for official CMMC certification, but AuditKit Pro gets you ready for that assessment by identifying and fixing gaps beforehand, dramatically reducing assessment time and cost.
-                    </p>
-                </div>
+                <div class="code-block"><span style="color: #608b4e;"># 1. Install AuditKit Pro (GitHub access provided after signup)</span>
+git clone git@github.com:guardian-nexus/auditkit-pro.git
+cd auditkit-pro/scanner
+go build ./cmd/auditkit-pro
+<br>
+<span style="color: #608b4e;"># 2. Run initial CMMC Level 2 assessment</span>
+./auditkit-pro scan -provider aws -framework cmmc -verbose
+<br>
+<span style="color: #608b4e;"># 3. Fix issues and re-scan (unlimited)</span>
+./auditkit-pro scan -provider aws -framework cmmc -verbose
+<br>
+<span style="color: #608b4e;"># 4. Generate C3PAO-ready evidence package</span>
+./auditkit-pro evidence-package -framework cmmc -output ./cmmc-evidence
+<br>
+<span style="color: #608b4e;"># 5. Enable continuous monitoring</span>
+./auditkit-pro daemon start -schedule "0 2 * * *" -framework cmmc</div>
             </div>
         </div>
     </section>
@@ -423,53 +471,58 @@
             <h2>Frequently Asked Questions</h2>
             
             <div class="faq-item">
-                <h3>What's new in v0.6.8?</h3>
-                <p>NIST 800-53 Rev 5 support via framework crosswalk. We map your existing SOC2/PCI/CMMC checks to ~150 NIST 800-53 controls across 19 control families. No duplicate scanning needed.</p>
+                <h3>Do I still need a C3PAO assessment?</h3>
+                <p>Yes, for official CMMC certification you need a C3PAO assessment (~$25K-$75K). AuditKit Pro gets you assessment-ready by identifying and fixing gaps beforehand, dramatically reducing assessment time and consultant costs. You'll know you're compliant before the assessor arrives.</p>
             </div>
             
             <div class="faq-item">
-                <h3>Do I still need a C3PAO assessment?</h3>
-                <p>Yes, for official CMMC certification you need a C3PAO assessment. AuditKit Pro gets you ready for that assessment by identifying and fixing gaps beforehand, dramatically reducing assessment time and cost.</p>
+                <h3>What's the difference between CMMC Level 1 and Level 2?</h3>
+                <p>Level 1 (17 practices) protects Federal Contract Information (FCI). Level 2 (110 practices) protects Controlled Unclassified Information (CUI). If your DoD contracts involve CUI, you need Level 2. AuditKit Free includes Level 1, Pro includes both.</p>
             </div>
             
             <div class="faq-item">
                 <h3>Does this work with government cloud?</h3>
-                <p>Yes, AuditKit Pro supports both commercial AWS/Azure and government cloud environments (AWS GovCloud, Azure Government).</p>
+                <p>Yes, AuditKit Pro supports both commercial cloud (AWS, Azure, GCP) and government cloud environments (AWS GovCloud, Azure Government). All checks work identically across commercial and government regions.</p>
             </div>
             
             <div class="faq-item">
-                <h3>What's the difference between Level 1 and Level 2?</h3>
-                <p>CMMC Level 1 (17 practices) protects Federal Contract Information (FCI). Level 2 (110 practices) protects Controlled Unclassified Information (CUI). If you handle CUI, you need Level 2.</p>
+                <h3>How does multi-account scanning work?</h3>
+                <p>AuditKit Pro scans entire AWS Organizations, Azure Management Groups, and GCP Folders with a single command. It aggregates results across all accounts and generates unified compliance reports. Perfect for organizations with separate dev/staging/prod accounts.</p>
             </div>
             
             <div class="faq-item">
                 <h3>Can I re-scan after fixing issues?</h3>
-                <p>Yes, AuditKit Pro allows unlimited re-scanning, so you can verify fixes immediately and track compliance progress over time.</p>
-            </div>
-            
-            <div class="faq-item">
-                <h3>What happens if I'm not compliant?</h3>
-                <p>New DoD contracts include CMMC requirements. Without proper certification, you may not be eligible for contract awards. Traditional assessments take 6+ months, so starting early is critical.</p>
+                <p>Yes, unlimited re-scanning is included. Fix issues, re-scan immediately, and track compliance progress over time. No per-scan fees, no usage limits.</p>
             </div>
             
             <div class="faq-item">
                 <h3>How does the 14-day trial work?</h3>
-                <p>Click "Start 14-Day Free Trial" to begin checkout. After payment setup, you'll receive access to the private auditkit-pro repository within 24 hours. Full access to CMMC Level 2 + NIST 800-53. Cancel anytime during trial for full refund.</p>
+                <p>Click "Start 14-Day Free Trial" to begin. You'll receive GitHub access to the private auditkit-pro repository within 24 hours. Full access to CMMC Level 2 + all Pro features. Cancel anytime during trial for full refund - no questions asked.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>What's new in v0.7.0?</h3>
+                <p>GCP Advanced support (GKE Security + Vertex AI Compliance), Evidence Package Generator, Exception & Waiver Management, Continuous Monitoring Daemon, and Multi-Environment Drift Detection. All new features work offline for air-gapped CMMC environments.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>Do the new features work in air-gapped environments?</h3>
+                <p>Yes, all Pro features work offline including the daemon, evidence package generator, and drift detection. Designed specifically for defense contractors operating in classified/air-gapped networks.</p>
             </div>
         </div>
     </section>
 
     <section style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white;">
         <div class="container" style="text-align: center;">
-            <h2 style="color: white; font-size: 2.5em; margin-bottom: 20px;">Ready to Get Started?</h2>
+            <h2 style="color: white; font-size: 2.5em; margin-bottom: 20px;">Ready to Get Assessment-Ready?</h2>
             <p style="font-size: 1.3em; margin-bottom: 40px;">
-                CMMC Level 2 (110 practices) + NIST 800-53 Rev 5 (~150 controls) in one tool. Assessment-ready in 30 days.
+                110 CMMC Level 2 practices automated. 30 days to assessment-ready. $146K+ in savings.
             </p>
             <a href="https://buy.stripe.com/28E14m5MS5xM0mj4r7gnK01" class="btn btn-primary" style="font-size: 1.3em; padding: 20px 50px;">
                 Start 14-Day Free Trial
             </a>
-            <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.9;">
-                14-day free trial • $297/month after trial • Cancel anytime
+            <p style="margin-top: 20px; font-size: 0.95em; opacity: 0.9;">
+                14-day free trial • $297/month after trial • Cancel anytime • No setup fees
             </p>
         </div>
     </section>
@@ -482,128 +535,12 @@
             <p style="margin-bottom: 30px;">
                 <a href="https://github.com/guardian-nexus/auditkit">Free Version (Level 1)</a> · 
                 <a href="mailto:hello@auditkit.io">Contact Sales</a> · 
+                <a href="https://github.com/guardian-nexus/auditkit/blob/main/docs/">Documentation</a>
             </p>
             <p style="font-size: 0.9em; opacity: 0.8;">
-                AuditKit Pro v0.6.8 • October 2025
+                AuditKit Pro v0.7.0 • November 2025
             </p>
         </div>
     </footer>
-<div id="cookie-consent-banner" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #2c3e50; color: white; padding: 20px; box-shadow: 0 -4px 6px rgba(0,0,0,0.1); z-index: 9999;">
-    <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
-        <div style="flex: 1; min-width: 300px;">
-            <strong style="font-size: 1.1em;">Privacy & Cookies</strong>
-            <p style="margin: 10px 0; font-size: 0.95em; line-height: 1.5;">
-                We use privacy-friendly analytics (Plausible) to understand how visitors use our site. 
-                No personal data is collected or shared. No cookies are used for tracking. 
-                <a href="#privacy-details" onclick="togglePrivacyDetails(); return false;" style="color: #667eea; text-decoration: underline;">Learn more</a>
-            </p>
-            <div id="privacy-details" style="display: none; margin-top: 10px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 4px; font-size: 0.9em;">
-                <p style="margin-bottom: 10px;"><strong>What we collect:</strong></p>
-                <ul style="margin-left: 20px; margin-bottom: 10px;">
-                    <li>Page views and referrers (anonymous)</li>
-                    <li>Browser type and device (aggregated)</li>
-                    <li>Country (based on IP, not stored)</li>
-                </ul>
-                <p style="margin-bottom: 10px;"><strong>What we don't collect:</strong></p>
-                <ul style="margin-left: 20px; margin-bottom: 10px;">
-                    <li>Personal information</li>
-                    <li>IP addresses</li>
-                    <li>Cross-site tracking</li>
-                    <li>Cookies for advertising</li>
-                </ul>
-                <p><strong>Your rights (GDPR/CCPA):</strong> You can opt-out anytime by clicking "Decline" below. We don't sell your data because we don't collect personal data.</p>
-            </div>
-        </div>
-        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-            <button onclick="acceptCookies()" style="background: #667eea; color: white; border: none; padding: 12px 30px; border-radius: 6px; font-size: 1em; font-weight: 600; cursor: pointer;">
-                Accept
-            </button>
-            <button onclick="declineCookies()" style="background: transparent; color: white; border: 2px solid white; padding: 12px 30px; border-radius: 6px; font-size: 1em; font-weight: 600; cursor: pointer;">
-                Decline
-            </button>
-        </div>
-    </div>
-</div>
-<script>
-// Cookie Consent Management
-function getCookieConsent() {
-    return localStorage.getItem('auditkit_cookie_consent');
-}
-
-function setCookieConsent(value) {
-    localStorage.setItem('auditkit_cookie_consent', value);
-    localStorage.setItem('auditkit_cookie_consent_date', new Date().toISOString());
-}
-
-function acceptCookies() {
-    setCookieConsent('accepted');
-    hideCookieBanner();
-    loadAnalytics();
-}
-
-function declineCookies() {
-    setCookieConsent('declined');
-    hideCookieBanner();
-    // Do not load analytics
-}
-
-function hideCookieBanner() {
-    document.getElementById('cookie-consent-banner').style.display = 'none';
-}
-
-function showCookieBanner() {
-    document.getElementById('cookie-consent-banner').style.display = 'block';
-}
-
-function togglePrivacyDetails() {
-    const details = document.getElementById('privacy-details');
-    details.style.display = details.style.display === 'none' ? 'block' : 'none';
-}
-
-function loadAnalytics() {
-    // Only load if user accepted
-    if (getCookieConsent() === 'accepted') {
-        // Plausible Analytics (privacy-friendly, no cookies)
-        var script = document.createElement('script');
-        script.defer = true;
-        script.dataset.domain = 'auditkit.io';
-        script.src = 'https://plausible.io/js/script.js';
-        document.head.appendChild(script);
-    }
-}
-
-// Check consent on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const consent = getCookieConsent();
-    
-    if (consent === 'accepted') {
-        // User previously accepted
-        loadAnalytics();
-    } else if (consent === 'declined') {
-        // User previously declined, don't show banner
-        // Banner will reappear after 90 days (optional)
-        const consentDate = localStorage.getItem('auditkit_cookie_consent_date');
-        if (consentDate) {
-            const daysSince = (new Date() - new Date(consentDate)) / (1000 * 60 * 60 * 24);
-            if (daysSince > 90) {
-                // Ask again after 90 days
-                showCookieBanner();
-            }
-        }
-    } else {
-        // No preference yet, show banner
-        showCookieBanner();
-    }
-});
-
-// Add function to manually reset consent (for testing or privacy policy page)
-function resetCookieConsent() {
-    localStorage.removeItem('auditkit_cookie_consent');
-    localStorage.removeItem('auditkit_cookie_consent_date');
-    showCookieBanner();
-}
-</script>
- <a href="#" onclick="resetCookieConsent(); return false;" style="color: #95a5a6; font-size: 0.9em;">
-    Cookie Preferences</a>
 </body>
 </html>

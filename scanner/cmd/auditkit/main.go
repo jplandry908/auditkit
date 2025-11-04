@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	gcpScanner "github.com/guardian-nexus/auditkit/scanner/pkg/gcp"
 	awsScanner "github.com/guardian-nexus/auditkit/scanner/pkg/aws"
 	azureScanner "github.com/guardian-nexus/auditkit/scanner/pkg/azure"
 	"github.com/guardian-nexus/auditkit/scanner/pkg/integrations"
@@ -21,7 +22,7 @@ import (
 	"github.com/guardian-nexus/auditkit/scanner/pkg/mappings"
 )
 
-const CurrentVersion = "v0.6.8"
+const CurrentVersion = "v0.7.0"
 
 type ComplianceResult struct {
 	Timestamp       time.Time       `json:"timestamp"`
@@ -69,10 +70,10 @@ type ScorePoint struct {
 
 func main() {
 	var (
-		provider  = flag.String("provider", "aws", "Cloud provider: aws, azure (both with full SOC2/PCI support)")
-		profile   = flag.String("profile", "default", "AWS profile or Azure subscription to use")
+		provider  = flag.String("provider", "aws", "Cloud provider: aws, azure, gcp")
+		profile   = flag.String("profile", "default", "AWS profile, Azure subscription, or GCP project ID")
 		framework = flag.String("framework", "all", "Compliance framework: soc2, pci, cmmc, hipaa (limited), all")
-		format    = flag.String("format", "text", "Output format (text, json, html, pdf)")
+		format    = flag.String("format", "text", "Output format (text, json, html, pdf, csv)")
 		output    = flag.String("output", "", "Output file (default: stdout)")
 		verbose   = flag.Bool("verbose", false, "Verbose output")
 		full      = flag.Bool("full", false, "Show all controls in text output (default: truncated for readability)")
@@ -107,7 +108,7 @@ func main() {
 	case "update":
 		updater.CheckForUpdates()
 	case "version":
-		fmt.Printf("AuditKit %s - Multi-cloud compliance scanning (AWS, Azure, M365)\n", CurrentVersion)
+		fmt.Printf("AuditKit %s - Multi-cloud compliance scanning (AWS, Azure, GCP, M365)\n", CurrentVersion)
 	default:
 		fmt.Fprintf(os.Stderr, "Unknown command: %s\n", command)
 		printUsage()
@@ -130,10 +131,10 @@ Usage:
   auditkit version               Show version
 
 Options:
-  -provider string   Cloud provider: aws, azure (default "aws")
-  -profile string    AWS profile or Azure subscription (default "default")
+  -provider string   Cloud provider: aws, azure, gcp (default "aws")
+  -profile string    AWS profile, Azure subscription, or GCP project (default "default")
   -framework string  Compliance framework: soc2, pci, cmmc, hipaa, 800-53, all (default "all")
-  -format string     Output format (text, json, html, pdf) (default "text")
+  -format string     Output format (text, json, html, pdf, csv) (default "text")
   -output string     Output file (default: stdout)
   -services string   Services to scan (default "all")
   -source string     Integration source: scubagear, prowler
@@ -142,12 +143,16 @@ Options:
   -full             Show all controls in text output (default: truncated)
 
 Frameworks:
-  soc2    SOC2 Type II Common Criteria (full coverage)
-  pci     PCI-DSS v4.0 (full coverage)
-  cmmc    CMMC Level 1 (17 practices) & Level 2 (110 practices)
-  hipaa   HIPAA Security Rule (experimental)
-  800-53  NIST 800-53 Rev 5 (via framework crosswalk)
-  all     Run all available frameworks
+  soc2      SOC2 Type II Common Criteria (full coverage)
+  pci       PCI-DSS v4.0 (full coverage)
+  cmmc      CMMC Level 1 (17 practices)
+  hipaa     HIPAA Security Rule (experimental)
+  800-53    NIST 800-53 Rev 5 (via framework crosswalk)
+  cis       CIS Benchmarks (auto-detects provider)
+  cis-aws   CIS AWS Foundations (~60 controls)
+  cis-azure CIS Azure Foundations (~90 controls)
+  cis-gcp   CIS GCP Foundations (~50 controls)
+  all       Run all available frameworks
 
 Integration Examples:
   # Import ScubaGear M365 results
@@ -162,6 +167,13 @@ Examples:
 
   # Azure PCI-DSS scan
   auditkit scan -provider azure -framework pci
+
+  # GCP SOC2 scan
+  auditkit scan -provider gcp -profile my-project-id -framework soc2
+  
+  # GCP with environment variable
+  export GOOGLE_CLOUD_PROJECT=my-project-id
+  auditkit scan -provider gcp -framework soc2
 
   # NIST 800-53 scan
   auditkit scan -provider aws -framework 800-53
@@ -416,18 +428,27 @@ func printIntegrationSummary(result ComplianceResult) {
 
 func runScan(provider, profile, framework, format, output string, verbose bool, full bool, services string) {
 	validFrameworks := map[string]bool{
-		"soc2":       true,
-		"pci":        true,
-		"hipaa":      true,
-		"cmmc":       true,
-		"800-53":     true,
-		"nist800-53": true,
-		"all":        true,
+		"soc2":             true,
+		"pci":              true,
+		"hipaa":            true,
+		"cmmc":             true,
+		"800-53":           true,
+		"nist800-53":       true,
+		"fedramp-low":      true,
+		"fedramp-moderate": true,
+		"fedramp-high":     true,
+		"iso27001":         true,
+		"iso-27001":        true,
+		"cis":              true,
+		"cis-aws":          true,
+		"cis-azure":        true,
+		"cis-gcp":          true,
+		"all":              true,
 	}
 
 	if !validFrameworks[strings.ToLower(framework)] {
 		fmt.Fprintf(os.Stderr, "Error: Invalid framework: %s\n", framework)
-		fmt.Fprintf(os.Stderr, "Valid options: soc2, pci, cmmc (Level 1 only), hipaa, 800-53, all\n")
+		fmt.Fprintf(os.Stderr, "Valid options: soc2, pci, cmmc (Level 1), hipaa, 800-53, fedramp-low, fedramp-moderate, fedramp-high, iso27001, cis, cis-aws, cis-azure, cis-gcp, all\n")
 		fmt.Fprintf(os.Stderr, "\n")
 		fmt.Fprintf(os.Stderr, "CMMC Level 2 requires upgrade to Pro:\n")
 		fmt.Fprintf(os.Stderr, "  Visit: https://auditkit.io/pro\n")
@@ -447,7 +468,7 @@ func runScan(provider, profile, framework, format, output string, verbose bool, 
 	automatedChecks := result.PassedControls + result.FailedControls
 	manualChecks := 0
 	for _, control := range result.Controls {
-		if control.Status == "INFO" {
+		if control.Status == "MANUAL" || control.Status == "INFO" {
 			manualChecks++
 		}
 	}
@@ -459,11 +480,6 @@ func runScan(provider, profile, framework, format, output string, verbose bool, 
 			fmt.Printf("\n⚠️  NOTE: %d additional manual controls require documentation.\n", manualChecks)
 			fmt.Printf("   Use 'auditkit evidence' to generate collection checklist.\n")
 		}
-		
-		fmt.Println("\nShare your success:")
-		fmt.Printf("  Post on X: https://x.com/intent/tweet?text=Just%%20hit%%20%.0f%%%%20automated%%20checks%%20using%%20AuditKit!%%20Free%%20tool:%%20github.com/guardian-nexus/auditkit\n", 
-			result.Score)
-		fmt.Println("  Star us: https://github.com/guardian-nexus/auditkit")
 	} else if result.Score >= 70 {
 		fmt.Printf("\nGetting there! %.1f%% of automated checks passed.\n", result.Score)
 		
@@ -524,6 +540,8 @@ func runScan(provider, profile, framework, format, output string, verbose bool, 
 		outputJSON(result, output)
 	case "html":
 		outputHTML(result, output)
+	case "csv":
+		outputCSV(result, output)
 	default:
 		fmt.Fprintf(os.Stderr, "Unknown format: %s\n", format)
 		os.Exit(1)
@@ -535,6 +553,24 @@ func performScan(provider, profile, framework string, verbose bool, services str
 	var accountID string
 	
 	ctx := context.Background()
+
+	// CIS CHANGE: Normalize framework name
+	framework = strings.ToLower(strings.TrimSpace(framework))
+	
+	// CIS CHANGE: Handle CIS framework auto-detection
+	if framework == "cis" {
+		switch provider {
+		case "aws":
+			framework = "cis-aws"
+		case "azure":
+			framework = "cis-azure"
+		case "gcp":
+			framework = "cis-gcp"
+		}
+		if verbose {
+			fmt.Printf("Auto-detected CIS framework: %s\n", framework)
+		}
+	}
 	
 	switch provider {
 	case "aws":
@@ -568,7 +604,12 @@ func performScan(provider, profile, framework string, verbose bool, services str
 		}
 		
 	case "azure":
-		scanner, err := azureScanner.NewScanner(profile)
+		// Get subscription ID from environment variable
+		subscriptionID := os.Getenv("AZURE_SUBSCRIPTION_ID")
+		if subscriptionID == "" {
+			subscriptionID = profile // fallback to profile flag if env var not set
+		}
+		scanner, err := azureScanner.NewScanner(subscriptionID)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error initializing Azure scanner: %v\n", err)
 			fmt.Fprintf(os.Stderr, "\nMake sure you have Azure credentials configured:\n")
@@ -603,18 +644,51 @@ func performScan(provider, profile, framework string, verbose bool, services str
 		}
 		
 	case "gcp":
-		fmt.Println("GCP support coming Q1 2026")
-		fmt.Println("\nPlanned GCP checks:")
-		fmt.Println("  - Cloud Storage bucket policies")
-		fmt.Println("  - IAM & Service Account management")
-		fmt.Println("  - VPC firewall rules")
-		fmt.Println("  - Cloud KMS encryption")
-		fmt.Println("\nGet notified: https://auditkit.substack.com")
-		os.Exit(0)
+		// Get GCP project ID from profile flag or environment
+		projectID := profile
+		if projectID == "" || projectID == "default" {
+			projectID = os.Getenv("GOOGLE_CLOUD_PROJECT")
+			if projectID == "" {
+				projectID = os.Getenv("GCP_PROJECT")
+			}
+		}
+
+		scanner, err := gcpScanner.NewScanner(projectID)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error initializing GCP scanner: %v\n", err)
+			fmt.Fprintf(os.Stderr, "\nMake sure you have GCP credentials configured:\n")
+			fmt.Fprintf(os.Stderr, "  gcloud auth application-default login\n")
+			fmt.Fprintf(os.Stderr, "  export GOOGLE_CLOUD_PROJECT=your-project-id\n")
+			fmt.Fprintf(os.Stderr, "\nOr use service account:\n")
+			fmt.Fprintf(os.Stderr, "  export GOOGLE_APPLICATION_CREDENTIALS=/path/to/key.json\n")
+			os.Exit(1)
+		}
+		defer scanner.Close()
+
+		accountID = scanner.GetAccountID(ctx)
+
+		if verbose {
+			fmt.Fprintf(os.Stderr, "Scanning GCP Project: %s\n", accountID)
+			fmt.Fprintf(os.Stderr, "Framework: %s\n", strings.ToUpper(framework))
+		}
+
+		serviceList := strings.Split(services, ",")
+		if services == "all" {
+			serviceList = []string{"storage", "iam", "compute", "network", "sql", "kms", "logging"}
+		}
+
+		gcpResults, err := scanner.ScanServices(ctx, serviceList, verbose, framework)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Warning during GCP scan: %v\n", err)
+		}
+
+		for _, r := range gcpResults {
+			scanResults = append(scanResults, r)
+		}
 		
 	default:
 		fmt.Fprintf(os.Stderr, "Unknown provider: %s\n", provider)
-		fmt.Fprintf(os.Stderr, "Supported providers: aws, azure\n")
+		fmt.Fprintf(os.Stderr, "Supported providers: aws, azure, gcp\n")
 		os.Exit(1)
 	}
 	
@@ -625,14 +699,26 @@ func performScan(provider, profile, framework string, verbose bool, services str
 	critical := 0
 	high := 0
 	
-	// Load crosswalk once if needed for 800-53
+	// Load crosswalk once if needed for 800-53 or FedRAMP
 	var crosswalk *mappings.Crosswalk
 	var crosswalkErr error
+	var fedRAMPBaselines *mappings.FedRAMPBaselines
+	var fedRAMPErr error
 	requestedUpper := strings.ToUpper(framework)
-	if requestedUpper == "800-53" || requestedUpper == "NIST800-53" {
+	requestedLower := strings.ToLower(framework)
+
+	if requestedUpper == "800-53" || requestedUpper == "NIST800-53" || strings.HasPrefix(requestedLower, "fedramp-") || requestedLower == "iso27001" || requestedLower == "iso-27001" {
 		crosswalk, crosswalkErr = mappings.GetCrosswalk()
 		if crosswalkErr != nil && verbose {
 			fmt.Fprintf(os.Stderr, "Warning: Could not load 800-53 crosswalk: %v\n", crosswalkErr)
+		}
+
+		// Load FedRAMP baselines if needed
+		if strings.HasPrefix(requestedLower, "fedramp-") {
+			fedRAMPBaselines, fedRAMPErr = mappings.GetFedRAMPBaselines()
+			if fedRAMPErr != nil && verbose {
+				fmt.Fprintf(os.Stderr, "Warning: Could not load FedRAMP baselines: %v\n", fedRAMPErr)
+			}
 		}
 	}
 	
@@ -642,7 +728,7 @@ func performScan(provider, profile, framework string, verbose bool, services str
 		// Type assertion based on provider
 		switch provider {
 		case "aws":
-			if awsResult, ok := result.(awsScanner.ScanResult); ok {
+			awsResult := result.(awsScanner.ScanResult)
 				priority, impact := getPriorityAndImpact(awsResult.Control, awsResult.Severity, awsResult.Status, framework)
 				control = ControlResult{
 					ID:                awsResult.Control,
@@ -658,10 +744,9 @@ func performScan(provider, profile, framework string, verbose bool, services str
 					ScreenshotGuide:   awsResult.ScreenshotGuide,
 					ConsoleURL:        awsResult.ConsoleURL,
 					Frameworks:        awsResult.Frameworks,
-				}
 			}
 		case "azure":
-			if azureResult, ok := result.(azureScanner.ScanResult); ok {
+			azureResult := result.(azureScanner.ScanResult)
 				priority, impact := getPriorityAndImpact(azureResult.Control, azureResult.Severity, azureResult.Status, framework)
 				control = ControlResult{
 					ID:                azureResult.Control,
@@ -677,10 +762,26 @@ func performScan(provider, profile, framework string, verbose bool, services str
 					ScreenshotGuide:   azureResult.ScreenshotGuide,
 					ConsoleURL:        azureResult.ConsoleURL,
 					Frameworks:        azureResult.Frameworks,
+			}
+		case "gcp":
+			gcpResult := result.(gcpScanner.ScanResult)
+				priority, impact := getPriorityAndImpact(gcpResult.Control, gcpResult.Severity, gcpResult.Status, framework)
+				control = ControlResult{
+					ID:                gcpResult.Control,
+					Name:              getControlName(gcpResult.Control),
+					Category:          getControlCategory(gcpResult.Control),
+					Severity:          gcpResult.Severity,
+					Status:            gcpResult.Status,
+					Evidence:          gcpResult.Evidence,
+					Remediation:       gcpResult.Remediation,
+					RemediationDetail: gcpResult.RemediationDetail,
+					Priority:          priority,
+					Impact:            impact,
+					ScreenshotGuide:   gcpResult.ScreenshotGuide,
+					ConsoleURL:        gcpResult.ConsoleURL,
+					Frameworks:        gcpResult.Frameworks,
 				}
 			}
-		}
-		
 		// Filter by framework if not "all"
 		if framework != "all" {
 			hasRequestedFramework := false
@@ -689,26 +790,103 @@ func performScan(provider, profile, framework string, verbose bool, services str
 			if (requestedUpper == "800-53" || requestedUpper == "NIST800-53") && crosswalk != nil {
 				// Try to derive 800-53 IDs (works with OR without Frameworks map)
 				nist80053IDs := crosswalk.Get800_53String(control.Frameworks, control.ID)
-				
+
 				if nist80053IDs != "" {
 					hasRequestedFramework = true
 					originalID := control.ID
-					
+
 					// Replace control ID with 800-53 IDs
 					control.ID = nist80053IDs
-					
+
 					// Update control name to show source
 					control.Name = fmt.Sprintf("%s (via %s)", control.Name, originalID)
-					
+
 					// Add to frameworks map
 					if control.Frameworks == nil {
 						control.Frameworks = make(map[string]string)
 					}
 					control.Frameworks["NIST800-53"] = nist80053IDs
 					control.Frameworks["Source"] = originalID
-					
+
 					if verbose {
 						fmt.Fprintf(os.Stderr, "✓ Mapped %s → %s\n", originalID, nist80053IDs)
+					}
+				}
+			} else if strings.HasPrefix(requestedLower, "fedramp-") && crosswalk != nil && fedRAMPBaselines != nil {
+				// Special handling for FedRAMP baselines
+				nist80053IDs := crosswalk.Get800_53String(control.Frameworks, control.ID)
+
+				if nist80053IDs != "" {
+					// Check if any of the 800-53 controls are in the requested FedRAMP baseline
+					controlList := strings.Split(nist80053IDs, ", ")
+					inBaseline := false
+
+					for _, ctrl := range controlList {
+						if fedRAMPBaselines.IsInFedRAMPBaseline(ctrl, requestedLower) {
+							inBaseline = true
+							break
+						}
+					}
+
+					if inBaseline {
+						hasRequestedFramework = true
+						originalID := control.ID
+
+						// Replace control ID with 800-53 IDs
+						control.ID = nist80053IDs
+
+						// Update control name to show source and baseline
+						baselineName := strings.ToUpper(strings.Replace(requestedLower, "fedramp-", "FedRAMP ", 1))
+						control.Name = fmt.Sprintf("%s (via %s, %s)", control.Name, originalID, baselineName)
+
+						// Add to frameworks map
+						if control.Frameworks == nil {
+							control.Frameworks = make(map[string]string)
+						}
+						control.Frameworks["NIST800-53"] = nist80053IDs
+						control.Frameworks["FedRAMP"] = baselineName
+						control.Frameworks["Source"] = originalID
+
+						if verbose {
+							fmt.Fprintf(os.Stderr, "✓ Mapped %s → %s (%s)\n", originalID, nist80053IDs, baselineName)
+						}
+					}
+				}
+			} else if (requestedLower == "iso27001" || requestedLower == "iso-27001") && crosswalk != nil {
+				// Special handling for ISO 27001
+				nist80053IDs := crosswalk.Get800_53String(control.Frameworks, control.ID)
+
+				if nist80053IDs != "" {
+					hasRequestedFramework = true
+					originalID := control.ID
+
+					// Replace control ID with 800-53 IDs
+					control.ID = nist80053IDs
+
+					// Update control name to show source and ISO 27001
+					control.Name = fmt.Sprintf("%s (via %s, ISO 27001)", control.Name, originalID)
+
+					// Add to frameworks map
+					if control.Frameworks == nil {
+						control.Frameworks = make(map[string]string)
+					}
+					control.Frameworks["NIST800-53"] = nist80053IDs
+					control.Frameworks["ISO27001"] = "ISO 27001:2022"
+					control.Frameworks["Source"] = originalID
+
+					if verbose {
+						fmt.Fprintf(os.Stderr, "✓ Mapped %s → %s (ISO 27001)\n", originalID, nist80053IDs)
+					}
+				}
+			} else if strings.HasPrefix(framework, "cis") {
+				// CIS works via Frameworks map - check for CIS-AWS, CIS-Azure, CIS-GCP
+				if control.Frameworks != nil {
+					for fw := range control.Frameworks {
+						fwUpper := strings.ToUpper(fw)
+						if strings.HasPrefix(fwUpper, "CIS") {
+							hasRequestedFramework = true
+							break
+						}
 					}
 				}
 			} else if control.Frameworks != nil && len(control.Frameworks) > 0 {
@@ -815,11 +993,31 @@ func showProgress(provider, profile string) {
 		}
 		accountID = scanner.GetAccountID(ctx)
 	case "azure":
-		scanner, err := azureScanner.NewScanner(profile)
+		// Get subscription ID from environment variable
+		subscriptionID := os.Getenv("AZURE_SUBSCRIPTION_ID")
+		if subscriptionID == "" {
+			subscriptionID = profile // fallback to profile flag if env var not set
+		}
+		scanner, err := azureScanner.NewScanner(subscriptionID)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			return
 		}
+		accountID = scanner.GetAccountID(ctx)
+	case "gcp":
+		projectID := profile
+		if projectID == "" || projectID == "default" {
+			projectID = os.Getenv("GOOGLE_CLOUD_PROJECT")
+			if projectID == "" {
+				projectID = os.Getenv("GCP_PROJECT")
+			}
+		}
+		scanner, err := gcpScanner.NewScanner(projectID)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			return
+		}
+		defer scanner.Close()
 		accountID = scanner.GetAccountID(ctx)
 	}
 	
@@ -887,11 +1085,31 @@ func compareScan(provider, profile string) {
 		}
 		accountID = scanner.GetAccountID(ctx)
 	case "azure":
-		scanner, err := azureScanner.NewScanner(profile)
+		// Get subscription ID from environment variable
+		subscriptionID := os.Getenv("AZURE_SUBSCRIPTION_ID")
+		if subscriptionID == "" {
+			subscriptionID = profile // fallback to profile flag if env var not set
+		}
+		scanner, err := azureScanner.NewScanner(subscriptionID)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			return
 		}
+		accountID = scanner.GetAccountID(ctx)
+	case "gcp":
+		projectID := profile
+		if projectID == "" || projectID == "default" {
+			projectID = os.Getenv("GOOGLE_CLOUD_PROJECT")
+			if projectID == "" {
+				projectID = os.Getenv("GCP_PROJECT")
+			}
+		}
+		scanner, err := gcpScanner.NewScanner(projectID)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			return
+		}
+		defer scanner.Close()
 		accountID = scanner.GetAccountID(ctx)
 	}
 	
@@ -964,6 +1182,35 @@ func generateFixScript(provider, profile, output string) {
 	case "azure":
 		fmt.Println("Azure fix script generation coming soon")
 		return
+	case "gcp":
+		projectID := profile
+		if projectID == "" || projectID == "default" {
+			projectID = os.Getenv("GOOGLE_CLOUD_PROJECT")
+			if projectID == "" {
+				projectID = os.Getenv("GCP_PROJECT")
+			}
+		}
+		scanner, err := gcpScanner.NewScanner(projectID)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			return
+		}
+		defer scanner.Close()
+		accountID = scanner.GetAccountID(ctx)
+		fmt.Printf("Scanning GCP Project %s to identify fixes...\n", accountID)
+		
+		services := []string{"storage", "iam", "network", "sql"}
+		scanResults, _ := scanner.ScanServices(ctx, services, false, "soc2")
+		
+		for _, result := range scanResults {
+			gcpResult := result
+				controls = append(controls, remediation.ControlResult{
+					Control:           gcpResult.Control,
+					Status:            gcpResult.Status,
+					Severity:          gcpResult.Severity,
+					RemediationDetail: gcpResult.RemediationDetail,
+				})
+		}
 	}
 	
 	if output == "" {
@@ -1009,7 +1256,12 @@ func runEvidenceTracker(provider, profile, output string) {
 			})
 		}
 	case "azure":
-		scanner, err := azureScanner.NewScanner(profile)
+		// Get subscription ID from environment variable
+		subscriptionID := os.Getenv("AZURE_SUBSCRIPTION_ID")
+		if subscriptionID == "" {
+			subscriptionID = profile // fallback to profile flag if env var not set
+		}
+		scanner, err := azureScanner.NewScanner(subscriptionID)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			return
@@ -1026,8 +1278,35 @@ func runEvidenceTracker(provider, profile, output string) {
 				Status:  result.Status,
 			})
 		}
-	}
-	
+	case "gcp":
+		projectID := profile
+		if projectID == "" || projectID == "default" {
+			projectID = os.Getenv("GOOGLE_CLOUD_PROJECT")
+			if projectID == "" {
+				projectID = os.Getenv("GCP_PROJECT")
+			}
+		}
+		scanner, err := gcpScanner.NewScanner(projectID)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			return
+		}
+		defer scanner.Close()
+		accountID = scanner.GetAccountID(ctx)
+		fmt.Printf("Scanning GCP Project %s...\n", accountID)
+		
+		services := []string{"storage", "iam", "network", "sql"}
+		scanResults, _ := scanner.ScanServices(ctx, services, false, "soc2")
+		
+		for _, result := range scanResults {
+			gcpResult := result
+				controls = append(controls, tracker.ControlResult{
+					Control: gcpResult.Control,
+					Status:  gcpResult.Status,
+				})
+			}
+		}
+		
 	if output == "" {
 		output = "evidence-tracker.html"
 	}
@@ -1245,13 +1524,13 @@ func printTextSummary(result ComplianceResult, full bool) {
 		infoShown := 0
 		infoCount := 0
 		for _, control := range result.Controls {
-			if control.Status == "INFO" {
+			if control.Status == "MANUAL" || control.Status == "INFO" {
 				infoCount++
 			}
 		}
-		
+
 		for _, control := range result.Controls {
-			if control.Status == "INFO" {
+			if control.Status == "MANUAL" || control.Status == "INFO" {
 				if !hasInfo {
 					fmt.Printf("Manual Documentation Required:\n")
 					fmt.Printf("=================================\n")
@@ -1407,6 +1686,24 @@ func generatePrioritizedRecommendations(controls []ControlResult, criticalCount,
 	}
 	recs = append(recs, "Schedule quarterly access reviews")
 	
+	if strings.HasPrefix(strings.ToLower(framework), "cis") {
+		recs = append(recs, "CIS Note: Some controls require manual verification")
+		recs = append(recs, "CIS Level 1 included in FREE (basic security)")
+		
+		// Provider-specific CIS guidance
+		switch strings.ToLower(framework) {
+		case "cis", "cis-aws":
+			recs = append(recs,
+				"CIS AWS Benchmark: https://www.cisecurity.org/benchmark/amazon_web_services")
+		case "cis-azure":
+			recs = append(recs,
+				"CIS Azure Benchmark: https://www.cisecurity.org/benchmark/azure")
+		case "cis-gcp":
+			recs = append(recs,
+				"CIS GCP Benchmark: https://www.cisecurity.org/benchmark/google_cloud_computing_platform")
+		}
+	}
+
 	return recs
 }
 
@@ -1604,6 +1901,62 @@ func outputHTML(result ComplianceResult, output string) {
 	}
 	fmt.Printf("HTML report saved to %s\n", output)
 	fmt.Printf("Open in browser: file://%s/%s\n", getCurrentDir(), output)
+}
+
+func outputCSV(result ComplianceResult, output string) {
+	var csvData strings.Builder
+
+	// CSV Header
+	csvData.WriteString("Control ID,Control Name,Category,Status,Severity,Priority,Evidence,Remediation,Console URL\n")
+
+	// CSV Rows
+	for _, control := range result.Controls {
+		// Escape CSV fields (handle commas and quotes)
+		controlID := escapeCSVField(control.ID)
+		controlName := escapeCSVField(control.Name)
+		category := escapeCSVField(control.Category)
+		status := escapeCSVField(control.Status)
+		severity := escapeCSVField(control.Severity)
+		priority := escapeCSVField(control.Priority)
+		evidence := escapeCSVField(control.Evidence)
+		remediation := escapeCSVField(control.Remediation)
+		consoleURL := escapeCSVField(control.ConsoleURL)
+
+		csvData.WriteString(fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
+			controlID, controlName, category, status, severity, priority,
+			evidence, remediation, consoleURL))
+	}
+
+	if output == "" {
+		output = fmt.Sprintf("auditkit-%s-%s-report-%s.csv",
+			strings.ToLower(result.Provider),
+			strings.ToLower(result.Framework),
+			time.Now().Format("2006-01-02-150405"))
+	}
+
+	err := os.WriteFile(output, []byte(csvData.String()), 0644)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error writing CSV file: %v\n", err)
+		os.Exit(1)
+	}
+	fmt.Printf("CSV report saved to %s\n", output)
+	fmt.Printf("Import into Excel, Google Sheets, or other spreadsheet tools\n")
+}
+
+// escapeCSVField properly escapes CSV fields containing commas, quotes, or newlines
+func escapeCSVField(field string) string {
+	// Replace newlines with spaces
+	field = strings.ReplaceAll(field, "\n", " ")
+	field = strings.ReplaceAll(field, "\r", "")
+
+	// If field contains comma, quote, or was modified, wrap in quotes
+	if strings.Contains(field, ",") || strings.Contains(field, "\"") {
+		// Escape existing quotes by doubling them
+		field = strings.ReplaceAll(field, "\"", "\"\"")
+		field = fmt.Sprintf("\"%s\"", field)
+	}
+
+	return field
 }
 
 func getCurrentDir() string {

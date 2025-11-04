@@ -58,7 +58,10 @@ func (c *PCIDSSChecks) Run(ctx context.Context) ([]CheckResult, error) {
 	
 	// Requirement 4: Encryption in Transit (CRITICAL)
 	results = append(results, c.CheckReq4_EncryptionInTransit(ctx)...)
-	
+
+	// Requirement 5: Malware Protection
+	results = append(results, c.CheckReq5_MalwareProtection(ctx)...)
+
 	// Requirement 6: Secure Systems (CRITICAL)
 	results = append(results, c.CheckReq6_SecureSystems(ctx)...)
 	
@@ -71,9 +74,15 @@ func (c *PCIDSSChecks) Run(ctx context.Context) ([]CheckResult, error) {
 	// Requirement 10: Logging (12 months!)
 	results = append(results, c.CheckReq10_Logging(ctx)...)
 	
+	// Requirement 9: Physical Access Controls
+	results = append(results, c.CheckReq9_PhysicalAccess(ctx)...)
+
 	// Requirement 11: Security Testing
 	results = append(results, c.CheckReq11_SecurityTesting(ctx)...)
-	
+
+	// Requirement 12: Information Security Policy
+	results = append(results, c.CheckReq12_SecurityPolicy(ctx)...)
+
 	return results, nil
 }
 
@@ -1124,6 +1133,242 @@ func (c *PCIDSSChecks) CheckReq11_SecurityTesting(ctx context.Context) []CheckRe
 			"PCI-DSS": "Req 11.5",
 		},
 	})
-	
+
+	return results
+}
+
+// Requirement 5: Malware Protection
+func (c *PCIDSSChecks) CheckReq5_MalwareProtection(ctx context.Context) []CheckResult {
+	results := []CheckResult{}
+
+	// PCI-DSS Requirement 5: Protect all systems from malware
+	results = append(results, CheckResult{
+		Control:   "PCI-5.1",
+		Name:      "[PCI-DSS] Anti-Malware Protection",
+		Status:    "INFO",
+		Evidence:  "MANUAL: PCI-DSS Req 5.1 requires anti-malware on all systems commonly affected by malware (workstations, servers)",
+		Remediation: "Deploy and maintain anti-malware solution",
+		RemediationDetail: "1. Deploy endpoint protection (Amazon GuardDuty for runtime, third-party for OS-level)\n2. Ensure anti-malware is active and up-to-date\n3. Configure automatic updates and periodic scans\n4. Document anti-malware solution and update schedule",
+		Priority: PriorityHigh,
+		ScreenshotGuide: "Security Console → Show anti-malware deployed on all systems with current definitions",
+		ConsoleURL: "https://console.aws.amazon.com/guardduty/",
+		Timestamp: time.Now(),
+		Frameworks: map[string]string{
+			"PCI-DSS": "Req 5.1, 5.2.1",
+		},
+	})
+
+	results = append(results, CheckResult{
+		Control:   "PCI-5.2.3",
+		Name:      "[PCI-DSS] Anti-Malware Updates",
+		Status:    "INFO",
+		Evidence:  "MANUAL: Verify anti-malware mechanisms are current, actively running, and generating logs",
+		Remediation: "Ensure anti-malware auto-updates are enabled",
+		RemediationDetail: "Configure automatic signature updates and verify audit logs show active scanning",
+		Priority: PriorityMedium,
+		ScreenshotGuide: "Anti-malware console → Show automatic updates enabled and recent scan logs",
+		Timestamp: time.Now(),
+		Frameworks: map[string]string{
+			"PCI-DSS": "Req 5.2.3, 5.3.1",
+		},
+	})
+
+	results = append(results, CheckResult{
+		Control:   "PCI-5.3.2",
+		Name:      "[PCI-DSS] Anti-Malware Scan Logs",
+		Status:    "INFO",
+		Evidence:  "MANUAL: PCI requires anti-malware logs be retained and reviewed periodically",
+		Remediation: "Configure log retention and review procedures",
+		RemediationDetail: "1. Enable logging for all anti-malware events\n2. Configure log retention (minimum per Req 10)\n3. Establish periodic review process\n4. Document review findings",
+		Priority: PriorityMedium,
+		ScreenshotGuide: "Show anti-malware logs with retention policy and review documentation",
+		Timestamp: time.Now(),
+		Frameworks: map[string]string{
+			"PCI-DSS": "Req 5.3.2, 5.3.4",
+		},
+	})
+
+	return results
+}
+
+// Requirement 9: Physical Access Controls
+func (c *PCIDSSChecks) CheckReq9_PhysicalAccess(ctx context.Context) []CheckResult {
+	results := []CheckResult{}
+
+	// Physical access controls - AWS inherited controls
+	results = append(results, CheckResult{
+		Control:   "PCI-9.1",
+		Name:      "[PCI-DSS] Physical Access Controls",
+		Status:    "INFO",
+		Evidence:  "INFO: AWS data centers have physical security controls (inherited control). Review AWS compliance documentation.",
+		Remediation: "Document AWS physical security inheritance",
+		RemediationDetail: "1. Review AWS PCI-DSS Attestation of Compliance (AOC)\n2. Download AWS PCI-DSS Responsibility Matrix from AWS Artifact\n3. Document inherited physical controls in your compliance documentation\n4. Focus on your organizational physical security for offices/facilities with cardholder data access",
+		Priority: PriorityMedium,
+		ScreenshotGuide: "AWS Artifact → Download PCI-DSS AOC showing AWS physical security controls",
+		ConsoleURL: "https://console.aws.amazon.com/artifact/home",
+		Timestamp: time.Now(),
+		Frameworks: map[string]string{
+			"PCI-DSS": "Req 9.1, 9.1.1",
+		},
+	})
+
+	results = append(results, CheckResult{
+		Control:   "PCI-9.2",
+		Name:      "[PCI-DSS] Physical Access Procedures",
+		Status:    "INFO",
+		Evidence:  "MANUAL: Develop procedures to control physical access to facilities with systems that store, process, or transmit cardholder data",
+		Remediation: "Document physical access procedures for your facilities",
+		RemediationDetail: "1. Implement badge/access card system for facility entry\n2. Establish visitor log procedures\n3. Differentiate badges for employees vs visitors\n4. Require escort for visitors in sensitive areas\n5. Document all procedures",
+		Priority: PriorityMedium,
+		ScreenshotGuide: "Document physical access control procedures, visitor logs, and badge system",
+		Timestamp: time.Now(),
+		Frameworks: map[string]string{
+			"PCI-DSS": "Req 9.2, 9.3",
+		},
+	})
+
+	results = append(results, CheckResult{
+		Control:   "PCI-9.4",
+		Name:      "[PCI-DSS] Media Physical Security",
+		Status:    "INFO",
+		Evidence:  "MANUAL: Physically secure all media containing cardholder data (backups, portable devices)",
+		Remediation: "Implement physical controls for backup media and portable devices",
+		RemediationDetail: "1. Store backup media in secure, locked location\n2. Maintain inventory of all media with cardholder data\n3. Review media inventory at least annually\n4. Securely destroy media when no longer needed (Req 9.8)",
+		Priority: PriorityMedium,
+		ScreenshotGuide: "Show backup media inventory, secure storage documentation, and destruction procedures",
+		Timestamp: time.Now(),
+		Frameworks: map[string]string{
+			"PCI-DSS": "Req 9.4, 9.5, 9.8",
+		},
+	})
+
+	results = append(results, CheckResult{
+		Control:   "PCI-9.9",
+		Name:      "[PCI-DSS] Point-of-Interaction Device Protection",
+		Status:    "INFO",
+		Evidence:  "MANUAL: Protect point-of-interaction (POI) devices from tampering and substitution",
+		Remediation: "Implement POI device protection procedures (if applicable)",
+		RemediationDetail: "1. Maintain inventory of POI devices\n2. Inspect devices regularly for tampering\n3. Train personnel to be aware of suspicious behavior\n4. Document inspection procedures and findings",
+		Priority: PriorityMedium,
+		ScreenshotGuide: "Document POI device inventory, inspection schedules, and training records",
+		Timestamp: time.Now(),
+		Frameworks: map[string]string{
+			"PCI-DSS": "Req 9.9, 9.9.1",
+		},
+	})
+
+	return results
+}
+
+// Requirement 12: Information Security Policy
+func (c *PCIDSSChecks) CheckReq12_SecurityPolicy(ctx context.Context) []CheckResult {
+	results := []CheckResult{}
+
+	// Security policy requirements
+	results = append(results, CheckResult{
+		Control:   "PCI-12.1",
+		Name:      "[PCI-DSS] Security Policy Establishment",
+		Status:    "INFO",
+		Evidence:  "MANUAL: PCI-DSS Req 12.1 requires establishing, publishing, maintaining, and disseminating a security policy",
+		Remediation: "Create and maintain comprehensive information security policy",
+		RemediationDetail: "1. Establish security policy addressing PCI-DSS requirements\n2. Review policy at least annually\n3. Update when environment changes\n4. Communicate to all relevant personnel\n5. Document policy review and approval",
+		Priority: PriorityHigh,
+		ScreenshotGuide: "Document current security policy, annual review dates, and communication records",
+		Timestamp: time.Now(),
+		Frameworks: map[string]string{
+			"PCI-DSS": "Req 12.1, 12.1.1",
+		},
+	})
+
+	results = append(results, CheckResult{
+		Control:   "PCI-12.2",
+		Name:      "[PCI-DSS] Risk Assessment Process",
+		Status:    "INFO",
+		Evidence:  "MANUAL: Implement risk assessment process performed at least annually and upon significant changes",
+		Remediation: "Establish annual risk assessment process",
+		RemediationDetail: "1. Perform formal risk assessment at least annually\n2. Identify critical assets and threats\n3. Assess likelihood and impact\n4. Document risk assessment results\n5. Update after significant infrastructure changes",
+		Priority: PriorityHigh,
+		ScreenshotGuide: "Document risk assessments with dates, findings, and mitigation plans",
+		Timestamp: time.Now(),
+		Frameworks: map[string]string{
+			"PCI-DSS": "Req 12.2",
+		},
+	})
+
+	results = append(results, CheckResult{
+		Control:   "PCI-12.3",
+		Name:      "[PCI-DSS] Acceptable Use Policies",
+		Status:    "INFO",
+		Evidence:  "MANUAL: Develop usage policies for critical technologies (remote access, wireless, mobile devices, email, internet)",
+		Remediation: "Create and enforce acceptable use policies",
+		RemediationDetail: "1. Define acceptable use for all critical technologies\n2. Require management approval for use of technologies\n3. Require authentication for use of technology\n4. Maintain list of authorized devices and personnel\n5. Document acceptable use policies",
+		Priority: PriorityMedium,
+		ScreenshotGuide: "Document acceptable use policies, approval records, and technology inventory",
+		Timestamp: time.Now(),
+		Frameworks: map[string]string{
+			"PCI-DSS": "Req 12.3",
+		},
+	})
+
+	results = append(results, CheckResult{
+		Control:   "PCI-12.5",
+		Name:      "[PCI-DSS] Assign Security Responsibilities",
+		Status:    "INFO",
+		Evidence:  "MANUAL: Assign individual or team responsibility for information security management",
+		Remediation: "Document security responsibilities and assignments",
+		RemediationDetail: "1. Formally assign information security responsibilities\n2. Define roles and responsibilities for PCI-DSS compliance\n3. Document organizational structure for security\n4. Ensure adequate resources allocated",
+		Priority: PriorityHigh,
+		ScreenshotGuide: "Document organizational chart showing security responsibilities and role assignments",
+		Timestamp: time.Now(),
+		Frameworks: map[string]string{
+			"PCI-DSS": "Req 12.5, 12.5.1",
+		},
+	})
+
+	results = append(results, CheckResult{
+		Control:   "PCI-12.6",
+		Name:      "[PCI-DSS] Security Awareness Program",
+		Status:    "INFO",
+		Evidence:  "MANUAL: Implement formal security awareness program for all personnel",
+		Remediation: "Establish security awareness and training program",
+		RemediationDetail: "1. Provide security awareness training upon hire and at least annually\n2. Train personnel on their responsibilities for protecting cardholder data\n3. Require personnel acknowledge understanding\n4. Document training completion and acknowledgments",
+		Priority: PriorityHigh,
+		ScreenshotGuide: "Document training program, completion records, and acknowledgment forms",
+		Timestamp: time.Now(),
+		Frameworks: map[string]string{
+			"PCI-DSS": "Req 12.6, 12.6.1, 12.6.2",
+		},
+	})
+
+	results = append(results, CheckResult{
+		Control:   "PCI-12.8",
+		Name:      "[PCI-DSS] Service Provider Management",
+		Status:    "INFO",
+		Evidence:  "MANUAL: Maintain and implement policies for service providers who handle cardholder data",
+		Remediation: "Implement service provider management procedures",
+		RemediationDetail: "1. Maintain list of service providers\n2. Establish written agreement including PCI-DSS responsibilities\n3. Ensure service providers acknowledge responsibility\n4. Monitor service provider PCI-DSS compliance status at least annually",
+		Priority: PriorityHigh,
+		ScreenshotGuide: "Document service provider list, contracts, and annual compliance verification",
+		Timestamp: time.Now(),
+		Frameworks: map[string]string{
+			"PCI-DSS": "Req 12.8, 12.8.1, 12.8.2",
+		},
+	})
+
+	results = append(results, CheckResult{
+		Control:   "PCI-12.10",
+		Name:      "[PCI-DSS] Incident Response Plan",
+		Status:    "INFO",
+		Evidence:  "MANUAL: Implement an incident response plan for security incidents",
+		Remediation: "Create and test incident response plan",
+		RemediationDetail: "1. Create incident response plan\n2. Assign roles and responsibilities\n3. Include specific incident response procedures\n4. Test plan at least annually\n5. Update plan based on test results and industry developments",
+		Priority: PriorityHigh,
+		ScreenshotGuide: "Document incident response plan, test results, and update history",
+		Timestamp: time.Now(),
+		Frameworks: map[string]string{
+			"PCI-DSS": "Req 12.10, 12.10.1",
+		},
+	})
+
 	return results
 }
