@@ -540,6 +540,80 @@ export GOOGLE_CLOUD_PROJECT="your-project-id"
         </div>
     </section>
 
+    <section style="background: #f8f9fa;">
+        <div class="container">
+            <h2>See It In Action</h2>
+            <p style="text-align: center; font-size: 1.2em; margin-bottom: 40px; color: #666;">
+                Real scan outputs and reports from actual customer environments
+            </p>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>What a PASS Looks Like</h3>
+                    <p style="margin-bottom: 15px;">Controls that meet compliance requirements show specific evidence of what's configured correctly.</p>
+                    <div class="code-block" style="font-size: 0.9em; line-height: 1.6; margin-top: 15px;">
+<span style="color: #4ec9b0;">✓ PASS</span> | <span style="color: #dcdcaa;">CC6.6</span> - Authentication Controls
+Root account has MFA enabled
+<span style="color: #608b4e;">→ Meets SOC2 CC6.6, PCI DSS 8.3.1, HIPAA 164.312(a)(2)(i)</span>
+<br>
+<span style="color: #4ec9b0;">✓ PASS</span> | <span style="color: #dcdcaa;">CC6.3</span> - Encryption at Rest
+All 15 S3 buckets have encryption enabled
+<span style="color: #608b4e;">→ Meets SOC2 CC6.3, PCI DSS 3.4, HIPAA 164.312(a)(2)(iv)</span></div>
+                </div>
+
+                <div class="card">
+                    <h3>What a FAIL Looks Like</h3>
+                    <p style="margin-bottom: 15px;">Failed controls show exactly what's wrong, how to fix it, and what evidence you'll need for auditors.</p>
+                    <div class="code-block" style="font-size: 0.9em; line-height: 1.6; margin-top: 15px;">
+<span style="color: #f48771;">✗ FAIL</span> | <span style="color: #dcdcaa;">CC6.1</span> - Access Controls
+<span style="color: #ce9178;">Issue:</span> SSH open to 0.0.0.0/0
+Security Group: sg-0ab56571076bcff37 (port 22)
+<span style="color: #608b4e;">→ Violates PCI DSS 1.2.1</span>
+<br>
+<span style="color: #569cd6;">Fix:</span> aws ec2 revoke-security-group-ingress \
+  --group-id sg-0ab56571076bcff37 \
+  --protocol tcp --port 22 --cidr 0.0.0.0/0
+<br>
+<span style="color: #dcdcaa;">Evidence needed:</span>
+1. Go to EC2 → Security Groups
+2. Screenshot 'Inbound rules' tab
+3. Show NO rules with 0.0.0.0/0 for port 22</div>
+                </div>
+
+                <div class="card">
+                    <h3>Interactive HTML Reports</h3>
+                    <p style="margin-bottom: 15px;">Generate professional compliance reports with scores, failed controls, remediation steps, and direct console links.</p>
+                    <div style="margin-top: 15px;">
+                        <img src="./examples/screenshots/html-report-score.png" alt="HTML Report Score Dashboard" style="width: 100%; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); margin-bottom: 15px;">
+                        <p style="font-size: 0.95em; color: #666; text-align: center;">
+                            View examples:
+                            <a href="./examples/reports/sample-aws-soc2-report.html" style="color: #667eea;" target="_blank">SOC2</a> •
+                            <a href="./examples/reports/sample-azure-cmmc-report.html" style="color: #667eea;" target="_blank">CMMC</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+                        padding: 25px 35px; border-radius: 8px; text-align: center;
+                        margin: 50px auto; max-width: 700px; border: 2px solid #2196f3;
+                        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);">
+                <p style="font-size: 1.2em; color: #1565c0; margin-bottom: 10px; font-weight: 600;">
+                    Want to see more examples?
+                </p>
+                <p style="color: #1976d2; margin-bottom: 20px; line-height: 1.6;">
+                    Browse terminal scan outputs, PDF reports, console screenshots, and more evidence samples.
+                </p>
+                <a href="./examples/" style="display: inline-block; padding: 12px 30px;
+                   background: #2196f3; color: white; text-decoration: none;
+                   border-radius: 6px; font-weight: 600; transition: background 0.3s;
+                   box-shadow: 0 2px 6px rgba(33, 150, 243, 0.3);">
+                    Browse All Examples →
+                </a>
+            </div>
+        </div>
+    </section>
+
     <section>
         <div class="container">
             <h2>Who Should Use This</h2>

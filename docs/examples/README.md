@@ -12,7 +12,7 @@ All examples are generated from actual scans against test environments.
 
 ---
 
-## 📊 Interactive HTML Reports
+## Interactive HTML Reports
 
 Professional, auditor-ready compliance reports with clickable tabs, severity badges, and direct cloud console links.
 
@@ -23,15 +23,15 @@ Professional, auditor-ready compliance reports with clickable tabs, severity bad
 | **CMMC Level 1** | Azure | 17 practices | [View HTML](./reports/sample-azure-cmmc-report.html) |
 
 **Features:**
-- 📈 Visual compliance score dashboard
-- 🔴 Failed controls with remediation commands
-- 🟢 Passed controls with evidence
-- 📝 Manual documentation requirements
-- 🔗 Direct links to AWS/Azure/GCP consoles
+- Visual compliance score dashboard
+- Failed controls with remediation commands
+- Passed controls with evidence
+- Manual documentation requirements
+- Direct links to AWS/Azure/GCP consoles
 
 ---
 
-## 📄 PDF Reports
+## PDF Reports
 
 Print-ready compliance reports for stakeholder distribution and audit submissions.
 
@@ -44,7 +44,7 @@ Print-ready compliance reports for stakeholder distribution and audit submission
 
 ---
 
-## 💻 Terminal Scan Outputs
+## Terminal Scan Outputs
 
 Raw command-line outputs showing how AuditKit displays findings in real-time.
 
@@ -66,7 +66,7 @@ Raw command-line outputs showing how AuditKit displays findings in real-time.
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 Visual examples of AuditKit's output and HTML report features.
 
@@ -79,7 +79,7 @@ Visual examples of AuditKit's output and HTML report features.
 
 ---
 
-## 🚀 Try It Yourself
+## Try It Yourself
 
 ### Install AuditKit (Free - CMMC Level 1, SOC2, PCI-DSS)
 
@@ -101,28 +101,49 @@ chmod +x auditkit-linux-amd64
 ### Upgrade to AuditKit Pro (CMMC Level 2 + Pro Features)
 
 AuditKit Pro includes:
-- ✅ **CMMC Level 2** - All 110 Level 2 practices (110 additional controls)
-- ✅ **Evidence Package Generator** - C3PAO-ready ZIP files
-- ✅ **Exception Management** - Track waivers with compensating controls
-- ✅ **Continuous Monitoring** - Scheduled scans with alerting
-- ✅ **Drift Detection** - Compare dev/staging/prod environments
-- ✅ **Multi-Account Scanning** - AWS Orgs, Azure MGs, GCP Folders
+- **CMMC Level 2** - All 110 Level 2 practices (110 additional controls)
+- **Evidence Package Generator** - C3PAO-ready ZIP files
+- **Exception Management** - Track waivers with compensating controls
+- **Continuous Monitoring** - Scheduled scans with alerting
+- **Drift Detection** - Compare dev/staging/prod environments
+- **Multi-Account Scanning** - AWS Orgs, Azure MGs, GCP Folders
 
-**[Subscribe to AuditKit Pro →](https://auditkit.io/pro)**
+**[Subscribe to AuditKit Pro →](../pro/)**
 
 ---
 
-## 📚 Additional Resources
+## Documentation
 
-- **[Main Documentation](../)** - Installation, usage, and framework guides
-- **[AuditKit Pro Features](../pro/)** - Evidence packages, exceptions, daemon mode
-- **[GitHub Repository](https://github.com/guardian-nexus/auditkit)** - Source code and issues
-- **[CLI Reference](../cli-reference.md)** - Complete command documentation
+### Getting Started
+- **[Getting Started Guide](../getting-started.md)** - Your first scan in 5 minutes
+- **[Installation Guide](../installation.md)** - Complete installation instructions
+- **[CLI Reference](../cli-reference.md)** - All commands and options
 - **[FAQ](../faq.md)** - Common questions and troubleshooting
+- **[Pricing](../pricing.md)** - Free vs Pro comparison
+
+### Framework Guides
+- **[CMMC](../frameworks/cmmc.md)** - Defense contractor compliance (Level 1 free, Level 2 Pro)
+- **[SOC2](../frameworks/soc2.md)** - Trust service criteria
+- **[PCI-DSS](../frameworks/pci-dss.md)** - Payment card security
+- **[HIPAA](../frameworks/hipaa.md)** - Healthcare data protection
+- **[NIST 800-53](../frameworks/nist-800-53.md)** - Federal security controls
+- **[ISO 27001](../frameworks/iso27001.md)** - Information security management
+- **[FedRAMP](../frameworks/fedramp.md)** - Federal cloud security
+- **[CIS Benchmarks](../frameworks/cis-benchmarks.md)** - Industry best practices
+
+### Cloud Provider Setup
+- **[AWS Setup](../setup/aws.md)** - Configure AWS credentials and permissions
+- **[Azure Setup](../setup/azure.md)** - Configure Azure authentication
+- **[GCP Setup](../setup/gcp.md)** - Configure GCP service accounts
+- **[M365 Setup](../setup/m365.md)** - Configure Microsoft 365 access
+
+### Advanced Documentation
+- **[GitHub Repository](https://github.com/guardian-nexus/auditkit)** - Source code, issues, and contributions
+- **[AuditKit Pro Features](../pro/)** - Evidence packages, exceptions, daemon mode, drift detection
 
 ---
 
-## 🔒 Privacy Notice
+## Privacy Notice
 
 All examples in this directory are generated from synthetic test environments. No real production data, account IDs, or sensitive information is included. Where account IDs appear (e.g., `1234567890`), they are dummy values for demonstration purposes.
 
