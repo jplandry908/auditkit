@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting Started - AuditKit</title>
+    <meta name="description" content="Get your first compliance scan running in 5 minutes with AuditKit. Complete guide for AWS, Azure, and GCP.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        nav {
+            background: #2c3e50;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        nav a:hover {
+            opacity: 1;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h2 {
+            font-size: 2em;
+            margin: 50px 0 20px 0;
+            color: #2c3e50;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+            color: #34495e;
+        }
+
+        h4 {
+            font-size: 1.2em;
+            margin: 25px 0 10px 0;
+            color: #34495e;
+        }
+
+        p {
+            margin: 15px 0;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin: 8px 0;
+            line-height: 1.8;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ff9800;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .note strong {
+            color: #e65100;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card h3 {
+            margin-top: 0;
+        }
+
+        .card-content {
+            flex-grow: 1;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .provider-section {
+            background: #f8f9fa;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .provider-section h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+            text-decoration: none;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        footer a {
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Getting Started with AuditKit</h1>
+        <p>Get your first compliance scan running in 5 minutes</p>
+    </div>
+
+    <nav>
+        <div class="container">
+            <a href="./">Home</a>
+            <a href="./getting-started.html">Getting Started</a>
+            <a href="./installation.html">Installation</a>
+            <a href="./cli-reference.html">CLI Reference</a>
+            <a href="./faq.html">FAQ</a>
+            <a href="./examples/">Examples</a>
+            <a href="./pro/">Pro</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Prerequisites</h2>
+        <ul>
+            <li>Cloud account access (AWS, Azure, or GCP)</li>
+            <li>Cloud CLI installed and configured</li>
+            <li>5 minutes</li>
+        </ul>
+
+        <h2>Installation</h2>
+
+        <h3>Option 1: Download Binary (Fastest)</h3>
+        <ol>
+            <li>Go to <a href="https://github.com/guardian-nexus/auditkit/releases">Releases</a></li>
+            <li>Download binary for your OS (Linux, macOS, Windows)</li>
+            <li>Make it executable: <code>chmod +x auditkit</code></li>
+            <li>Run: <code>./auditkit scan</code></li>
+        </ol>
+
+        <h3>Option 2: Build from Source</h3>
+        <pre><code>git clone https://github.com/guardian-nexus/auditkit
+cd auditkit/scanner
+go build ./cmd/auditkit
+./auditkit scan</code></pre>
+
+        <h2>Your First Scan</h2>
+
+        <div class="provider-section">
+            <h3>AWS</h3>
+            <pre><code># 1. Configure credentials
+aws configure
+
+# 2. Run scan
+./auditkit scan -provider aws -framework soc2
+
+# 3. Generate PDF
+./auditkit scan -provider aws -framework soc2 -format pdf -output report.pdf</code></pre>
+            <p><a href="https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/aws.md">AWS Setup Guide →</a></p>
+        </div>
+
+        <div class="provider-section">
+            <h3>Azure</h3>
+            <pre><code># 1. Login to Azure
+az login
+export AZURE_SUBSCRIPTION_ID="your-subscription-id"
+
+# 2. Run scan
+./auditkit scan -provider azure -framework soc2
+
+# 3. Generate PDF
+./auditkit scan -provider azure -framework soc2 -format pdf -output report.pdf</code></pre>
+            <p><a href="https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/azure.md">Azure Setup Guide →</a></p>
+        </div>
+
+        <div class="provider-section">
+            <h3>GCP</h3>
+            <pre><code># 1. Login to GCP
+gcloud auth application-default login
+export GOOGLE_CLOUD_PROJECT=your-project-id
+
+# 2. Run scan
+./auditkit scan -provider gcp -framework soc2
+
+# 3. Generate PDF
+./auditkit scan -provider gcp -framework soc2 -format pdf -output report.pdf</code></pre>
+            <p><a href="https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/gcp.md">GCP Setup Guide →</a></p>
+        </div>
+
+        <h2>Understanding Your Results</h2>
+
+        <h3>Terminal Output</h3>
+        <pre><code>AuditKit SOC2 Compliance Scan Results
+=====================================
+AWS Account: 123456789012
+Scan Time: 2025-10-19 14:30:00
+
+Compliance Score: 72.5%
+Controls Passed: 46/64
+
+Critical Issues: 3 (FIX IMMEDIATELY)
+High Priority: 6
+Medium Priority: 4
+
+CRITICAL - Fix These NOW:
+[FAIL] CC6.6 - User MFA Enforcement
+[FAIL] CC6.2 - S3 Bucket Public Access
+[FAIL] CC6.1 - IAM Key Rotation</code></pre>
+
+        <p><strong>What this means:</strong></p>
+        <ul>
+            <li><strong>Compliance Score:</strong> Percentage of passing controls</li>
+            <li><strong>Critical Issues:</strong> Security gaps requiring immediate attention</li>
+            <li><strong>Each failed control shows:</strong> What's wrong and how to fix it</li>
+        </ul>
+
+        <h3>Report Formats</h3>
+        <p><strong>PDF Report</strong> - For auditors and management</p>
+        <pre><code>./auditkit scan -format pdf -output report.pdf</code></pre>
+
+        <p><strong>HTML Report</strong> - Interactive, great for teams</p>
+        <pre><code>./auditkit scan -format html -output report.html</code></pre>
+
+        <p><strong>JSON Report</strong> - For automation/CI/CD</p>
+        <pre><code>./auditkit scan -format json -output results.json</code></pre>
+
+        <h2>Next Steps</h2>
+
+        <h3>1. Fix Critical Issues</h3>
+        <p>AuditKit shows exact commands to fix each issue:</p>
+        <pre><code># Generate fix script
+./auditkit fix -output fixes.sh
+
+# Review the script
+cat fixes.sh
+
+# Run fixes (review first!)
+bash fixes.sh</code></pre>
+
+        <h3>2. Track Your Progress</h3>
+        <pre><code># Show improvement over time
+./auditkit progress
+
+# Compare last two scans
+./auditkit compare</code></pre>
+
+        <h3>3. Scan Other Frameworks</h3>
+        <pre><code># PCI-DSS
+./auditkit scan -framework pci
+
+# CMMC Level 1
+./auditkit scan -framework cmmc
+
+# NIST 800-53
+./auditkit scan -framework 800-53
+
+# All frameworks
+./auditkit scan -framework all</code></pre>
+
+        <h2>Common Use Cases</h2>
+
+        <div class="card">
+            <div class="card-content">
+                <h3>For Startups: SOC2 Preparation</h3>
+                <p><strong>Goal:</strong> Pass SOC2 Type II audit without hiring consultants</p>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>Run initial scan: <code>./auditkit scan -framework soc2</code></li>
+                    <li>Fix critical issues (usually takes 1-2 days)</li>
+                    <li>Re-scan weekly to track progress</li>
+                    <li>Generate final report for auditor</li>
+                    <li>Collect evidence using evidence tracker</li>
+                </ol>
+                <p><strong>Timeline:</strong> Most startups fix 80%+ of issues in 2-4 weeks</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h3>For DoD Contractors: CMMC Compliance</h3>
+                <p><strong>Goal:</strong> Self-assess CMMC Level 1 before C3PAO assessment</p>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>Run CMMC scan: <code>./auditkit scan -framework cmmc</code></li>
+                    <li>Fix automated controls (AC.1.001, AC.1.002, etc.)</li>
+                    <li>Document manual controls (physical security, training)</li>
+                    <li>Generate assessment report</li>
+                    <li>Schedule C3PAO review with confidence</li>
+                </ol>
+            </div>
+            <div class="note">
+                <strong>Note:</strong> Need CMMC Level 2 (110 practices)? <a href="./pro/">Try Pro free for 14 days →</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h3>For Multi-Cloud: Unified Compliance</h3>
+                <p><strong>Goal:</strong> Single compliance view across AWS + Azure + GCP</p>
+                <pre><code># Scan all providers
+./auditkit scan -provider aws -framework soc2 -output aws.json
+./auditkit scan -provider azure -framework soc2 -output azure.json
+./auditkit scan -provider gcp -framework soc2 -output gcp.json</code></pre>
+            </div>
+        </div>
+
+        <h2>Troubleshooting</h2>
+
+        <h3>"Error: AWS credentials not configured"</h3>
+        <p><strong>Solution:</strong></p>
+        <pre><code>aws configure
+# Enter your AWS Access Key ID and Secret Access Key</code></pre>
+        <p><a href="https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/aws.md">AWS Setup Guide →</a></p>
+
+        <h3>"Error: Azure subscription not found"</h3>
+        <p><strong>Solution:</strong></p>
+        <pre><code>az login
+az account list  # Find your subscription ID
+export AZURE_SUBSCRIPTION_ID="your-sub-id"</code></pre>
+        <p><a href="https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/azure.md">Azure Setup Guide →</a></p>
+
+        <h3>"Error: GCP project not found"</h3>
+        <p><strong>Solution:</strong></p>
+        <pre><code>gcloud auth application-default login
+gcloud projects list  # Find your project ID
+export GOOGLE_CLOUD_PROJECT=your-project-id</code></pre>
+        <p><a href="https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/gcp.md">GCP Setup Guide →</a></p>
+
+        <h3>"Compliance score is very low (< 30%)"</h3>
+        <p><strong>Common cause:</strong> Security services not enabled</p>
+        <p><strong>Solution:</strong> Enable these first:</p>
+        <ul>
+            <li><strong>AWS:</strong> GuardDuty, Config, CloudTrail, Security Hub</li>
+            <li><strong>Azure:</strong> Defender for Cloud, Azure Policy, Activity Logs</li>
+            <li><strong>GCP:</strong> Security Command Center, Cloud Logging, Cloud KMS</li>
+        </ul>
+        <p>Then re-scan.</p>
+
+        <h2>What's Next?</h2>
+        <div class="grid">
+            <div class="card">
+                <div class="card-content">
+                    <h4>CLI Reference</h4>
+                    <p>Complete command documentation with all flags and options</p>
+                </div>
+                <a href="./cli-reference.html" class="btn">Read Docs →</a>
+            </div>
+            <div class="card">
+                <div class="card-content">
+                    <h4>Cloud Setup</h4>
+                    <p>Detailed authentication guides for AWS, Azure, and GCP</p>
+                </div>
+                <a href="https://github.com/guardian-nexus/auditkit/tree/main/docs/setup" class="btn">Read Docs →</a>
+            </div>
+            <div class="card">
+                <div class="card-content">
+                    <h4>FAQ</h4>
+                    <p>Answers to common questions and troubleshooting tips</p>
+                </div>
+                <a href="./faq.html" class="btn">Read FAQ →</a>
+            </div>
+        </div>
+
+        <div class="note" style="text-align: center; margin-top: 50px;">
+            <strong>Ready for CMMC Level 2 or advanced GCP features?</strong><br>
+            <a href="./pro/" class="btn" style="margin-top: 15px;">Try Pro Free for 14 Days →</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>
+            <a href="./">Home</a> ·
+            <a href="./examples/">Examples</a> ·
+            <a href="https://github.com/guardian-nexus/auditkit">GitHub</a> ·
+            <a href="./pro/">AuditKit Pro</a>
+        </p>
+        <p style="margin-top: 15px; opacity: 0.8;">
+            AuditKit v0.7.0 • November 2025
+        </p>
+    </footer>
+</body>
+</html>

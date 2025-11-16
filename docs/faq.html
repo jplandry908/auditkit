@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - AuditKit</title>
+    <meta name="description" content="Frequently asked questions about AuditKit compliance scanning.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        nav {
+            background: #2c3e50;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        nav a:hover {
+            opacity: 1;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h2 {
+            font-size: 2em;
+            margin: 50px 0 20px 0;
+            color: #2c3e50;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+            color: #34495e;
+        }
+
+        p {
+            margin: 15px 0;
+            line-height: 1.8;
+        }
+
+        ul {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin: 8px 0;
+            line-height: 1.8;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ff9800;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .note strong {
+            color: #e65100;
+        }
+
+        .faq-item {
+            background: #f8f9fa;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .faq-item h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+            text-decoration: none;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        footer a {
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Frequently Asked Questions</h1>
+        <p>Common questions about AuditKit</p>
+    </div>
+
+    <nav>
+        <div class="container">
+            <a href="./">Home</a>
+            <a href="./getting-started.html">Getting Started</a>
+            <a href="./installation.html">Installation</a>
+            <a href="./cli-reference.html">CLI Reference</a>
+            <a href="./faq.html">FAQ</a>
+            <a href="./examples/">Examples</a>
+            <a href="./pro/">Pro</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>General Questions</h2>
+
+        <div class="faq-item">
+            <h3>Does this replace my auditor?</h3>
+            <p><strong>No.</strong> AuditKit automates the technical controls portion of compliance audits, but you still need:</p>
+            <ul>
+                <li><strong>SOC2:</strong> CPA firm for certification ($15,000 - $30,000)</li>
+                <li><strong>CMMC:</strong> C3PAO for assessment ($25,000 - $150,000)</li>
+                <li><strong>PCI-DSS:</strong> QSA for certification ($15,000 - $50,000)</li>
+            </ul>
+            <p><strong>What AuditKit replaces:</strong> Technical consultant fees ($30,000 - $100,000) for infrastructure scanning and remediation</p>
+            <p><strong>What you still need:</strong> Certified auditor/assessor for final certification</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>What's the difference between Free and Pro?</h3>
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th>Free</th>
+                    <th>Pro ($297/mo)</th>
+                </tr>
+                <tr>
+                    <td>AWS/Azure/GCP/M365</td>
+                    <td>Full support</td>
+                    <td>Full support</td>
+                </tr>
+                <tr>
+                    <td>SOC2, PCI-DSS, NIST 800-53</td>
+                    <td>All frameworks</td>
+                    <td>All frameworks</td>
+                </tr>
+                <tr>
+                    <td>CMMC Level 1</td>
+                    <td>17 practices</td>
+                    <td>17 practices</td>
+                </tr>
+                <tr>
+                    <td>CMMC Level 2</td>
+                    <td>-</td>
+                    <td>110 practices (CUI)</td>
+                </tr>
+                <tr>
+                    <td>Multi-Account Scanning</td>
+                    <td>One at a time</td>
+                    <td>AWS Orgs, Azure MG, GCP Folders</td>
+                </tr>
+                <tr>
+                    <td>Evidence Package Generator</td>
+                    <td>-</td>
+                    <td>C3PAO-ready ZIP files</td>
+                </tr>
+                <tr>
+                    <td>Support</td>
+                    <td>Community</td>
+                    <td>Priority + 14-day trial</td>
+                </tr>
+            </table>
+            <p><a href="./pro/" class="btn">Try Pro Free for 14 Days →</a></p>
+        </div>
+
+        <div class="faq-item">
+            <h3>How much does it cost?</h3>
+            <p><strong>Free version:</strong> $0 forever (open source)<br>
+            <strong>Pro version:</strong> $297/month with 14-day free trial</p>
+            <p>Compare to traditional costs:</p>
+            <ul>
+                <li>SOC2 consultant: $50,000+</li>
+                <li>CMMC C3PAO assessment: $25,000+</li>
+                <li>Compliance platforms (Vanta/Drata): $5,000+/year</li>
+            </ul>
+        </div>
+
+        <h2>CMMC Questions</h2>
+
+        <div class="faq-item">
+            <h3>What's the difference between CMMC Level 1 and Level 2?</h3>
+            <p><strong>CMMC Level 1 (17 practices) - FREE</strong></p>
+            <ul>
+                <li>Protects Federal Contract Information (FCI)</li>
+                <li>Basic cybersecurity hygiene</li>
+                <li>Required for all DoD contractors</li>
+                <li>Self-assessment allowed</li>
+            </ul>
+            <p><strong>CMMC Level 2 (110 practices) - PRO</strong></p>
+            <ul>
+                <li>Protects Controlled Unclassified Information (CUI)</li>
+                <li>Based on NIST SP 800-171 Rev 2</li>
+                <li>Required for contractors handling CUI</li>
+                <li>Requires C3PAO assessment</li>
+            </ul>
+            <div class="note">
+                <strong>If your DoD contract mentions CUI, you need Level 2.</strong>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <h3>When is the CMMC deadline?</h3>
+            <p><strong>November 10, 2025</strong> - CMMC requirements start appearing in DoD contracts</p>
+            <p>DoD contractors must be compliant when specified in contract solicitations. Many contracts now include CMMC Level 1 or Level 2 requirements.</p>
+            <p><a href="./getting-started.html">Start your assessment now →</a></p>
+        </div>
+
+        <div class="faq-item">
+            <h3>Can AuditKit prepare me for C3PAO assessment?</h3>
+            <p><strong>Yes, for technical controls.</strong> AuditKit automates:</p>
+            <ul>
+                <li>Technical security configuration checks</li>
+                <li>Evidence collection guides</li>
+                <li>Remediation commands</li>
+                <li>Assessment reports</li>
+            </ul>
+            <p>You still need to handle:</p>
+            <ul>
+                <li>Organizational policies</li>
+                <li>Security awareness training</li>
+                <li>Incident response procedures</li>
+                <li>Physical security measures</li>
+            </ul>
+            <p><strong>Timeline:</strong> Most contractors fix 80%+ of technical issues in 2-4 weeks with AuditKit.</p>
+        </div>
+
+        <h2>Technical Questions</h2>
+
+        <div class="faq-item">
+            <h3>Which cloud providers are supported?</h3>
+            <p><strong>Fully supported:</strong></p>
+            <ul>
+                <li>AWS (Amazon Web Services)</li>
+                <li>Azure (Microsoft Azure)</li>
+                <li>GCP (Google Cloud Platform)</li>
+                <li>M365 (Microsoft 365) via ScubaGear integration</li>
+            </ul>
+            <p><strong>Coverage:</strong></p>
+            <ul>
+                <li>AWS: 64+ SOC2 controls, 30+ PCI-DSS, 17 CMMC L1, 110 CMMC L2 (Pro)</li>
+                <li>Azure: 64+ SOC2 controls, 30+ PCI-DSS, 17 CMMC L1, 110 CMMC L2 (Pro)</li>
+                <li>GCP: 170+ core checks (Free), +32 advanced checks (Pro)</li>
+                <li>M365: 29+ Entra ID rules via ScubaGear</li>
+            </ul>
+        </div>
+
+        <div class="faq-item">
+            <h3>What frameworks are supported?</h3>
+            <table>
+                <tr>
+                    <th>Framework</th>
+                    <th>Status</th>
+                    <th>Coverage</th>
+                </tr>
+                <tr>
+                    <td>SOC2 Type II</td>
+                    <td>Production</td>
+                    <td>64 controls</td>
+                </tr>
+                <tr>
+                    <td>PCI-DSS v4.0</td>
+                    <td>Production</td>
+                    <td>30+ controls</td>
+                </tr>
+                <tr>
+                    <td>CMMC Level 1</td>
+                    <td>Production</td>
+                    <td>17 practices</td>
+                </tr>
+                <tr>
+                    <td>CMMC Level 2</td>
+                    <td>Pro only</td>
+                    <td>110 practices</td>
+                </tr>
+                <tr>
+                    <td>NIST 800-53 Rev 5</td>
+                    <td>Production</td>
+                    <td>~150 controls</td>
+                </tr>
+                <tr>
+                    <td>HIPAA</td>
+                    <td>Experimental</td>
+                    <td>~10 controls</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="faq-item">
+            <h3>Does AuditKit make any changes to my infrastructure?</h3>
+            <p><strong>No.</strong> AuditKit is read-only. It only:</p>
+            <ul>
+                <li>Reads configuration</li>
+                <li>Checks security settings</li>
+                <li>Generates reports</li>
+            </ul>
+            <p>It never modifies your infrastructure.</p>
+            <p>The <code>auditkit fix</code> command generates a script for you to review and run manually.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>What permissions does AuditKit need?</h3>
+            <ul>
+                <li><strong>AWS:</strong> <code>ReadOnlyAccess</code> managed policy</li>
+                <li><strong>Azure:</strong> <code>Reader</code> role</li>
+                <li><strong>GCP:</strong> <code>roles/viewer</code> role</li>
+            </ul>
+            <p>All read-only, no write permissions required.</p>
+            <p><a href="https://github.com/guardian-nexus/auditkit/tree/main/docs/setup">Setup guides →</a></p>
+        </div>
+
+        <h2>Common Issues</h2>
+
+        <div class="faq-item">
+            <h3>Why is my compliance score low?</h3>
+            <p><strong>Common reasons:</strong></p>
+            <p><strong>1. Security services not enabled</strong></p>
+            <p>Enable these first:</p>
+            <ul>
+                <li><strong>AWS:</strong> GuardDuty, Config, CloudTrail, Security Hub</li>
+                <li><strong>Azure:</strong> Defender for Cloud, Azure Policy, Activity Logs</li>
+                <li><strong>GCP:</strong> Security Command Center, Cloud Logging, Cloud KMS</li>
+            </ul>
+            <p><strong>2. Basic security controls missing</strong></p>
+            <ul>
+                <li>MFA not enforced</li>
+                <li>CloudTrail/logging not configured</li>
+                <li>Encryption not enabled</li>
+                <li>Public access on storage</li>
+            </ul>
+            <p><strong>Fix critical issues first, then re-scan.</strong></p>
+        </div>
+
+        <div class="faq-item">
+            <h3>"Error: AWS credentials not configured"</h3>
+            <p><strong>Solution:</strong></p>
+            <pre><code>aws configure
+# Enter your AWS Access Key ID and Secret Access Key</code></pre>
+            <p><a href="https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/aws.md">AWS setup guide →</a></p>
+        </div>
+
+        <h2>Getting More Help</h2>
+
+        <div class="faq-item">
+            <h3>Where can I get support?</h3>
+            <p><strong>Documentation:</strong></p>
+            <ul>
+                <li><a href="./getting-started.html">Getting Started</a></li>
+                <li><a href="./installation.html">Installation Guide</a></li>
+                <li><a href="./cli-reference.html">CLI Reference</a></li>
+                <li><a href="https://github.com/guardian-nexus/auditkit/tree/main/docs/setup">Cloud Setup Guides</a></li>
+            </ul>
+            <p><strong>Community Support:</strong></p>
+            <ul>
+                <li><a href="https://github.com/guardian-nexus/auditkit/issues">GitHub Issues</a></li>
+                <li><a href="https://github.com/guardian-nexus/auditkit/discussions">GitHub Discussions</a></li>
+            </ul>
+            <p><strong>Pro Support:</strong></p>
+            <ul>
+                <li>Priority email support: <a href="mailto:hello@auditkit.io">hello@auditkit.io</a></li>
+                <li><a href="./pro/">Try Pro free for 14 days →</a></li>
+            </ul>
+        </div>
+
+        <div class="note" style="text-align: center; margin-top: 50px;">
+            <strong>Need CMMC Level 2 or advanced GCP features?</strong><br>
+            <a href="./pro/" class="btn" style="margin-top: 15px;">Try Pro Free for 14 Days →</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>
+            <a href="./">Home</a> ·
+            <a href="./examples/">Examples</a> ·
+            <a href="https://github.com/guardian-nexus/auditkit">GitHub</a> ·
+            <a href="./pro/">AuditKit Pro</a>
+        </p>
+        <p style="margin-top: 15px; opacity: 0.8;">
+            AuditKit v0.7.0 • November 2025
+        </p>
+    </footer>
+</body>
+</html>

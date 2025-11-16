@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation Guide - AuditKit</title>
+    <meta name="description" content="Complete installation instructions for AuditKit on Linux, macOS, and Windows.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        nav {
+            background: #2c3e50;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        nav a:hover {
+            opacity: 1;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h2 {
+            font-size: 2em;
+            margin: 50px 0 20px 0;
+            color: #2c3e50;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+            color: #34495e;
+        }
+
+        h4 {
+            font-size: 1.2em;
+            margin: 25px 0 10px 0;
+            color: #34495e;
+        }
+
+        p {
+            margin: 15px 0;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin: 8px 0;
+            line-height: 1.8;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ff9800;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .note strong {
+            color: #e65100;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card h3 {
+            margin-top: 0;
+        }
+
+        .card-content {
+            flex-grow: 1;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .provider-section {
+            background: #f8f9fa;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .provider-section h3, .provider-section h4 {
+            margin-top: 0;
+            color: #667eea;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+            text-decoration: none;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        footer a {
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Installation Guide</h1>
+        <p>Complete installation instructions for AuditKit</p>
+    </div>
+
+    <nav>
+        <div class="container">
+            <a href="./">Home</a>
+            <a href="./getting-started.html">Getting Started</a>
+            <a href="./installation.html">Installation</a>
+            <a href="./cli-reference.html">CLI Reference</a>
+            <a href="./faq.html">FAQ</a>
+            <a href="./examples/">Examples</a>
+            <a href="./pro/">Pro</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>System Requirements</h2>
+
+        <p><strong>Operating Systems:</strong></p>
+        <ul>
+            <li>Linux (any modern distribution)</li>
+            <li>macOS (10.15 Catalina or newer)</li>
+            <li>Windows (10/11 or Server 2016+)</li>
+        </ul>
+
+        <p><strong>Requirements:</strong></p>
+        <ul>
+            <li>Go 1.19 or newer (for building from source)</li>
+            <li>Cloud CLI tools (AWS CLI, Azure CLI, or gcloud CLI)</li>
+            <li>Read-only cloud credentials</li>
+            <li>Internet connection (for downloading and scanning)</li>
+        </ul>
+
+        <p><strong>Disk Space:</strong></p>
+        <ul>
+            <li>Binary: ~15 MB</li>
+            <li>Source code: ~50 MB</li>
+            <li>Scan results: ~1-10 MB per scan</li>
+        </ul>
+
+        <h2>Installation Methods</h2>
+
+        <h3>Option 1: Download Pre-Built Binary (Recommended)</h3>
+        <p>Fastest and easiest method</p>
+
+        <div class="provider-section">
+            <h4>Linux</h4>
+            <pre><code># Download latest release
+wget https://github.com/guardian-nexus/auditkit/releases/download/v0.7.0/auditkit-linux-amd64
+
+# Make executable
+chmod +x auditkit-linux-amd64
+
+# Move to PATH
+sudo mv auditkit-linux-amd64 /usr/local/bin/auditkit
+
+# Verify installation
+auditkit version</code></pre>
+        </div>
+
+        <div class="provider-section">
+            <h4>macOS</h4>
+            <pre><code># Download latest release
+curl -L https://github.com/guardian-nexus/auditkit/releases/download/v0.7.0/auditkit-darwin-amd64 -o auditkit
+
+# Make executable
+chmod +x auditkit
+
+# Move to PATH
+sudo mv auditkit /usr/local/bin/
+
+# If you get security warning on first run:
+# System Preferences > Security & Privacy > Allow
+
+# Verify installation
+auditkit version</code></pre>
+        </div>
+
+        <div class="provider-section">
+            <h4>Windows</h4>
+            <pre><code># Download from GitHub Releases page
+# https://github.com/guardian-nexus/auditkit/releases/download/v0.7.0/auditkit-windows-amd64.exe
+
+# Rename to auditkit.exe
+Rename-Item auditkit-windows-amd64.exe auditkit.exe
+
+# Add to PATH or run from current directory
+.\auditkit.exe version</code></pre>
+        </div>
+
+        <h3>Option 2: Build from Source</h3>
+        <p>For developers or custom builds</p>
+
+        <h4>Prerequisites</h4>
+        <pre><code># Install Go 1.19 or newer
+# Download from: https://go.dev/dl/
+
+# Verify Go installation
+go version  # Should show 1.19 or higher</code></pre>
+
+        <h4>Clone and Build</h4>
+        <pre><code># Clone repository
+git clone https://github.com/guardian-nexus/auditkit
+cd auditkit/scanner
+
+# Build binary
+go build ./cmd/auditkit
+
+# Binary is now at: ./auditkit
+
+# Optional: Move to PATH
+sudo mv auditkit /usr/local/bin/
+
+# Verify installation
+auditkit version</code></pre>
+
+        <h4>Build for Different Platforms</h4>
+        <pre><code># Linux (amd64)
+GOOS=linux GOARCH=amd64 go build -o auditkit-linux ./cmd/auditkit
+
+# macOS (amd64)
+GOOS=darwin GOARCH=amd64 go build -o auditkit-macos ./cmd/auditkit
+
+# macOS (arm64 - M1/M2)
+GOOS=darwin GOARCH=arm64 go build -o auditkit-macos-arm64 ./cmd/auditkit
+
+# Windows (amd64)
+GOOS=windows GOARCH=amd64 go build -o auditkit.exe ./cmd/auditkit</code></pre>
+
+        <h3>Option 3: Go Install</h3>
+        <p>For Go users</p>
+        <pre><code># Install directly from GitHub
+go install github.com/guardian-nexus/auditkit/scanner/cmd/auditkit@latest
+
+# Binary installed to: $GOPATH/bin/auditkit
+
+# Add GOPATH/bin to PATH if needed
+export PATH=$PATH:$(go env GOPATH)/bin
+
+# Verify installation
+auditkit version</code></pre>
+
+        <h2>Installing Cloud CLI Tools</h2>
+        <p>AuditKit requires cloud CLI tools for authentication.</p>
+
+        <div class="provider-section">
+            <h4>AWS CLI</h4>
+            <p><strong>Linux/macOS:</strong></p>
+            <pre><code># macOS
+brew install awscli
+
+# Ubuntu/Debian
+sudo apt-get install awscli
+
+# Or using pip
+pip3 install awscli
+
+# Verify installation
+aws --version</code></pre>
+
+            <p><strong>Windows:</strong></p>
+            <pre><code># Download installer from:
+# https://aws.amazon.com/cli/
+
+# Or using Chocolatey
+choco install awscli
+
+# Verify installation
+aws --version</code></pre>
+            <p><a href="https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/aws.md">AWS Setup Guide →</a></p>
+        </div>
+
+        <div class="provider-section">
+            <h4>Azure CLI</h4>
+            <p><strong>Linux/macOS:</strong></p>
+            <pre><code># macOS
+brew install azure-cli
+
+# Ubuntu/Debian
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+# Verify installation
+az --version</code></pre>
+
+            <p><strong>Windows:</strong></p>
+            <pre><code># Download installer from:
+# https://docs.microsoft.com/cli/azure/install-azure-cli-windows
+
+# Or using Chocolatey
+choco install azure-cli
+
+# Verify installation
+az --version</code></pre>
+            <p><a href="https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/azure.md">Azure Setup Guide →</a></p>
+        </div>
+
+        <div class="provider-section">
+            <h4>Google Cloud SDK</h4>
+            <p><strong>Linux/macOS:</strong></p>
+            <pre><code># macOS
+brew install google-cloud-sdk
+
+# Linux - using snap
+sudo snap install google-cloud-cli --classic
+
+# Verify installation
+gcloud --version</code></pre>
+
+            <p><strong>Windows:</strong></p>
+            <pre><code># Download installer from:
+# https://cloud.google.com/sdk/docs/install
+
+# Or using Chocolatey
+choco install gcloudsdk
+
+# Verify installation
+gcloud --version</code></pre>
+            <p><a href="https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/gcp.md">GCP Setup Guide →</a></p>
+        </div>
+
+        <h2>Verifying Installation</h2>
+
+        <h3>Check AuditKit Version</h3>
+        <pre><code>auditkit version</code></pre>
+
+        <p><strong>Expected output:</strong></p>
+        <pre><code>AuditKit v0.7.0
+Built: 2025-10-19</code></pre>
+
+        <h3>Check Cloud CLI Tools</h3>
+        <pre><code># AWS
+aws --version
+
+# Azure
+az --version
+
+# GCP
+gcloud --version</code></pre>
+
+        <h3>Run Test Scan</h3>
+        <pre><code># Test AWS (requires configured credentials)
+auditkit scan -provider aws -framework soc2
+
+# Test Azure (requires login)
+auditkit scan -provider azure -framework soc2
+
+# Test GCP (requires auth)
+auditkit scan -provider gcp -framework soc2</code></pre>
+
+        <h2>Configuration</h2>
+
+        <h3>Setting Up Cloud Credentials</h3>
+        <p><strong>AWS:</strong></p>
+        <pre><code>aws configure
+# Enter: Access Key ID, Secret Access Key, Region</code></pre>
+
+        <p><strong>Azure:</strong></p>
+        <pre><code>az login
+export AZURE_SUBSCRIPTION_ID="your-subscription-id"</code></pre>
+
+        <p><strong>GCP:</strong></p>
+        <pre><code>gcloud auth application-default login
+export GOOGLE_CLOUD_PROJECT=your-project-id</code></pre>
+
+        <p><a href="https://github.com/guardian-nexus/auditkit/tree/main/docs/setup">Detailed setup guides →</a></p>
+
+        <h2>Troubleshooting Installation</h2>
+
+        <h3>"Command not found: auditkit"</h3>
+        <p><strong>Cause:</strong> Binary not in PATH</p>
+        <pre><code># Find where binary is located
+which auditkit
+
+# If not found, add to PATH
+export PATH=$PATH:/path/to/auditkit/directory
+
+# Or move to standard location
+sudo mv auditkit /usr/local/bin/</code></pre>
+
+        <h3>"Permission denied" when running auditkit</h3>
+        <p><strong>Cause:</strong> Binary not executable</p>
+        <pre><code>chmod +x auditkit</code></pre>
+
+        <h3>macOS "cannot be opened because the developer cannot be verified"</h3>
+        <p><strong>Cause:</strong> macOS Gatekeeper security</p>
+        <pre><code># Remove quarantine attribute
+xattr -d com.apple.quarantine auditkit
+
+# Or: System Preferences > Security & Privacy > Allow</code></pre>
+
+        <h3>Build errors with Go</h3>
+        <p><strong>Cause:</strong> Go version too old or dependencies missing</p>
+        <pre><code># Update Go to 1.19 or newer
+go version
+
+# Clean build cache
+go clean -cache -modcache
+
+# Rebuild
+go build ./cmd/auditkit</code></pre>
+
+        <h2>Pro Version Installation</h2>
+        <p>For AuditKit Pro customers:</p>
+
+        <ol>
+            <li><a href="./pro/">Sign up for trial →</a></li>
+            <li>Receive license key via email</li>
+            <li>Download Pro binary from customer portal</li>
+            <li>Activate with license key</li>
+        </ol>
+
+        <pre><code># Install Pro binary
+chmod +x auditkit-pro
+sudo mv auditkit-pro /usr/local/bin/auditkit-pro
+
+# Activate license
+auditkit-pro activate --license-key YOUR-LICENSE-KEY
+
+# Verify Pro features enabled
+auditkit-pro version  # Shows "Pro" edition
+
+# Run Pro scans
+auditkit-pro scan -provider aws -framework cmmc-l2</code></pre>
+
+        <div class="note">
+            <strong>Note:</strong> Pro version uses <code>auditkit-pro</code> command, not <code>auditkit</code>
+        </div>
+
+        <p><a href="./pricing.html">Pro feature details →</a></p>
+
+        <h2>Next Steps</h2>
+        <div class="grid">
+            <div class="card">
+                <div class="card-content">
+                    <h4>Run Your First Scan</h4>
+                    <p>Get your first compliance scan running in 5 minutes</p>
+                </div>
+                <a href="./getting-started.html" class="btn">Get Started →</a>
+            </div>
+            <div class="card">
+                <div class="card-content">
+                    <h4>Setup Cloud Credentials</h4>
+                    <p>Detailed authentication guides for AWS, Azure, and GCP</p>
+                </div>
+                <a href="https://github.com/guardian-nexus/auditkit/tree/main/docs/setup" class="btn">Setup Guide →</a>
+            </div>
+            <div class="card">
+                <div class="card-content">
+                    <h4>CLI Reference</h4>
+                    <p>Complete command documentation</p>
+                </div>
+                <a href="./cli-reference.html" class="btn">Read Docs →</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>
+            <a href="./">Home</a> ·
+            <a href="./examples/">Examples</a> ·
+            <a href="https://github.com/guardian-nexus/auditkit">GitHub</a> ·
+            <a href="./pro/">AuditKit Pro</a>
+        </p>
+        <p style="margin-top: 15px; opacity: 0.8;">
+            AuditKit v0.7.0 • November 2025
+        </p>
+    </footer>
+</body>
+</html>
