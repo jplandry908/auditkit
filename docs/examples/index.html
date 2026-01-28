@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuditKit - Examples & Sample Reports</title>
+    <meta name="description" content="Browse AuditKit example scan outputs, HTML reports, PDF reports, and terminal screenshots. See real compliance scan results.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #334155;
+            background: #fff;
+        }
+
+        nav {
+            background: #0f172a;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        nav .nav-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        nav .nav-logo img { height: 32px; }
+
+        nav .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav .nav-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav .nav-links a:hover { color: #e2e8f0; }
+
+        nav .nav-links .nav-cta {
+            background: #10b981;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        nav .nav-links .nav-cta:hover {
+            background: #059669;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.2em;
+            color: #cbd5e1;
+        }
+
+        section {
+            padding: 60px 20px;
+        }
+
+        h2 {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: #0f172a;
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .example-card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 6px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s;
+        }
+
+        .example-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .example-card h3 {
+            font-size: 1.3em;
+            color: #0f172a;
+            margin-bottom: 10px;
+        }
+
+        .example-card p {
+            color: #475569;
+            margin-bottom: 15px;
+            line-height: 1.7;
+        }
+
+        .example-card a {
+            color: #10b981;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .example-card a:hover {
+            text-decoration: underline;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .badge-report { background: #ecfdf5; color: #065f46; }
+        .badge-screenshot { background: #eff6ff; color: #1e40af; }
+        .badge-output { background: #fef3c7; color: #92400e; }
+
+        footer {
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        footer a {
+            color: #10b981;
+            text-decoration: none;
+        }
+
+        footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="nav-logo">
+            <img src="../auditkit-logo-dark.svg" alt="AuditKit">
+        </a>
+        <div class="nav-links">
+            <a href="https://github.com/guardian-nexus/auditkit">GitHub</a>
+            <a href="../getting-started.html">Docs</a>
+            <a href="./">Examples</a>
+            <a href="/pro/" class="nav-cta">Get Pro</a>
+        </div>
+    </nav>
+
+    <header>
+        <div class="container">
+            <h1>Examples &amp; Sample Reports</h1>
+            <p>Browse real scan outputs, compliance reports, and evidence samples from AuditKit.</p>
+        </div>
+    </header>
+
+    <section>
+        <div class="container">
+            <h2>Sample Reports</h2>
+            <p style="color: #64748b; margin-bottom: 20px;">Interactive HTML reports generated by AuditKit scans.</p>
+
+            <div class="examples-grid">
+                <div class="example-card">
+                    <span class="badge badge-report">HTML Report</span>
+                    <h3>AWS SOC2 Report</h3>
+                    <p>Full SOC2 compliance scan of an AWS environment with 64 controls evaluated, including pass/fail status and remediation guidance.</p>
+                    <a href="./reports/sample-aws-soc2-report.html" target="_blank">View Report &rarr;</a>
+                </div>
+
+                <div class="example-card">
+                    <span class="badge badge-report">HTML Report</span>
+                    <h3>Azure CMMC Report</h3>
+                    <p>CMMC Level 1 compliance scan of an Azure environment with control mappings and evidence collection guides.</p>
+                    <a href="./reports/sample-azure-cmmc-report.html" target="_blank">View Report &rarr;</a>
+                </div>
+
+                <div class="example-card">
+                    <span class="badge badge-report">HTML Report</span>
+                    <h3>AWS CMMC Level 2 Report</h3>
+                    <p>Full CMMC Level 2 assessment with all 110 practices evaluated. Pro feature.</p>
+                    <a href="./reports/sample-aws-cmmc-level2-report.html" target="_blank">View Report &rarr;</a>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 60px;">Screenshots</h2>
+            <p style="color: #64748b; margin-bottom: 20px;">Visual examples of AuditKit output and the Desktop GUI.</p>
+
+            <div class="examples-grid">
+                <div class="example-card">
+                    <span class="badge badge-screenshot">Screenshot</span>
+                    <h3>HTML Report Score Dashboard</h3>
+                    <p>The compliance score overview shown at the top of every generated HTML report.</p>
+                    <a href="./screenshots/html-report-score.png" target="_blank">View Screenshot &rarr;</a>
+                </div>
+
+                <div class="example-card">
+                    <span class="badge badge-screenshot">Screenshot</span>
+                    <h3>Desktop GUI Dashboard</h3>
+                    <p>The AuditKit Pro Desktop GUI main dashboard with real-time compliance scores and trends.</p>
+                    <a href="./screenshots/auditkitwebgui-dashboard.png" target="_blank">View Screenshot &rarr;</a>
+                </div>
+
+                <div class="example-card">
+                    <span class="badge badge-screenshot">Screenshot</span>
+                    <h3>Desktop GUI Findings</h3>
+                    <p>The findings explorer view with search, filtering by severity, framework, and provider.</p>
+                    <a href="./screenshots/auditkitwebgui-findings.png" target="_blank">View Screenshot &rarr;</a>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 60px;">Scan Outputs</h2>
+            <p style="color: #64748b; margin-bottom: 20px;">Raw terminal output from AuditKit scans.</p>
+
+            <div class="examples-grid">
+                <div class="example-card">
+                    <span class="badge badge-output">Terminal Output</span>
+                    <h3>Scan Output Directory</h3>
+                    <p>Browse raw scan output examples showing terminal results, JSON exports, and CSV data.</p>
+                    <a href="./scan-outputs/">Browse Outputs &rarr;</a>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 60px; padding: 40px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <h3 style="color: #0f172a; margin-bottom: 15px;">Want to generate your own reports?</h3>
+                <p style="color: #475569; margin-bottom: 25px;">Install AuditKit and run your first scan in under 5 minutes.</p>
+                <a href="../getting-started.html" style="display: inline-block; padding: 12px 30px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; margin-right: 15px;">Quick Start Guide</a>
+                <a href="https://github.com/guardian-nexus/auditkit" style="display: inline-block; padding: 12px 30px; background: #0f172a; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">View on GitHub</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>
+                <a href="/">AuditKit</a> &bull;
+                <a href="/pro/">Pro</a> &bull;
+                <a href="https://github.com/guardian-nexus/auditkit">GitHub</a> &bull;
+                <a href="mailto:support@auditkit.io">Support</a>
+            </p>
+            <p style="margin-top: 15px; font-size: 0.9em; color: #475569;">
+                AuditKit v0.8.0 &bull; January 2026
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

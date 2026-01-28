@@ -1,0 +1,11 @@
+<!-- /mnt/user-data/outputs/auditkit-logo-dark.svg -->
+<!-- AuditKit Logo - Dark Mode Variant -->
+<!-- For use on dark backgrounds -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 60">
+    <text x="10" y="45" 
+          font-family="'Inter', 'Segoe UI', system-ui, sans-serif" 
+          font-size="42" 
+          font-weight="700" 
+          letter-spacing="-1.5" 
+          fill="#e2e8f0">Audit<tspan fill="#10b981">Kit</tspan></text>
+</svg>

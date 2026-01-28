@@ -20,39 +20,101 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #334155;
             background: #fff;
         }
-        
+
+        /* Navigation */
+        nav {
+            background: #0f172a;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        nav .nav-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        nav .nav-logo img {
+            height: 32px;
+        }
+
+        nav .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav .nav-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav .nav-links a:hover {
+            color: #e2e8f0;
+        }
+
+        nav .nav-links .nav-cta {
+            background: #10b981;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        nav .nav-links .nav-cta:hover {
+            background: #059669;
+            color: white;
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
-        
+
         header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: white;
             padding: 80px 20px;
             text-align: center;
         }
-        
+
         header h1 {
             font-size: 3.5em;
             margin-bottom: 20px;
             font-weight: 700;
         }
-        
+
+        header h1 .accent {
+            color: #10b981;
+        }
+
         header .subtitle {
             font-size: 1.4em;
             margin-bottom: 30px;
             opacity: 0.95;
+            color: #cbd5e1;
         }
-        
+
         .badges {
             display: flex;
             gap: 15px;
@@ -60,40 +122,43 @@
             flex-wrap: wrap;
             margin-bottom: 30px;
         }
-        
+
         .badge {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 0.9em;
             backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        
-        .badge.success {
-            background: rgba(46, 213, 115, 0.3);
-        }
-        
+
         .cmmc-alert {
-            background: #ff6b6b;
-            color: white;
-            padding: 20px;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 16px;
             text-align: center;
-            font-size: 1.1em;
+            font-size: 1em;
             font-weight: 600;
+            border-bottom: 2px solid #10b981;
         }
-        
+
         .cmmc-alert a {
-            color: white;
+            color: #10b981;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .cmmc-alert a:hover {
             text-decoration: underline;
         }
-        
+
         .cta-buttons {
             display: flex;
             gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
         }
-        
+
         .btn {
             padding: 15px 35px;
             font-size: 1.1em;
@@ -103,39 +168,39 @@
             transition: transform 0.2s, box-shadow 0.2s;
             font-weight: 600;
         }
-        
+
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
-        
+
         .btn-primary {
             background: white;
-            color: #667eea;
+            color: #0f172a;
         }
-        
+
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            border: 2px solid white;
+            border: 2px solid rgba(255,255,255,0.3);
         }
-        
+
         .btn-pro {
-            background: #ff6b6b;
+            background: #10b981;
             color: white;
         }
-        
+
         section {
             padding: 60px 20px;
         }
-        
+
         section h2 {
             font-size: 2.5em;
             margin-bottom: 30px;
             text-align: center;
-            color: #2c3e50;
+            color: #0f172a;
         }
-        
+
         .demo-output {
             background: #1e1e1e;
             color: #d4d4d4;
@@ -148,85 +213,86 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             line-height: 2;
         }
-        
+
         .demo-output .prompt {
             color: #4ec9b0;
         }
-        
+
         .demo-output .comment {
             color: #608b4e;
         }
-        
+
         .demo-output .critical {
             color: #f48771;
         }
-        
+
         .demo-output .arrow {
             color: #569cd6;
         }
-        
+
         .demo-output .framework {
             color: #9cdcfe;
         }
-        
+
         .demo-output .url {
             color: #569cd6;
         }
-        
+
         .demo-output .label {
             color: #ce9178;
         }
-        
+
         .demo-output .command {
             color: #dcdcaa;
         }
-        
+
         .demo-output .success {
             color: #4ec9b0;
         }
-        
+
         .problem-solution {
-            background: #f8f9fa;
+            background: #f8fafc;
             padding: 60px 20px;
         }
-        
+
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
             margin-top: 40px;
         }
-        
+
         .card {
             background: white;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 6px rgba(0,0,0,0.04);
             transition: transform 0.2s;
+            border: 1px solid #e2e8f0;
         }
-        
+
         .card:hover {
             transform: translateY(-5px);
         }
-        
+
         .card h3 {
             font-size: 1.5em;
             margin-bottom: 15px;
-            color: #2c3e50;
+            color: #0f172a;
         }
-        
+
         .card p {
-            color: #555;
+            color: #475569;
             line-height: 1.8;
         }
-        
+
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 30px;
             margin: 50px 0;
         }
-        
+
         .stat {
             text-align: center;
             padding: 30px;
@@ -234,39 +300,40 @@
             border-radius: 8px;
             backdrop-filter: blur(10px);
         }
-        
+
         .stat-number {
             font-size: 3em;
             font-weight: 700;
             margin-bottom: 10px;
         }
-        
+
         .stat-label {
             font-size: 1em;
             opacity: 0.9;
         }
-        
+
         .features-list {
             list-style: none;
             padding: 0;
         }
-        
+
         .features-list li {
             padding: 12px 0;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #f1f5f9;
+            color: #475569;
         }
-        
+
         .features-list li:last-child {
             border-bottom: none;
         }
-        
+
         .features-list li:before {
-            content: "✓ ";
-            color: #28a745;
+            content: "\2713  ";
+            color: #10b981;
             font-weight: bold;
             margin-right: 8px;
         }
-        
+
         .code-block {
             background: #1e1e1e;
             color: #d4d4d4;
@@ -278,76 +345,81 @@
             margin: 20px 0;
             line-height: 1.8;
         }
-        
+
         .installation {
-            background: #2c3e50;
+            background: #0f172a;
             color: white;
         }
-        
+
         .installation h2 {
             color: white;
         }
-        
+
         .who-should-use {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 40px;
             margin-top: 40px;
         }
-        
+
         @media (max-width: 768px) {
             .who-should-use {
                 grid-template-columns: 1fr;
             }
+            nav .nav-links {
+                gap: 15px;
+            }
         }
-        
+
         .should-use, .should-not-use {
             background: white;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 6px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
         }
-        
+
         .provider-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 30px;
             margin-top: 40px;
         }
-        
+
         .provider-card {
             background: white;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 6px rgba(0,0,0,0.04);
             text-align: center;
+            border: 1px solid #e2e8f0;
         }
-        
+
         .provider-card h3 {
             font-size: 1.8em;
             margin-bottom: 20px;
-            color: #667eea;
+            color: #0f172a;
         }
-        
+
         .provider-card .check-count {
             font-size: 2.5em;
             font-weight: 700;
-            color: #28a745;
+            color: #10b981;
             margin: 20px 0;
         }
-        
+
         footer {
-            background: #2c3e50;
-            color: white;
+            background: #0f172a;
+            color: #e2e8f0;
             padding: 60px 20px;
             text-align: center;
         }
-        
+
         footer a {
-            color: #3498db;
+            color: #10b981;
             text-decoration: none;
         }
-        
+
         footer a:hover {
             text-decoration: underline;
         }
@@ -376,28 +448,40 @@
         }
 
         .footer-section a {
-            color: #95a5a6;
+            color: #94a3b8;
             font-size: 0.95em;
         }
 
         .footer-section a:hover {
-            color: #3498db;
+            color: #10b981;
         }
     </style>
 </head>
 <body>
+    <nav>
+        <a href="/" class="nav-logo">
+            <img src="./auditkit-logo-dark.svg" alt="AuditKit">
+        </a>
+        <div class="nav-links">
+            <a href="https://github.com/guardian-nexus/auditkit">GitHub</a>
+            <a href="./getting-started.html">Docs</a>
+            <a href="./examples/">Examples</a>
+            <a href="/pro/" class="nav-cta">Get Pro</a>
+        </div>
+    </nav>
+
     <div class="cmmc-alert">
-        ⚠️ CMMC NOW MANDATORY: DoD contracts now require CMMC compliance (effective Nov 10, 2025) · 
-        <a href="/pro/">Identify All 110 Gaps in 30 Minutes →</a>
+        CMMC NOW MANDATORY: DoD contracts now require CMMC compliance (effective Nov 10, 2025) &middot;
+        <a href="/pro/">Identify All 110 Gaps in 30 Minutes &rarr;</a>
     </div>
 
     <header>
         <div class="container">
-            <h1>AuditKit</h1>
+            <h1>Audit<span class="accent">Kit</span></h1>
             <p class="subtitle">
                 Stop paying $50K per framework. One scanner, five frameworks, four cloud providers.
             </p>
-            
+
             <div class="badges">
                 <span class="badge">SOC2</span>
                 <span class="badge">PCI-DSS</span>
@@ -405,7 +489,7 @@
                 <span class="badge">HIPAA</span>
                 <span class="badge">NIST 800-53</span>
             </div>
-            
+
             <div class="cta-buttons">
                 <a href="https://github.com/guardian-nexus/auditkit" class="btn btn-primary">View on GitHub</a>
                 <a href="#installation" class="btn btn-secondary">Quick Start</a>
@@ -417,38 +501,38 @@
     <section class="problem-solution">
         <div class="container">
             <h2>The Problem</h2>
-            
+
             <div class="grid">
                 <div class="card">
                     <h3>Compliance is Expensive</h3>
                     <p>Consultants charge $50K+ per framework. SOC2, PCI, HIPAA, CMMC? That's $200K just to understand what you're missing.</p>
                 </div>
-                
+
                 <div class="card">
                     <h3>Tools Don't Tell You What to Fix</h3>
                     <p>Cloud security scanners find issues but don't explain how to fix them or what evidence auditors need.</p>
                 </div>
-                
+
                 <div class="card">
-                    <h3>Manual Evidence Collection Sucks</h3>
-                    <p>Spending weeks taking screenshots and compiling evidence packages for auditors is mind-numbing work.</p>
+                    <h3>Manual Evidence Collection Is Tedious</h3>
+                    <p>Spending weeks taking screenshots and compiling evidence packages for auditors is repetitive work that drains engineering time.</p>
                 </div>
             </div>
 
             <h2 style="margin-top: 60px;">The Solution</h2>
-            
+
             <div class="demo-output">
 <span class="prompt">$</span> <span class="command">auditkit scan -provider aws -framework soc2 -verbose</span>
 <br>
 <span class="comment"># Scanning 64 SOC2 controls across AWS...</span>
 <br><br>
-<span class="critical">✗ FAIL</span> | <span class="framework">CC6.6</span> | MFA Not Enforced
+<span class="critical">&#10007; FAIL</span> | <span class="framework">CC6.6</span> | MFA Not Enforced
 <span class="label">Evidence:</span> 3 IAM users without MFA: admin-user, deploy-bot, john.doe
 <span class="label">Remediation:</span> aws iam enable-mfa-device --user-name admin-user
-<span class="label">Screenshot Guide:</span> IAM → Users → Security credentials → Show MFA enabled
+<span class="label">Screenshot Guide:</span> IAM &rarr; Users &rarr; Security credentials &rarr; Show MFA enabled
 <span class="label">Console URL:</span> <span class="url">https://console.aws.amazon.com/iam/home#/users</span>
 <br><br>
-<span class="success">✓ PASS</span> | <span class="framework">CC6.1</span> | CloudTrail Logging Enabled
+<span class="success">&#10003; PASS</span> | <span class="framework">CC6.1</span> | CloudTrail Logging Enabled
 <span class="label">Evidence:</span> CloudTrail enabled in all regions, logs encrypted
 <span class="label">Frameworks:</span> SOC2 (CC6.1), PCI-DSS (10.2.2), CMMC (AU.L2-3.3.1)
 <br><br>
@@ -462,7 +546,7 @@
     <section>
         <div class="container">
             <h2>Multi-Cloud Coverage</h2>
-            <p style="text-align: center; font-size: 1.2em; margin-bottom: 40px; color: #666;">
+            <p style="text-align: center; font-size: 1.2em; margin-bottom: 40px; color: #64748b;">
                 One tool. Four cloud providers. Stop juggling separate scanners.
             </p>
 
@@ -491,19 +575,19 @@
                     <div class="check-count">90+</div>
                     <p>IAM, S3, EC2, CloudTrail, KMS, RDS, VPC, SageMaker, Redshift, ElastiCache, OpenSearch</p>
                 </div>
-                
+
                 <div class="provider-card">
                     <h3>Azure</h3>
                     <div class="check-count">64+</div>
                     <p>Entra ID, Storage, NSGs, SQL, Key Vault</p>
                 </div>
-                
+
                 <div class="provider-card">
                     <h3>GCP</h3>
                     <div class="check-count">170+</div>
                     <p>Cloud Storage, IAM, Compute, SQL, KMS, Logging</p>
                 </div>
-                
+
                 <div class="provider-card">
                     <h3>Microsoft 365</h3>
                     <div class="check-count">29+</div>
@@ -512,37 +596,37 @@
             </div>
 
             <!-- Azure Arc On-Prem Section -->
-            <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
                         border-radius: 12px; padding: 40px; margin-top: 50px; color: white;
-                        border: 2px solid #ff6b6b;">
+                        border: 2px solid #10b981;">
                 <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
                     <h3 style="font-size: 1.8em; margin: 0;">Azure Arc (On-Premises)</h3>
-                    <span style="background: #ff6b6b; color: white; padding: 4px 12px;
+                    <span style="background: #10b981; color: white; padding: 4px 12px;
                                  border-radius: 20px; font-size: 0.8em; font-weight: 600;">PRO ONLY</span>
                 </div>
                 <p style="font-size: 1.1em; opacity: 0.9; margin-bottom: 25px; line-height: 1.7;">
                     Extend compliance scanning to your on-premises servers connected via Azure Arc.
                     AuditKit Pro pulls security assessments from Microsoft Defender for Cloud and
-                    Guest Configuration policies—bringing hybrid environments into your compliance posture.
+                    Guest Configuration policies -- bringing hybrid environments into your compliance posture.
                 </p>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px;">
                     <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
-                        <strong style="color: #4ec9b0;">Defender Assessments</strong>
+                        <strong style="color: #10b981;">Defender Assessments</strong>
                         <p style="font-size: 0.9em; opacity: 0.8; margin-top: 5px;">Updates, encryption, vulnerabilities, endpoint protection</p>
                     </div>
                     <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
-                        <strong style="color: #4ec9b0;">Guest Configuration</strong>
+                        <strong style="color: #10b981;">Guest Configuration</strong>
                         <p style="font-size: 0.9em; opacity: 0.8; margin-top: 5px;">Azure Policy compliance for Windows/Linux baselines</p>
                     </div>
                     <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
-                        <strong style="color: #4ec9b0;">Agent Health</strong>
+                        <strong style="color: #10b981;">Agent Health</strong>
                         <p style="font-size: 0.9em; opacity: 0.8; margin-top: 5px;">Monitor Arc agent connectivity status</p>
                     </div>
                 </div>
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <a href="./providers/arc.html" style="background: white; color: #1a1a2e; padding: 12px 25px;
+                    <a href="./providers/arc.html" style="background: white; color: #0f172a; padding: 12px 25px;
                        border-radius: 6px; text-decoration: none; font-weight: 600;">Learn More</a>
-                    <a href="/pro/" style="background: #ff6b6b; color: white; padding: 12px 25px;
+                    <a href="/pro/" style="background: #10b981; color: white; padding: 12px 25px;
                        border-radius: 6px; text-decoration: none; font-weight: 600;">Get Pro Access</a>
                 </div>
             </div>
@@ -561,9 +645,9 @@
                         <li>NIST 800-53, GDPR, ISO 27001 mappings</li>
                     </ul>
                 </div>
-                
-                <div class="card" style="border: 2px solid #ff6b6b;">
-                    <h3>Pro Version <span style="color: #ff6b6b;">($297/mo)</span></h3>
+
+                <div class="card" style="border: 2px solid #10b981;">
+                    <h3>Pro Version <span style="color: #10b981;">($297/mo)</span></h3>
                     <ul class="features-list">
                         <li>CMMC Level 2 (110 practices)</li>
                         <li>Custom controls - define your own checks</li>
@@ -585,7 +669,7 @@
     <section id="installation" class="installation">
         <div class="container">
             <h2>Installation</h2>
-            
+
             <div class="code-block"><span style="color: #608b4e;"># Quick install (Go required)</span>
 go install github.com/guardian-nexus/auditkit/scanner/cmd/auditkit@latest
 <br>
@@ -611,11 +695,11 @@ export GOOGLE_CLOUD_PROJECT="your-project-id"
         </div>
     </section>
 
-    <section style="background: #f8f9fa;">
+    <section style="background: #f8fafc;">
         <div class="container">
             <h2>See It In Action</h2>
-            <p style="text-align: center; font-size: 1.2em; margin-bottom: 40px; color: #666;">
-                Real scan outputs and reports from actual customer environments
+            <p style="text-align: center; font-size: 1.2em; margin-bottom: 40px; color: #64748b;">
+                Real scan outputs and reports from actual environments
             </p>
 
             <div class="grid">
@@ -623,30 +707,30 @@ export GOOGLE_CLOUD_PROJECT="your-project-id"
                     <h3>What a PASS Looks Like</h3>
                     <p style="margin-bottom: 15px;">Controls that meet compliance requirements show specific evidence of what's configured correctly.</p>
                     <div class="code-block" style="font-size: 0.9em; line-height: 1.6; margin-top: 15px;">
-<span style="color: #4ec9b0;">✓ PASS</span> | <span style="color: #dcdcaa;">CC6.6</span> - Authentication Controls
+<span style="color: #4ec9b0;">&#10003; PASS</span> | <span style="color: #dcdcaa;">CC6.6</span> - Authentication Controls
 Root account has MFA enabled
-<span style="color: #608b4e;">→ Meets SOC2 CC6.6, PCI DSS 8.3.1, HIPAA 164.312(a)(2)(i)</span>
+<span style="color: #608b4e;">&rarr; Meets SOC2 CC6.6, PCI DSS 8.3.1, HIPAA 164.312(a)(2)(i)</span>
 <br>
-<span style="color: #4ec9b0;">✓ PASS</span> | <span style="color: #dcdcaa;">CC6.3</span> - Encryption at Rest
+<span style="color: #4ec9b0;">&#10003; PASS</span> | <span style="color: #dcdcaa;">CC6.3</span> - Encryption at Rest
 All 15 S3 buckets have encryption enabled
-<span style="color: #608b4e;">→ Meets SOC2 CC6.3, PCI DSS 3.4, HIPAA 164.312(a)(2)(iv)</span></div>
+<span style="color: #608b4e;">&rarr; Meets SOC2 CC6.3, PCI DSS 3.4, HIPAA 164.312(a)(2)(iv)</span></div>
                 </div>
 
                 <div class="card">
                     <h3>What a FAIL Looks Like</h3>
                     <p style="margin-bottom: 15px;">Failed controls show exactly what's wrong, how to fix it, and what evidence you'll need for auditors.</p>
                     <div class="code-block" style="font-size: 0.9em; line-height: 1.6; margin-top: 15px;">
-<span style="color: #f48771;">✗ FAIL</span> | <span style="color: #dcdcaa;">CC6.1</span> - Access Controls
+<span style="color: #f48771;">&#10007; FAIL</span> | <span style="color: #dcdcaa;">CC6.1</span> - Access Controls
 <span style="color: #ce9178;">Issue:</span> SSH open to 0.0.0.0/0
 Security Group: sg-0ab56571076bcff37 (port 22)
-<span style="color: #608b4e;">→ Violates PCI DSS 1.2.1</span>
+<span style="color: #608b4e;">&rarr; Violates PCI DSS 1.2.1</span>
 <br>
 <span style="color: #569cd6;">Fix:</span> aws ec2 revoke-security-group-ingress \
   --group-id sg-0ab56571076bcff37 \
   --protocol tcp --port 22 --cidr 0.0.0.0/0
 <br>
 <span style="color: #dcdcaa;">Evidence needed:</span>
-1. Go to EC2 → Security Groups
+1. Go to EC2 &rarr; Security Groups
 2. Screenshot 'Inbound rules' tab
 3. Show NO rules with 0.0.0.0/0 for port 22</div>
                 </div>
@@ -656,30 +740,30 @@ Security Group: sg-0ab56571076bcff37 (port 22)
                     <p style="margin-bottom: 15px;">Generate professional compliance reports with scores, failed controls, remediation steps, and direct console links.</p>
                     <div style="margin-top: 15px;">
                         <img src="./examples/screenshots/html-report-score.png" alt="HTML Report Score Dashboard" style="width: 100%; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); margin-bottom: 15px;">
-                        <p style="font-size: 0.95em; color: #666; text-align: center;">
+                        <p style="font-size: 0.95em; color: #64748b; text-align: center;">
                             View examples:
-                            <a href="./examples/reports/sample-aws-soc2-report.html" style="color: #667eea;" target="_blank">SOC2</a> •
-                            <a href="./examples/reports/sample-azure-cmmc-report.html" style="color: #667eea;" target="_blank">CMMC</a>
+                            <a href="./examples/reports/sample-aws-soc2-report.html" style="color: #10b981;" target="_blank">SOC2</a> &bull;
+                            <a href="./examples/reports/sample-azure-cmmc-report.html" style="color: #10b981;" target="_blank">CMMC</a>
                         </p>
                     </div>
                 </div>
             </div>
 
-            <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
                         padding: 25px 35px; border-radius: 8px; text-align: center;
-                        margin: 50px auto; max-width: 700px; border: 2px solid #2196f3;
-                        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);">
-                <p style="font-size: 1.2em; color: #1565c0; margin-bottom: 10px; font-weight: 600;">
+                        margin: 50px auto; max-width: 700px; border: 2px solid #10b981;
+                        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);">
+                <p style="font-size: 1.2em; color: #064e3b; margin-bottom: 10px; font-weight: 600;">
                     Want to see more examples?
                 </p>
-                <p style="color: #1976d2; margin-bottom: 20px; line-height: 1.6;">
+                <p style="color: #065f46; margin-bottom: 20px; line-height: 1.6;">
                     Browse terminal scan outputs, PDF reports, console screenshots, and more evidence samples.
                 </p>
                 <a href="./examples/" style="display: inline-block; padding: 12px 30px;
-                   background: #2196f3; color: white; text-decoration: none;
+                   background: #10b981; color: white; text-decoration: none;
                    border-radius: 6px; font-weight: 600; transition: background 0.3s;
-                   box-shadow: 0 2px 6px rgba(33, 150, 243, 0.3);">
-                    Browse All Examples →
+                   box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);">
+                    Browse All Examples &rarr;
                 </a>
             </div>
         </div>
@@ -688,10 +772,10 @@ Security Group: sg-0ab56571076bcff37 (port 22)
     <section>
         <div class="container">
             <h2>Who Should Use This</h2>
-            
+
             <div class="who-should-use">
                 <div class="should-use">
-                    <h3 style="color: #28a745; margin-bottom: 20px;">Perfect For</h3>
+                    <h3 style="color: #10b981; margin-bottom: 20px;">Built For</h3>
                     <ul class="features-list">
                         <li>Defense contractors needing CMMC compliance</li>
                         <li>Startups facing SOC2 + PCI + HIPAA simultaneously</li>
@@ -701,24 +785,24 @@ Security Group: sg-0ab56571076bcff37 (port 22)
                         <li>Teams tired of running 5 different scanners</li>
                     </ul>
                 </div>
-                
+
                 <div class="should-not-use">
-                    <h3 style="color: #dc3545; margin-bottom: 20px;">NOT For You If</h3>
+                    <h3 style="color: #ef4444; margin-bottom: 20px;">Not the Right Fit If</h3>
                     <ul style="list-style: none;">
-                        <li style="padding: 15px 0; border-bottom: 1px solid #eee;">You need someone to do compliance for you</li>
-                        <li style="padding: 15px 0; border-bottom: 1px solid #eee;">You want a magic "pass audit" button</li>
-                        <li style="padding: 15px 0; border-bottom: 1px solid #eee;">You need vendor certifications</li>
-                        <li style="padding: 15px 0;">You require hand-holding</li>
+                        <li style="padding: 15px 0; border-bottom: 1px solid #f1f5f9; color: #475569;">You need fully managed compliance services</li>
+                        <li style="padding: 15px 0; border-bottom: 1px solid #f1f5f9; color: #475569;">You're looking for an automated certification solution</li>
+                        <li style="padding: 15px 0; border-bottom: 1px solid #f1f5f9; color: #475569;">You need vendor certifications or attestations</li>
+                        <li style="padding: 15px 0; color: #475569;">You need guided implementation support</li>
                     </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="cmmc-pro" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+    <section id="cmmc-pro" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white;">
         <div class="container">
             <h2 style="color: white;">Need CMMC Level 2?</h2>
-            <p style="text-align: center; font-size: 1.3em; margin-bottom: 40px; opacity: 0.95;">
+            <p style="text-align: center; font-size: 1.3em; margin-bottom: 40px; color: #cbd5e1;">
                 DoD contractors handling CUI must comply. Identify all 110 gaps in 30 minutes vs 30 days.
             </p>
 
@@ -742,16 +826,16 @@ Security Group: sg-0ab56571076bcff37 (port 22)
             </div>
 
             <div style="text-align: center; margin-top: 40px;">
-                <a href="/pro/" class="btn btn-primary" style="font-size: 1.2em; padding: 18px 40px;">Start 14-Day Free Trial</a>
-                <p style="margin-top: 20px; opacity: 0.9;">$297/month • Know what to fix before paying a C3PAO • Cancel anytime</p>
+                <a href="/pro/" class="btn" style="font-size: 1.2em; padding: 18px 40px; background: #10b981; color: white;">Start 14-Day Free Trial</a>
+                <p style="margin-top: 20px; color: #94a3b8;">$297/month &bull; Know what to fix before paying a C3PAO &bull; Cancel anytime</p>
             </div>
         </div>
     </section>
 
     <footer>
         <div class="container">
-            <p style="font-size: 1.2em; margin-bottom: 20px;">
-                <strong>Built by engineers who went through compliance hell and lived to tell the tale.</strong>
+            <p style="font-size: 1.1em; margin-bottom: 20px; color: #cbd5e1;">
+                <strong>Built by engineers who have been through the compliance process.</strong>
             </p>
 
             <div class="footer-nav">
@@ -786,7 +870,7 @@ Security Group: sg-0ab56571076bcff37 (port 22)
                         <li><a href="./setup/azure.html">Azure Setup</a></li>
                         <li><a href="./setup/gcp.html">GCP Setup</a></li>
                         <li><a href="./setup/m365.html">M365 Setup</a></li>
-                        <li><a href="./providers/arc.html" style="color: #ff6b6b;">Azure Arc (Pro)</a></li>
+                        <li><a href="./providers/arc.html" style="color: #10b981;">Azure Arc (Pro)</a></li>
                     </ul>
                 </div>
 
@@ -798,16 +882,16 @@ Security Group: sg-0ab56571076bcff37 (port 22)
                         <li><a href="https://github.com/guardian-nexus/auditkit/issues">Report Bug</a></li>
                         <li><a href="https://github.com/guardian-nexus/auditkit/discussions">Discussions</a></li>
                         <li><a href="mailto:support@auditkit.io">Support</a></li>
-                        <li><a href="/pro/" style="color: #ff6b6b; font-weight: 600;">AuditKit Pro</a></li>
+                        <li><a href="/pro/" style="color: #10b981; font-weight: 600;">AuditKit Pro</a></li>
                     </ul>
                 </div>
             </div>
 
-            <p style="margin-bottom: 20px; opacity: 0.8;">
-                Apache 2.0 License. Fork it, improve it, sell it—we don't care.
+            <p style="margin-bottom: 20px; color: #64748b; font-size: 0.95em;">
+                Apache 2.0 License. Open source and free to use.
             </p>
-            <p style="font-size: 0.9em; color: #95a5a6;">
-                AuditKit v0.8.0 • January 2026
+            <p style="font-size: 0.9em; color: #475569;">
+                AuditKit v0.8.0 &bull; January 2026
             </p>
         </div>
     </footer>
