@@ -56,6 +56,8 @@
       '.cc-btn-accept:hover{background:#059669}' +
       '.cc-btn-manage{background:transparent;color:#94a3b8;border:1px solid #334155}' +
       '.cc-btn-manage:hover{color:#e2e8f0;border-color:#475569}' +
+      '.cc-btn-reject{background:transparent;color:#94a3b8;border:1px solid #334155}' +
+      '.cc-btn-reject:hover{color:#e2e8f0;border-color:#475569}' +
       '.cc-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:10001;display:flex;align-items:center;justify-content:center;font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif}' +
       '.cc-modal{background:#fff;border-radius:8px;padding:2rem;max-width:480px;width:90%;max-height:90vh;overflow-y:auto;color:#334155}' +
       '.cc-modal h2{color:#0f172a;font-size:1.25rem;margin-bottom:1rem}' +
@@ -86,6 +88,7 @@
     banner.innerHTML =
       '<p>We use cookies to measure site usage and improve your experience. You can manage your preferences at any time.</p>' +
       '<div class="cc-banner-actions">' +
+      '<button class="cc-btn cc-btn-reject" id="cc-reject-all">Reject All</button>' +
       '<button class="cc-btn cc-btn-manage" id="cc-manage">Manage Preferences</button>' +
       '<button class="cc-btn cc-btn-accept" id="cc-accept-all">Accept All</button>' +
       '</div>';
@@ -93,6 +96,11 @@
 
     document.getElementById('cc-accept-all').addEventListener('click', function () {
       setConsent({ necessary: true, analytics: true, marketing: true });
+      closeBanner();
+    });
+
+    document.getElementById('cc-reject-all').addEventListener('click', function () {
+      setConsent({ necessary: true, analytics: false, marketing: false });
       closeBanner();
     });
 

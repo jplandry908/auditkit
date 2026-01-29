@@ -11,17 +11,19 @@
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
+    <a href="#main" class="skip-link">Skip to content</a>
 
-    <nav class="site-nav">
+    <nav class="site-nav" aria-label="Main navigation">
         <div class="nav-inner">
             <a href="/" class="nav-logo">
                 <img src="./auditkit-logo-dark.svg" alt="AuditKit">
             </a>
+            <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
             <div class="nav-links">
                 <a href="https://github.com/guardian-nexus/auditkit">GitHub</a>
                 <a href="./getting-started.html">Docs</a>
                 <a href="./examples/">Examples</a>
-                <a href="./about.html" class="nav-hide-mobile">About</a>
+                <a href="./about.html">About</a>
                 <a href="/pro/" class="nav-cta">Get Pro</a>
             </div>
         </div>
@@ -33,6 +35,7 @@
     </div>
 
     <!-- Hero -->
+    <main id="main">
     <section class="hero">
         <div class="container">
             <img src="./auditkit-logo.svg" alt="AuditKit" class="hero-logo">
@@ -157,28 +160,28 @@
             </div>
 
             <!-- Azure Arc -->
-            <div class="card card-highlight mt-4" style="background: var(--navy); color: var(--text-on-dark);">
-                <div class="flex items-center gap-1" style="margin-bottom: 1rem;">
-                    <h3 style="color: var(--white); margin-bottom: 0;">Azure Arc (On-Premises)</h3>
+            <div class="card card-highlight arc-card mt-4">
+                <div class="flex items-center gap-1 mb-2">
+                    <h3>Azure Arc (On-Premises)</h3>
                     <span class="badge-pro">PRO</span>
                 </div>
-                <p style="color: var(--slate-300); margin-bottom: 1.5rem;">
+                <p>
                     Extend compliance scanning to your on-premises servers connected via Azure Arc.
                     AuditKit Pro pulls security assessments from Microsoft Defender for Cloud and
                     Guest Configuration policies -- bringing hybrid environments into your compliance posture.
                 </p>
-                <div class="grid-3" style="margin-bottom: 1.5rem;">
-                    <div style="border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: var(--radius);">
+                <div class="grid-3 mb-2">
+                    <div class="arc-feature">
                         <strong class="text-emerald">Defender Assessments</strong>
-                        <p class="text-sm mb-0" style="color: var(--slate-400); margin-top: 0.25rem;">Updates, encryption, vulnerabilities, endpoint protection</p>
+                        <p class="text-sm mb-0">Updates, encryption, vulnerabilities, endpoint protection</p>
                     </div>
-                    <div style="border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: var(--radius);">
+                    <div class="arc-feature">
                         <strong class="text-emerald">Guest Configuration</strong>
-                        <p class="text-sm mb-0" style="color: var(--slate-400); margin-top: 0.25rem;">Azure Policy compliance for Windows/Linux baselines</p>
+                        <p class="text-sm mb-0">Azure Policy compliance for Windows/Linux baselines</p>
                     </div>
-                    <div style="border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: var(--radius);">
+                    <div class="arc-feature">
                         <strong class="text-emerald">Agent Health</strong>
-                        <p class="text-sm mb-0" style="color: var(--slate-400); margin-top: 0.25rem;">Monitor Arc agent connectivity status</p>
+                        <p class="text-sm mb-0">Monitor Arc agent connectivity status</p>
                     </div>
                 </div>
                 <div class="btn-group">
@@ -301,11 +304,11 @@ export GOOGLE_CLOUD_PROJECT="your-project-id"
                 <div class="card">
                     <h3>Interactive HTML Reports</h3>
                     <p>Generate professional compliance reports with scores, failed controls, remediation steps, and direct console links.</p>
-                    <img src="./examples/screenshots/html-report-score.png" alt="HTML Report Score Dashboard" style="border-radius: var(--radius); margin-bottom: 1rem;">
+                    <img src="./examples/screenshots/html-report-score.png" alt="HTML Report Score Dashboard" loading="lazy" style="border-radius: var(--radius); margin-bottom: 1rem;">
                     <p class="text-center text-sm text-muted mb-0">
                         View examples:
-                        <a href="./examples/reports/sample-aws-soc2-report.html" target="_blank">SOC2</a> &bull;
-                        <a href="./examples/reports/sample-azure-cmmc-report.html" target="_blank">CMMC</a>
+                        <a href="./examples/reports/sample-aws-soc2-report.html" target="_blank" rel="noopener noreferrer">SOC2</a> &bull;
+                        <a href="./examples/reports/sample-azure-cmmc-report.html" target="_blank" rel="noopener noreferrer">CMMC</a>
                     </p>
                 </div>
             </div>
@@ -337,12 +340,12 @@ export GOOGLE_CLOUD_PROJECT="your-project-id"
                 </div>
 
                 <div class="card">
-                    <h3 style="color: var(--danger);">Not the Right Fit If</h3>
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--slate-100);">You need fully managed compliance services</li>
-                        <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--slate-100);">You're looking for an automated certification solution</li>
-                        <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--slate-100);">You need vendor certifications or attestations</li>
-                        <li style="padding: 0.75rem 0;">You need guided implementation support</li>
+                    <h3 class="text-danger">Not the Right Fit If</h3>
+                    <ul class="not-fit-list">
+                        <li>You need fully managed compliance services</li>
+                        <li>You're looking for an automated certification solution</li>
+                        <li>You need vendor certifications or attestations</li>
+                        <li>You need guided implementation support</li>
                     </ul>
                 </div>
             </div>
@@ -377,11 +380,13 @@ export GOOGLE_CLOUD_PROJECT="your-project-id"
             </div>
 
             <a href="/pro/" class="btn btn-primary btn-lg">Start 14-Day Free Trial</a>
-            <p class="text-sm mt-0" style="margin-top: 1.25rem; color: var(--text-on-dark-muted);">
+            <p class="text-sm text-on-dark-muted" style="margin-top: 1.25rem;">
                 $297/month &bull; Know what to fix before paying a C3PAO &bull; Cancel anytime
             </p>
         </div>
     </section>
+
+    </main>
 
     <!-- Footer -->
     <footer class="site-footer">
@@ -448,5 +453,17 @@ export GOOGLE_CLOUD_PROJECT="your-project-id"
     </footer>
 
     <script src="./cookie-consent.js"></script>
+    <script>
+        (function() {
+            var toggle = document.querySelector('.nav-toggle');
+            var links = document.querySelector('.nav-links');
+            if (toggle && links) {
+                toggle.addEventListener('click', function() {
+                    var open = links.classList.toggle('open');
+                    toggle.setAttribute('aria-expanded', open);
+                });
+            }
+        })();
+    </script>
 </body>
 </html>

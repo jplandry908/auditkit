@@ -11,16 +11,19 @@
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-    <nav class="site-nav">
+    <a href="#main" class="skip-link">Skip to content</a>
+
+    <nav class="site-nav" aria-label="Main navigation">
         <div class="nav-inner">
             <a href="/" class="nav-logo">
                 <img src="./auditkit-logo-dark.svg" alt="AuditKit">
             </a>
+            <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
             <div class="nav-links">
                 <a href="https://github.com/guardian-nexus/auditkit">GitHub</a>
                 <a href="./getting-started.html">Docs</a>
                 <a href="./examples/">Examples</a>
-                <a href="./about.html" class="nav-hide-mobile">About</a>
+                <a href="./about.html">About</a>
                 <a href="/pro/" class="nav-cta">Get Pro</a>
             </div>
         </div>
@@ -394,5 +397,17 @@ auditkit-pro scan -provider aws -framework cmmc-l2</code></pre>
     </footer>
 
     <script src="./cookie-consent.js"></script>
+    <script>
+        (function() {
+            var toggle = document.querySelector('.nav-toggle');
+            var links = document.querySelector('.nav-links');
+            if (toggle && links) {
+                toggle.addEventListener('click', function() {
+                    var open = links.classList.toggle('open');
+                    toggle.setAttribute('aria-expanded', open);
+                });
+            }
+        })();
+    </script>
 </body>
 </html>

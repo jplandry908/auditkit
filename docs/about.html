@@ -11,23 +11,26 @@
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
+    <a href="#main" class="skip-link">Skip to content</a>
 
-    <nav class="site-nav">
+    <nav class="site-nav" aria-label="Main navigation">
         <div class="nav-inner">
             <a href="/" class="nav-logo">
                 <img src="./auditkit-logo-dark.svg" alt="AuditKit">
             </a>
+            <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
             <div class="nav-links">
                 <a href="https://github.com/guardian-nexus/auditkit">GitHub</a>
                 <a href="./getting-started.html">Docs</a>
                 <a href="./examples/">Examples</a>
-                <a href="./about.html" class="nav-hide-mobile">About</a>
+                <a href="./about.html" class="nav-active">About</a>
                 <a href="/pro/" class="nav-cta">Get Pro</a>
             </div>
         </div>
     </nav>
 
     <!-- Header -->
+    <main id="main">
     <section class="page-header">
         <div class="container">
             <h1>About AuditKit</h1>
@@ -143,9 +146,15 @@ go install github.com/guardian-nexus/auditkit/scanner/cmd/auditkit@latest
         </div>
     </section>
 
+    </main>
+
     <!-- Footer -->
     <footer class="site-footer">
         <div class="footer-inner">
+            <p style="margin-bottom: 2rem; color: var(--slate-300); font-size: 1rem;">
+                <strong style="color: var(--white);">Built by engineers who have been through the compliance process.</strong>
+            </p>
+
             <div class="footer-grid">
                 <div class="footer-section">
                     <h4>Getting Started</h4>
@@ -203,5 +212,17 @@ go install github.com/guardian-nexus/auditkit/scanner/cmd/auditkit@latest
     </footer>
 
     <script src="./cookie-consent.js"></script>
+    <script>
+        (function() {
+            var toggle = document.querySelector('.nav-toggle');
+            var links = document.querySelector('.nav-links');
+            if (toggle && links) {
+                toggle.addEventListener('click', function() {
+                    var open = links.classList.toggle('open');
+                    toggle.setAttribute('aria-expanded', open);
+                });
+            }
+        })();
+    </script>
 </body>
 </html>

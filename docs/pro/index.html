@@ -11,12 +11,14 @@
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
+    <a href="#main" class="skip-link">Skip to content</a>
 
-    <nav class="site-nav">
+    <nav class="site-nav" aria-label="Main navigation">
         <div class="nav-inner">
             <a href="/pro/" class="nav-logo">
                 <img src="./auditkit-logo-pro-dark.svg" alt="AuditKit Pro">
             </a>
+            <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
             <div class="nav-links">
                 <a href="/">Free Version</a>
                 <a href="../getting-started.html">Docs</a>
@@ -32,11 +34,13 @@
     </div>
 
     <!-- Hero -->
+    <main id="main">
     <section class="hero">
         <div class="container">
             <img src="./auditkit-logo-pro.svg" alt="AuditKit Pro" class="hero-logo">
+            <h1>CMMC Level 2 Gap Analysis in 30 Minutes</h1>
             <p class="subtitle">
-                Identify all 110 CMMC Level 2 gaps in 30 minutes. Know what to fix before paying a C3PAO.
+                Identify all 110 CMMC Level 2 gaps before paying a C3PAO. Know exactly what to fix.
             </p>
 
             <div class="grid-4 mb-3" style="max-width: 900px; margin-left: auto; margin-right: auto;">
@@ -237,21 +241,21 @@
                 <div class="carousel-track">
                     <div class="carousel-slides" id="carousel-slides">
                         <div class="carousel-slide" onclick="openLightbox(0)">
-                            <img src="../examples/screenshots/auditkitwebgui-dashboard.png" alt="Dashboard">
+                            <img src="../examples/screenshots/auditkitwebgui-dashboard.png" alt="Dashboard" loading="lazy">
                             <div class="carousel-caption">
                                 <strong>Dashboard</strong>
                                 <p>Real-time compliance scores &amp; trends</p>
                             </div>
                         </div>
                         <div class="carousel-slide" onclick="openLightbox(1)">
-                            <img src="../examples/screenshots/auditkitwebgui-findings.png" alt="Findings Explorer">
+                            <img src="../examples/screenshots/auditkitwebgui-findings.png" alt="Findings Explorer" loading="lazy">
                             <div class="carousel-caption">
                                 <strong>Findings Explorer</strong>
                                 <p>Search &amp; filter by severity</p>
                             </div>
                         </div>
                         <div class="carousel-slide" onclick="openLightbox(2)">
-                            <img src="../examples/screenshots/auditkitwebgui-scanhistory.png" alt="Scan History">
+                            <img src="../examples/screenshots/auditkitwebgui-scanhistory.png" alt="Scan History" loading="lazy">
                             <div class="carousel-caption">
                                 <strong>Scan History</strong>
                                 <p>Browse all past scans</p>
@@ -259,8 +263,8 @@
                         </div>
                     </div>
                 </div>
-                <button class="carousel-btn carousel-btn-prev" onclick="carouselNav(-1)">&#10094;</button>
-                <button class="carousel-btn carousel-btn-next" onclick="carouselNav(1)">&#10095;</button>
+                <button class="carousel-btn carousel-btn-prev" onclick="carouselNav(-1)" aria-label="Previous slide">&#10094;</button>
+                <button class="carousel-btn carousel-btn-next" onclick="carouselNav(1)" aria-label="Next slide">&#10095;</button>
                 <div class="carousel-dots" id="carousel-dots">
                     <button class="carousel-dot active" onclick="carouselGo(0)"></button>
                     <button class="carousel-dot" onclick="carouselGo(1)"></button>
@@ -297,9 +301,9 @@ export AUDITKIT_PRO_LICENSE="your-license-key"
 
     <!-- Lightbox -->
     <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
-        <button class="lightbox-nav lightbox-prev" onclick="event.stopPropagation(); changeSlide(-1)">&#10094;</button>
-        <button class="lightbox-nav lightbox-next" onclick="event.stopPropagation(); changeSlide(1)">&#10095;</button>
+        <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close lightbox">&times;</button>
+        <button class="lightbox-nav lightbox-prev" onclick="event.stopPropagation(); changeSlide(-1)" aria-label="Previous image">&#10094;</button>
+        <button class="lightbox-nav lightbox-next" onclick="event.stopPropagation(); changeSlide(1)" aria-label="Next image">&#10095;</button>
         <div style="text-align: center;">
             <img id="lightbox-img" src="" alt="">
             <p id="lightbox-caption" class="lightbox-caption"></p>
@@ -455,11 +459,11 @@ go build ./cmd/auditkit-pro
                 <div class="card">
                     <h3>Interactive HTML Reports</h3>
                     <p>Generate professional compliance reports with scores, failed controls, remediation steps, and direct console links.</p>
-                    <img src="../examples/screenshots/html-report-score.png" alt="HTML Report Score Dashboard" style="border-radius: var(--radius); margin-bottom: 0.75rem;">
+                    <img src="../examples/screenshots/html-report-score.png" alt="HTML Report Score Dashboard" loading="lazy" style="border-radius: var(--radius); margin-bottom: 0.75rem;">
                     <p class="text-sm text-muted mb-0">
                         View examples:
-                        <a href="../examples/reports/sample-aws-cmmc-level2-report.html" target="_blank">CMMC Level 2</a> &bull;
-                        <a href="../examples/reports/sample-aws-soc2-report.html" target="_blank">SOC2</a>
+                        <a href="../examples/reports/sample-aws-cmmc-level2-report.html" target="_blank" rel="noopener noreferrer">CMMC Level 2</a> &bull;
+                        <a href="../examples/reports/sample-aws-soc2-report.html" target="_blank" rel="noopener noreferrer">SOC2</a>
                     </p>
                 </div>
             </div>
@@ -580,6 +584,8 @@ go build ./cmd/auditkit-pro
         </div>
     </section>
 
+    </main>
+
     <!-- Footer -->
     <footer class="site-footer">
         <div class="footer-inner">
@@ -637,11 +643,24 @@ go build ./cmd/auditkit-pro
             </div>
 
             <div class="footer-bottom">
+                <p>Apache 2.0 License. Open source and free to use.</p>
                 <p>AuditKit Pro v0.9.0 &bull; January 2026</p>
             </div>
         </div>
     </footer>
 
     <script src="../cookie-consent.js"></script>
+    <script>
+        (function() {
+            var toggle = document.querySelector('.nav-toggle');
+            var links = document.querySelector('.nav-links');
+            if (toggle && links) {
+                toggle.addEventListener('click', function() {
+                    var open = links.classList.toggle('open');
+                    toggle.setAttribute('aria-expanded', open);
+                });
+            }
+        })();
+    </script>
 </body>
 </html>
