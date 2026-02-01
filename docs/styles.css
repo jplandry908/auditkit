@@ -282,6 +282,7 @@ pre code { background: none; padding: 0; }
 .btn-outline-light { border: 2px solid rgba(255,255,255,0.2); color: var(--white); background: transparent; }
 .btn-outline-light:hover { border-color: rgba(255,255,255,0.5); }
 
+.container-prose .btn { margin-bottom: 1.5rem; }
 .btn-lg { padding: 1rem 2.25rem; font-size: 1.1rem; }
 .btn-sm { padding: 0.5rem 1rem; font-size: 0.875rem; }
 .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; }
