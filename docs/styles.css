@@ -373,6 +373,14 @@ tr:last-child td { border-bottom: none; }
 .callout-warning h3, .callout-warning h4 { color: #92400e; }
 
 /* ---------- FAQ ---------- */
+.faq-section { margin-bottom: 3rem; }
+.faq-section-title {
+  font-size: 1.5rem;
+  color: var(--text-heading);
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--emerald);
+  margin-bottom: 0;
+}
 .faq-item {
   padding: 2rem 0;
   border-bottom: 1px solid var(--slate-200);
