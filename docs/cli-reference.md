@@ -58,7 +58,7 @@ auditkit scan --full
 
 ### integrate
 
-Import results from third-party tools (M365 ScubaGear).
+Import results from third-party tools (Prowler, ScubaGear).
 
 ```bash
 auditkit integrate -source [tool] -file [path] [flags]
@@ -66,7 +66,13 @@ auditkit integrate -source [tool] -file [path] [flags]
 
 **Examples:**
 ```bash
-# Import ScubaGear results
+# Import Prowler results (AWS/Azure/GCP)
+auditkit integrate -source prowler -file prowler-output.json
+
+# Generate PDF from Prowler results
+auditkit integrate -source prowler -file prowler-output.json -format pdf -output prowler-report.pdf
+
+# Import ScubaGear results (M365)
 auditkit integrate -source scubagear -file ScubaResults/ScubaResults.json
 
 # Generate PDF from ScubaGear results
@@ -74,7 +80,7 @@ auditkit integrate -source scubagear -file ScubaResults.json -format pdf -output
 ```
 
 **Flags:**
-- `-source` - Source tool: `scubagear` (currently only ScubaGear supported)
+- `-source` - Source tool: `prowler`, `scubagear`
 - `-file` - Path to results file
 - `-format` - Output format: `text`, `json`, `html`, `pdf` (default: `text`)
 - `-output` - Output file path
@@ -222,8 +228,8 @@ auditkit version
 
 **Output:**
 ```
-AuditKit v0.7.0
-Built: 2025-10-19
+AuditKit v0.8.1
+Built: 2026-02-03
 ```
 
 ---

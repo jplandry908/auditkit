@@ -4,7 +4,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/guardian-nexus/auditkit)](https://github.com/guardian-nexus/auditkit/stargazers)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Version](https://img.shields.io/badge/version-v0.8.0-green.svg)](https://github.com/guardian-nexus/auditkit/releases)
+[![Version](https://img.shields.io/badge/version-v0.8.1-green.svg)](https://github.com/guardian-nexus/auditkit/releases)
 [![Newsletter](https://img.shields.io/badge/Newsletter-Subscribe-orange)](https://auditkit.substack.com)
 
 ---
@@ -97,21 +97,25 @@ AuditKit scans your cloud infrastructure for compliance gaps and security miscon
 
 ---
 
-## Recent Changes (v0.8.0)
+## Recent Changes (v0.8.1)
 
-**January 11, 2026**
+**February 2026**
 
 New Features:
-- **AWS Data Services** - Added SageMaker (6 checks), Redshift (7 checks), ElastiCache (5 checks), OpenSearch (6 checks)
-- **Offline Mode** - Cache scan results for air-gapped environments with --offline and --cache-file flags
-- **GDPR Framework** - Added GDPR compliance mapping via NIST 800-53 crosswalk
-- **NIST CSF** - Added NIST Cybersecurity Framework (CSF) mapping
-- **Framework Updates** - All frameworks updated to January 2026 standards
+- **Prowler Integration** - Import Prowler scan results and convert to AuditKit format with full framework mapping
+- **Azure Fix Scripts** - Generate remediation scripts for Azure (AWS and GCP already supported)
+- **Evidence Tracker HTML** - Interactive HTML checklist for evidence collection with progress tracking
 
 Improvements:
-- AWS service coverage increased from 64 to 90+ checks
-- All framework remediation guidance updated to current versions
-- Updated CIS AWS Benchmark mappings to v3.0
+- Evidence tracker now includes localStorage persistence, export to JSON, and print support
+- Prowler integration supports AWS, Azure, and GCP findings with automatic provider detection
+
+### Previous: v0.8.0 (January 2026)
+
+- **AWS Data Services** - Added SageMaker, Redshift, ElastiCache, OpenSearch checks
+- **Offline Mode** - Cache scan results for air-gapped environments
+- **GDPR/NIST CSF** - Added framework mappings via NIST 800-53 crosswalk
+- AWS service coverage increased to 90+ checks
 
 ---
 
@@ -253,6 +257,27 @@ go build -o auditkit-gcp ./cmd/auditkit-gcp
 ./auditkit-gcp scan -framework cmmc -format json -output gcp-cmmc.json
 ```
 
+### External Tool Integration
+```bash
+# Import Prowler results
+prowler aws --output-formats json -o prowler-output     # Run Prowler first
+./auditkit integrate -source prowler -file prowler-output.json
+
+# Import with PDF report
+./auditkit integrate -source prowler -file prowler.json -format pdf -output prowler-report.pdf
+
+# Import ScubaGear M365 results
+./auditkit integrate -source scubagear -file scubagear-results.json
+```
+
+### Remediation Scripts
+```bash
+# Generate fix scripts (review before running!)
+./auditkit fix -provider aws      # AWS remediation script
+./auditkit fix -provider azure    # Azure remediation script
+./auditkit fix -provider gcp      # GCP remediation script
+```
+
 **[CLI Reference →](./docs/cli-reference.md)**
 
 ---
@@ -284,22 +309,21 @@ go build -o auditkit-gcp ./cmd/auditkit-gcp
 
 ---
 
-## What's New in v0.8.0
+## What's New in v0.8.1
 
 ### New Features
-- **AWS Data Services:** SageMaker, Redshift, ElastiCache, OpenSearch checks for data security
-- **Offline Mode:** Run scans offline with cached results for air-gapped environments
-- **GDPR Mapping:** GDPR compliance via NIST 800-53 crosswalk
-- **NIST CSF:** NIST Cybersecurity Framework mapping
+- **Prowler Integration:** Import Prowler AWS/Azure/GCP results and map to compliance frameworks
+- **Azure Fix Scripts:** Generate remediation scripts for Azure resources
+- **Evidence Tracker HTML:** Interactive checklist with progress bar, localStorage persistence, and JSON export
 
 ### Improvements
-- AWS service coverage increased to 90+ checks
-- All framework remediation updated to January 2026 standards
-- CIS AWS Benchmark mappings updated to v3.0
+- Evidence tracker now saves progress across browser sessions
+- Prowler auto-detects cloud provider from scan results
 
-### Coming in Pro v0.9.0
-- Custom controls - define your own security checks in YAML
-- Enhanced multi-account scanning
+### Coming in Pro v0.9.1
+- Daemon stop/status commands for continuous monitoring
+- Azure MFA checks via Microsoft Graph API
+- Windows daemon support
 
 **[Full Release Notes →](./CHANGELOG.md)**
 
@@ -324,11 +348,11 @@ go build -o auditkit-gcp ./cmd/auditkit-gcp
 
 We need help with:
 - **CIS Azure & GCP expansion** (add more controls to existing implementations)
-- **Additional framework mappings** (GDPR, ISO 27001 expansion)
+- **Additional framework mappings** (ISO 27001 expansion)
 - **FedRAMP baseline filtering** for Low/Moderate/High
-- **Prowler integration** for complete NIST 800-53 coverage
 - **Kubernetes compliance** scanning
 - **Automated evidence collection** workflows
+- **Additional Prowler mappings** (expand framework coverage for imported findings)
 
 **[Contributing Guide →](./CONTRIBUTING.md)** • **[Good First Issues →](https://github.com/guardian-nexus/auditkit/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)**
 

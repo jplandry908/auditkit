@@ -2,6 +2,38 @@
 
 All notable changes to AuditKit will be documented in this file.
 
+## [v0.8.1] - 2026-02-03
+
+### Added
+- **Prowler Integration** - Import Prowler scan results directly into AuditKit
+  - Supports AWS, Azure, and GCP Prowler outputs
+  - Automatic cloud provider detection from scan results
+  - Full framework mapping (SOC2, PCI-DSS, CMMC, HIPAA, NIST 800-53, CIS, and more)
+  - All output formats supported (text, JSON, HTML, PDF)
+  - Use `auditkit integrate -source prowler -file prowler-output.json`
+- **Azure Fix Script Generation** - Generate remediation scripts for Azure resources
+  - Completes fix script support for all three major cloud providers
+  - Use `auditkit fix -provider azure`
+- **Evidence Tracker HTML** - Interactive HTML checklist for evidence collection
+  - Progress bar showing collection status
+  - Pass/fail statistics dashboard
+  - LocalStorage persistence (progress saves across browser sessions)
+  - Notes field for each control
+  - Export to JSON for backup/sharing
+  - Print-friendly layout
+  - Use `auditkit evidence-tracker -provider aws -output tracker.html`
+
+### Improved
+- Evidence tracker now persists progress in browser localStorage
+- Prowler integration auto-detects AWS/Azure/GCP from scan results
+- Updated all documentation and website to v0.8.1
+
+### Technical
+- New `pkg/integrations/prowler/parser.go` - Prowler JSON parser
+- Updated `runIntegration()` to handle Prowler source
+- Implemented `generateEvidenceTrackerHTML()` with full interactive features
+- Azure fix script generation now uses same pattern as AWS/GCP
+
 ## [v0.8.0] - 2026-01-11
 
 ### Added

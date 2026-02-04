@@ -15,6 +15,7 @@ import (
 	azureScanner "github.com/guardian-nexus/auditkit/scanner/pkg/azure"
 	"github.com/guardian-nexus/auditkit/scanner/pkg/cli"
 	"github.com/guardian-nexus/auditkit/scanner/pkg/integrations"
+	"github.com/guardian-nexus/auditkit/scanner/pkg/integrations/prowler"
 	"github.com/guardian-nexus/auditkit/scanner/pkg/integrations/scubagear"
 	"github.com/guardian-nexus/auditkit/scanner/pkg/offline"
 	"github.com/guardian-nexus/auditkit/scanner/pkg/remediation"
@@ -24,7 +25,7 @@ import (
 	"github.com/guardian-nexus/auditkit/scanner/pkg/mappings"
 )
 
-const CurrentVersion = "v0.8.0"
+const CurrentVersion = "v0.8.1"
 
 type ComplianceResult struct {
 	Timestamp       time.Time       `json:"timestamp"`
@@ -287,14 +288,83 @@ func runIntegration(source, file, format, output string, verbose bool) {
 		}
 
 	case "prowler":
-		fmt.Fprintf(os.Stderr, "Prowler integration coming soon\n")
-		fmt.Fprintf(os.Stderr, "For now, use native AWS/Azure scanning:\n")
-		fmt.Fprintf(os.Stderr, "  auditkit scan -provider aws -framework soc2\n")
-		os.Exit(1)
+		if file == "" {
+			fmt.Fprintf(os.Stderr, "Error: -file flag required for Prowler integration\n")
+			fmt.Fprintf(os.Stderr, "Usage: auditkit integrate -source prowler -file prowler-output.json\n")
+			fmt.Fprintf(os.Stderr, "\nGenerate Prowler output with:\n")
+			fmt.Fprintf(os.Stderr, "  prowler aws --output-formats json -o prowler-output\n")
+			fmt.Fprintf(os.Stderr, "  prowler azure --output-formats json -o prowler-output\n")
+			fmt.Fprintf(os.Stderr, "  prowler gcp --output-formats json -o prowler-output\n")
+			os.Exit(1)
+		}
+
+		prowlerIntegration := prowler.NewProwlerIntegration()
+
+		if verbose {
+			fmt.Fprintf(os.Stderr, "Parsing Prowler output: %s\n", file)
+		}
+
+		results, err := prowlerIntegration.ParseFile(ctx, file)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error parsing Prowler file: %v\n", err)
+			os.Exit(1)
+		}
+
+		if verbose {
+			fmt.Fprintf(os.Stderr, "Found %d Prowler findings\n", len(results))
+		}
+
+		// Detect provider from first result
+		detectedProvider := "AWS"
+		if len(results) > 0 && strings.Contains(results[0].Product, "AZURE") {
+			detectedProvider = "Azure"
+		} else if len(results) > 0 && strings.Contains(results[0].Product, "GCP") {
+			detectedProvider = "GCP"
+		}
+
+		integrationResult := convertIntegrationResults(results, detectedProvider)
+
+		switch format {
+		case "text":
+			printIntegrationSummary(integrationResult)
+		case "json":
+			data, _ := json.MarshalIndent(integrationResult, "", "  ")
+			if output != "" {
+				os.WriteFile(output, data, 0644)
+				fmt.Printf("Results saved to %s\n", output)
+			} else {
+				fmt.Println(string(data))
+			}
+		case "pdf":
+			if output == "" {
+				output = fmt.Sprintf("auditkit-prowler-report-%s.pdf", time.Now().Format("2006-01-02-150405"))
+			}
+			pdfResult := report.ComplianceResult{
+				Timestamp:       integrationResult.Timestamp,
+				Provider:        integrationResult.Provider,
+				AccountID:       integrationResult.AccountID,
+				Score:           integrationResult.Score,
+				TotalControls:   integrationResult.TotalControls,
+				PassedControls:  integrationResult.PassedControls,
+				FailedControls:  integrationResult.FailedControls,
+				Controls:        convertControlsForPDF(integrationResult.Controls),
+				Recommendations: integrationResult.Recommendations,
+				Framework:       integrationResult.Framework,
+			}
+			err := report.GeneratePDF(pdfResult, output)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error generating PDF: %v\n", err)
+				os.Exit(1)
+			}
+			fmt.Printf("Prowler compliance report saved to %s\n", output)
+		default:
+			fmt.Fprintf(os.Stderr, "Unknown format: %s\n", format)
+			os.Exit(1)
+		}
 
 	default:
 		fmt.Fprintf(os.Stderr, "Unknown integration source: %s\n", source)
-		fmt.Fprintf(os.Stderr, "Supported sources: scubagear, prowler (coming soon)\n")
+		fmt.Fprintf(os.Stderr, "Supported sources: scubagear, prowler\n")
 		os.Exit(1)
 	}
 }
@@ -1442,8 +1512,29 @@ func generateFixScript(provider, profile, output string) {
 			})
 		}
 	case "azure":
-		fmt.Println("Azure fix script generation coming soon")
-		return
+		subscriptionID := os.Getenv("AZURE_SUBSCRIPTION_ID")
+		if subscriptionID == "" {
+			subscriptionID = profile
+		}
+		scanner, err := azureScanner.NewScanner(subscriptionID)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			return
+		}
+		accountID = scanner.GetAccountID(ctx)
+		fmt.Printf("Scanning Azure Subscription %s to identify fixes...\n", accountID)
+
+		services := []string{"storage", "aad", "network", "compute", "sql"}
+		scanResults, _ := scanner.ScanServices(ctx, services, false, "soc2")
+
+		for _, result := range scanResults {
+			controls = append(controls, remediation.ControlResult{
+				Control:           result.Control,
+				Status:            result.Status,
+				Severity:          result.Severity,
+				RemediationDetail: result.RemediationDetail,
+			})
+		}
 	case "gcp":
 		projectID := profile
 		if projectID == "" || projectID == "default" {
@@ -2238,7 +2329,306 @@ func getCurrentDir() string {
 }
 
 func generateEvidenceTrackerHTML(controls []tracker.ControlResult, accountID string) string {
-	return ""
+	// Count pass/fail for progress
+	passCount := 0
+	failCount := 0
+	for _, c := range controls {
+		if c.Status == "PASS" {
+			passCount++
+		} else {
+			failCount++
+		}
+	}
+	totalCount := len(controls)
+	progressPct := 0.0
+	if totalCount > 0 {
+		progressPct = float64(passCount) / float64(totalCount) * 100
+	}
+
+	html := fmt.Sprintf(`<!DOCTYPE html>
+<html>
+<head>
+    <title>AuditKit Evidence Collection Tracker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 40px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 { color: #10b981; margin-bottom: 5px; }
+        .subtitle { color: #64748b; margin-top: 0; }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat {
+            background: #f8fafc;
+            padding: 15px 25px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-number { font-size: 28px; font-weight: bold; color: #0f172a; }
+        .stat-label { font-size: 12px; color: #64748b; text-transform: uppercase; }
+        .stat.pass .stat-number { color: #10b981; }
+        .stat.fail .stat-number { color: #ef4444; }
+        .progress {
+            background: #e2e8f0;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #10b981, #059669);
+            height: 100%%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        .section-title {
+            margin-top: 30px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            color: #0f172a;
+        }
+        .control {
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.2s;
+        }
+        .control:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .control.pass { border-left: 4px solid #10b981; }
+        .control.fail { border-left: 4px solid #ef4444; }
+        .control.collected { background: #ecfdf5; }
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #10b981;
+        }
+        .control-info { flex: 1; }
+        .control-id { font-weight: 600; color: #0f172a; }
+        .control-status {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+        .control-status.pass { background: #d1fae5; color: #065f46; }
+        .control-status.fail { background: #fee2e2; color: #991b1b; }
+        .notes {
+            width: 100%%;
+            padding: 8px;
+            margin-top: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            display: none;
+            font-size: 14px;
+        }
+        .control.collected .notes { display: block; }
+        .btn-group { margin-top: 30px; display: flex; gap: 10px; }
+        button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        button:hover { background: #059669; }
+        button.secondary { background: #64748b; }
+        button.secondary:hover { background: #475569; }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+            font-size: 13px;
+            text-align: center;
+        }
+        .footer a { color: #10b981; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Evidence Collection Tracker</h1>
+        <p class="subtitle">Account: %s | Generated: %s</p>
+
+        <div class="stats">
+            <div class="stat pass">
+                <div class="stat-number">%d</div>
+                <div class="stat-label">Passing</div>
+            </div>
+            <div class="stat fail">
+                <div class="stat-number">%d</div>
+                <div class="stat-label">Failing</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">%d</div>
+                <div class="stat-label">Total Controls</div>
+            </div>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progress-bar" style="width: %.0f%%">
+                <span id="progress-text">0/%d Evidence Collected</span>
+            </div>
+        </div>
+
+        <h2 class="section-title">Controls Requiring Evidence</h2>
+        <p style="color: #64748b; margin-bottom: 20px;">Check off each control as you collect screenshots and documentation.</p>
+        <div id="controls">`,
+		accountID,
+		time.Now().Format("January 2, 2006"),
+		passCount,
+		failCount,
+		totalCount,
+		progressPct,
+		totalCount)
+
+	// Add each control
+	for _, control := range controls {
+		statusClass := "fail"
+		statusText := "FAIL"
+		if control.Status == "PASS" {
+			statusClass = "pass"
+			statusText = "PASS"
+		}
+
+		html += fmt.Sprintf(`
+            <div class="control %s" data-control="%s">
+                <input type="checkbox" onchange="toggleEvidence(this)">
+                <div class="control-info">
+                    <span class="control-id">%s</span>
+                    <span class="control-status %s">%s</span>
+                    <input type="text" class="notes" placeholder="Add notes about evidence collected...">
+                </div>
+            </div>`, statusClass, control.Control, control.Control, statusClass, statusText)
+	}
+
+	html += fmt.Sprintf(`
+        </div>
+
+        <div class="btn-group">
+            <button onclick="exportProgress()">Export Progress (JSON)</button>
+            <button class="secondary" onclick="window.print()">Print Checklist</button>
+        </div>
+
+        <div class="footer">
+            <p>Generated by <a href="https://auditkit.io">AuditKit</a> | Evidence is saved in your browser's local storage</p>
+        </div>
+
+        <script>
+        const STORAGE_KEY = 'auditkit_evidence_%s';
+
+        function toggleEvidence(checkbox) {
+            const control = checkbox.closest('.control');
+            if (checkbox.checked) {
+                control.classList.add('collected');
+            } else {
+                control.classList.remove('collected');
+            }
+            updateProgress();
+            saveToLocal();
+        }
+
+        function updateProgress() {
+            const total = document.querySelectorAll('.control').length;
+            const collected = document.querySelectorAll('.control.collected').length;
+            const percentage = total > 0 ? (collected / total * 100).toFixed(0) : 0;
+
+            const bar = document.getElementById('progress-bar');
+            bar.style.width = percentage + '%%';
+            document.getElementById('progress-text').textContent = collected + '/' + total + ' Evidence Collected';
+        }
+
+        function saveToLocal() {
+            const controls = {};
+            document.querySelectorAll('.control').forEach(el => {
+                const id = el.dataset.control;
+                const collected = el.classList.contains('collected');
+                const notes = el.querySelector('.notes').value;
+                controls[id] = { collected, notes };
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(controls));
+        }
+
+        function loadFromLocal() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const controls = JSON.parse(saved);
+                Object.keys(controls).forEach(id => {
+                    const el = document.querySelector('[data-control="' + id + '"]');
+                    if (el && controls[id]) {
+                        if (controls[id].collected) {
+                            el.classList.add('collected');
+                            el.querySelector('input[type="checkbox"]').checked = true;
+                        }
+                        if (controls[id].notes) {
+                            el.querySelector('.notes').value = controls[id].notes;
+                        }
+                    }
+                });
+                updateProgress();
+            }
+        }
+
+        function exportProgress() {
+            const data = {
+                account: '%s',
+                exportDate: new Date().toISOString(),
+                controls: {}
+            };
+
+            document.querySelectorAll('.control').forEach(el => {
+                const id = el.dataset.control;
+                data.controls[id] = {
+                    status: el.classList.contains('pass') ? 'PASS' : 'FAIL',
+                    evidenceCollected: el.classList.contains('collected'),
+                    notes: el.querySelector('.notes').value
+                };
+            });
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'evidence-progress-%s.json';
+            a.click();
+        }
+
+        // Auto-save notes on blur
+        document.querySelectorAll('.notes').forEach(input => {
+            input.addEventListener('blur', saveToLocal);
+        });
+
+        // Load saved progress on page load
+        loadFromLocal();
+        </script>
+    </div>
+</body>
+</html>`, accountID, accountID, accountID)
+
+	return html
 }
 
 func generateReport(format, output string) {

@@ -1,7 +1,7 @@
 # AuditKit Scanner - Multi-Cloud Compliance Tool
 # Hybrid Build: Multi-cloud + Provider-specific binaries
 
-VERSION := v0.7.0
+VERSION := v0.8.1
 LDFLAGS := -ldflags="-s -w"
 
 .PHONY: help build build-all build-aws build-gcp build-azure build-full test scan scan-soc2 scan-pci clean sizes

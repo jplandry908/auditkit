@@ -263,8 +263,8 @@ auditkit version
 
 **Expected output:**
 ```
-AuditKit v0.7.0
-Built: 2025-10-19
+AuditKit v0.8.1
+Built: 2026-02-03
 ```
 
 ### Check Cloud CLI Tools

@@ -368,17 +368,20 @@ python create-jira-tickets.py results.json
 
 ### Can I use AuditKit with Prowler?
 
-Yes, for complete NIST 800-53 coverage:
+Yes! AuditKit can import Prowler scan results directly:
 
 ```bash
-# Run Prowler scan
-prowler aws -M json -o prowler-results.json
+# Run Prowler scan first
+prowler aws --output-formats json -o prowler-output
 
-# Run AuditKit scan
-auditkit scan -framework 800-53 -format json -output auditkit-results.json
+# Import into AuditKit with framework mapping
+auditkit integrate -source prowler -file prowler-output.json
 
-# Combine results (Pro feature coming in v0.7.1)
+# Generate PDF report from Prowler results
+auditkit integrate -source prowler -file prowler-output.json -format pdf -output prowler-report.pdf
 ```
+
+This maps Prowler findings to SOC2, PCI-DSS, CMMC, HIPAA, and other compliance frameworks.
 
 **[Prowler integration guide →](./integrations/prowler.md)**
 
