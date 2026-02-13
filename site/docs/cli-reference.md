@@ -213,7 +213,7 @@ Current version: v0.7.0
 Latest version:  v0.7.1
 Update available!
 
-Download: https://github.com/guardian-nexus/auditkit/releases/tag/v0.7.1
+Download: https://github.com/guardian-nexus/AuditKit-Community-Edition/releases/tag/v0.7.1
 ```
 
 ---
@@ -483,4 +483,4 @@ auditkit scan -provider gcp -framework soc2  # Includes Vertex AI checks
 - **Command help:** `auditkit [command] --help`
 - **Documentation:** [Full docs →](../)
 - **Examples:** [Sample usage →](./examples/)
-- **Issues:** [GitHub Issues](https://github.com/guardian-nexus/auditkit/issues)
+- **Issues:** [GitHub Issues](https://github.com/guardian-nexus/AuditKit-Community-Edition/issues)

@@ -523,7 +523,7 @@ auditkit evidence -format html -output evidence-tracker.html
 - [Framework Guides →](./frameworks/)
 
 **Support:**
-- [GitHub Issues](https://github.com/guardian-nexus/auditkit/issues)
+- [GitHub Issues](https://github.com/guardian-nexus/AuditKit-Community-Edition/issues)
 - [Newsletter](https://auditkit.substack.com)
 - Pro Support: info@auditkit.io
 

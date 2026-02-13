@@ -731,7 +731,7 @@ gcloud logging sinks create SINK_NAME \
 - Dataflow
 - Cloud Spanner
 
-**Vote for features:** [GitHub Issues](https://github.com/guardian-nexus/auditkit/issues)
+**Vote for features:** [GitHub Issues](https://github.com/guardian-nexus/AuditKit-Community-Edition/issues)
 
 ---
 

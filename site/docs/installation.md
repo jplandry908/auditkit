@@ -34,7 +34,7 @@ Complete installation instructions for AuditKit.
 
 ```bash
 # Download latest release
-wget https://github.com/guardian-nexus/auditkit/releases/download/v0.7.0/auditkit-linux-amd64
+wget https://github.com/guardian-nexus/AuditKit-Community-Edition/releases/download/v0.7.0/auditkit-linux-amd64
 
 # Make executable
 chmod +x auditkit-linux-amd64
@@ -50,7 +50,7 @@ auditkit version
 
 ```bash
 # Download latest release
-curl -L https://github.com/guardian-nexus/auditkit/releases/download/v0.7.0/auditkit-darwin-amd64 -o auditkit
+curl -L https://github.com/guardian-nexus/AuditKit-Community-Edition/releases/download/v0.7.0/auditkit-darwin-amd64 -o auditkit
 
 # Make executable
 chmod +x auditkit
@@ -69,7 +69,7 @@ auditkit version
 
 ```powershell
 # Download from GitHub Releases page
-# https://github.com/guardian-nexus/auditkit/releases/download/v0.7.0/auditkit-windows-amd64.exe
+# https://github.com/guardian-nexus/AuditKit-Community-Edition/releases/download/v0.7.0/auditkit-windows-amd64.exe
 
 # Rename to auditkit.exe
 Rename-Item auditkit-windows-amd64.exe auditkit.exe
@@ -98,8 +98,8 @@ go version  # Should show 1.19 or higher
 
 ```bash
 # Clone repository
-git clone https://github.com/guardian-nexus/auditkit
-cd auditkit/scanner
+git clone https://github.com/guardian-nexus/AuditKit-Community-Edition
+cd AuditKit-Community-Edition/scanner
 
 # Build binary
 go build ./cmd/auditkit
@@ -333,7 +333,7 @@ auditkit update
 
 ```bash
 # Download new version
-wget https://github.com/guardian-nexus/auditkit/releases/download/v0.X.X/auditkit-linux-amd64
+wget https://github.com/guardian-nexus/AuditKit-Community-Edition/releases/download/v0.X.X/auditkit-linux-amd64
 
 # Replace old binary
 chmod +x auditkit-linux-amd64
@@ -472,7 +472,7 @@ rm -rf ~/.auditkit/
 
 1. Download binary on internet-connected machine:
 ```bash
-wget https://github.com/guardian-nexus/auditkit/releases/download/v0.7.0/auditkit-linux-amd64
+wget https://github.com/guardian-nexus/AuditKit-Community-Edition/releases/download/v0.7.0/auditkit-linux-amd64
 ```
 
 2. Transfer to air-gapped machine via USB/secure transfer

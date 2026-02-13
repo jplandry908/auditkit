@@ -233,7 +233,7 @@ Many organizations need multiple frameworks:
 
 **General support:**
 - [Main FAQ](../faq.md)
-- [GitHub Issues](https://github.com/guardian-nexus/auditkit/issues)
+- [GitHub Issues](https://github.com/guardian-nexus/AuditKit-Community-Edition/issues)
 - Email: info@auditkit.io
 
 ---

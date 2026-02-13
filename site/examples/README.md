@@ -85,7 +85,7 @@ Visual examples of AuditKit's output and HTML report features.
 
 ```bash
 # Download latest release
-curl -LO https://github.com/guardian-nexus/auditkit/releases/latest/download/auditkit-linux-amd64.tar.gz
+curl -LO https://github.com/guardian-nexus/AuditKit-Community-Edition/releases/latest/download/auditkit-linux-amd64.tar.gz
 
 # Extract
 tar -xzf auditkit-linux-amd64.tar.gz

@@ -773,10 +773,10 @@ AuditKit is designed to help you achieve compliance, but the tool itself:
 - [PCI DSS v4.0](https://www.pcisecuritystandards.org/)
 
 ### AuditKit Documentation
-- [Getting Started](https://github.com/guardian-nexus/auditkit/blob/main/docs/getting-started.md)
-- [AWS Setup Guide](https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/aws.md)
-- [Azure Setup Guide](https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/azure.md)
-- [GCP Setup Guide](https://github.com/guardian-nexus/auditkit/blob/main/docs/setup/gcp.md)
+- [Getting Started](https://github.com/guardian-nexus/AuditKit-Community-Edition/blob/main/docs/getting-started.md)
+- [AWS Setup Guide](https://github.com/guardian-nexus/AuditKit-Community-Edition/blob/main/docs/setup/aws.md)
+- [Azure Setup Guide](https://github.com/guardian-nexus/AuditKit-Community-Edition/blob/main/docs/setup/azure.md)
+- [GCP Setup Guide](https://github.com/guardian-nexus/AuditKit-Community-Edition/blob/main/docs/setup/gcp.md)
 
 ---
 
@@ -784,7 +784,7 @@ AuditKit is designed to help you achieve compliance, but the tool itself:
 
 - **General Security Questions**: security@auditkit.io
 - **Pro Support**: hello@auditkit.io
-- **Documentation**: https://github.com/guardian-nexus/auditkit
+- **Documentation**: https://github.com/guardian-nexus/AuditKit-Community-Edition
 - **Community**: GitHub Discussions
 
 ---

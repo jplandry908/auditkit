@@ -16,7 +16,7 @@ type ReleaseInfo struct {
 
 func CheckForUpdates() {
 	// Check GitHub releases API
-	resp, err := http.Get("https://api.github.com/repos/guardian-nexus/auditkit/releases/latest")
+	resp, err := http.Get("https://api.github.com/repos/guardian-nexus/AuditKit-Community-Edition/releases/latest")
 	if err != nil {
 		fmt.Println("Unable to check for updates")
 		return

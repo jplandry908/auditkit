@@ -330,7 +330,7 @@ Help us expand CIS coverage:
 
 ## Support
 
-- **Issues:** [GitHub Issues](https://github.com/guardian-nexus/auditkit/issues)
+- **Issues:** [GitHub Issues](https://github.com/guardian-nexus/AuditKit-Community-Edition/issues)
 - **Questions:** info@auditkit.io
 - **Pro Support:** Priority email + Slack channel
 

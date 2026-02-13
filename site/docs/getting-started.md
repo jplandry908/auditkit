@@ -16,7 +16,7 @@ Get your first compliance scan running in 5 minutes.
 
 ### Option 1: Download Binary (Fastest)
 
-1. Go to [Releases](https://github.com/guardian-nexus/auditkit/releases)
+1. Go to [Releases](https://github.com/guardian-nexus/AuditKit-Community-Edition/releases)
 2. Download binary for your OS (Linux, macOS, Windows)
 3. Make it executable: `chmod +x auditkit`
 4. Run: `./auditkit scan`
@@ -24,8 +24,8 @@ Get your first compliance scan running in 5 minutes.
 ### Option 2: Build from Source
 
 ```bash
-git clone https://github.com/guardian-nexus/auditkit
-cd auditkit/scanner
+git clone https://github.com/guardian-nexus/AuditKit-Community-Edition
+cd AuditKit-Community-Edition/scanner
 go build ./cmd/auditkit
 ./auditkit scan
 ```
@@ -273,7 +273,7 @@ Then re-scan.
 
 - **Documentation:** [Full docs →](../)
 - **Examples:** [Sample reports →](./examples/)
-- **Issues:** [GitHub Issues](https://github.com/guardian-nexus/auditkit/issues)
+- **Issues:** [GitHub Issues](https://github.com/guardian-nexus/AuditKit-Community-Edition/issues)
 - **FAQ:** [Common questions →](./faq.md)
 - **Newsletter:** [auditkit.substack.com](https://auditkit.substack.com)
 

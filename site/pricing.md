@@ -315,8 +315,8 @@ For 10+ licenses or custom requirements, contact info@auditkit.io for enterprise
 
 ```bash
 # Clone and install
-git clone https://github.com/guardian-nexus/auditkit
-cd auditkit/scanner
+git clone https://github.com/guardian-nexus/AuditKit-Community-Edition
+cd AuditKit-Community-Edition/scanner
 go build ./cmd/auditkit
 
 # Start scanning
@@ -346,7 +346,7 @@ go build ./cmd/auditkit
 - Newsletter
 - Response time: Best effort
 
-**[GitHub Issues →](https://github.com/guardian-nexus/auditkit/issues)**
+**[GitHub Issues →](https://github.com/guardian-nexus/AuditKit-Community-Edition/issues)**
 
 ### Priority Support (Pro)
 
@@ -363,7 +363,7 @@ go build ./cmd/auditkit
 
 **License:** Apache 2.0
 **Usage:** Commercial and personal use allowed
-**Source code:** [github.com/guardian-nexus/auditkit](https://github.com/guardian-nexus/auditkit)
+**Source code:** [github.com/guardian-nexus/AuditKit-Community-Edition](https://github.com/guardian-nexus/AuditKit-Community-Edition)
 
 ### Pro Version
 

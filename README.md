@@ -2,9 +2,9 @@
 
 **Scan AWS, Azure, GCP, and M365 for SOC2, PCI-DSS, HIPAA, CMMC, CIS Benchmarks, and NIST 800-53 compliance. Get audit-ready reports in minutes.**
 
-[![GitHub stars](https://img.shields.io/github/stars/guardian-nexus/auditkit)](https://github.com/guardian-nexus/auditkit/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/guardian-nexus/AuditKit-Community-Edition)](https://github.com/guardian-nexus/AuditKit-Community-Edition/stargazers)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Version](https://img.shields.io/badge/version-v0.8.1-green.svg)](https://github.com/guardian-nexus/auditkit/releases)
+[![Version](https://img.shields.io/badge/version-v0.8.1-green.svg)](https://github.com/guardian-nexus/AuditKit-Community-Edition/releases)
 [![Newsletter](https://img.shields.io/badge/Newsletter-Subscribe-orange)](https://auditkit.substack.com)
 
 **Need CMMC Level 2, evidence packages, or continuous monitoring?** → [auditkit.io](https://auditkit.io)
@@ -15,8 +15,8 @@
 
 ```bash
 # Install
-git clone https://github.com/guardian-nexus/auditkit
-cd auditkit/scanner
+git clone https://github.com/guardian-nexus/AuditKit-Community-Edition
+cd AuditKit-Community-Edition/scanner
 go build ./cmd/auditkit
 
 # Scan AWS
@@ -175,14 +175,14 @@ cp ~/Downloads/license.lic ~/.auditkit-pro/license.lic
 ## Installation
 
 ### Pre-built Binaries
-Download from [GitHub Releases](https://github.com/guardian-nexus/auditkit/releases)
+Download from [GitHub Releases](https://github.com/guardian-nexus/AuditKit-Community-Edition/releases)
 
 ### From Source
 
 **Option 1: Universal Scanner (All Clouds)**
 ```bash
-git clone https://github.com/guardian-nexus/auditkit
-cd auditkit/scanner
+git clone https://github.com/guardian-nexus/AuditKit-Community-Edition
+cd AuditKit-Community-Edition/scanner
 go build ./cmd/auditkit
 ./auditkit scan -provider aws -framework soc2
 ```
@@ -361,13 +361,13 @@ We need help with:
 - **Automated evidence collection** workflows
 - **Additional Prowler mappings** (expand framework coverage for imported findings)
 
-**[Contributing Guide →](./CONTRIBUTING.md)** • **[Good First Issues →](https://github.com/guardian-nexus/auditkit/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)**
+**[Contributing Guide →](./CONTRIBUTING.md)** • **[Good First Issues →](https://github.com/guardian-nexus/AuditKit-Community-Edition/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)**
 
 ---
 
 ## Support
 
-- **Community Support:** [GitHub Issues](https://github.com/guardian-nexus/auditkit/issues)
+- **Community Support:** [GitHub Issues](https://github.com/guardian-nexus/AuditKit-Community-Edition/issues)
 - **Security Issues:** [SECURITY.md](./SECURITY.md)
 - **Newsletter:** [auditkit.substack.com](https://auditkit.substack.com)
 - **AuditKit Support:** Priority email + Slack channel (info@auditkit.io)
