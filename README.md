@@ -36,7 +36,7 @@ go build ./cmd/auditkit
 ./auditkit scan -provider gcp -framework pci -format html -output gcp-pci.html
 ```
 
-**Setup:** [AWS](./docs/setup/aws.md) • [Azure](./docs/setup/azure.md) • [GCP](./docs/setup/gcp.md) • [M365](./docs/setup/m365.md)
+**Setup:** [AWS](./site/docs/setup/aws.md) • [Azure](./site/docs/setup/azure.md) • [GCP](./site/docs/setup/gcp.md) • [M365](./site/docs/setup/m365.md)
 
 ---
 
@@ -52,7 +52,7 @@ AuditKit scans your cloud infrastructure for compliance gaps and security miscon
 
 **What it doesn't do:** Replace auditors, scan for vulnerabilities, or guarantee certification.
 
-**[View Examples →](./docs/examples/)** • **[Read Documentation →](./docs/)**
+**[View Examples →](./site/examples/)** • **[Read Documentation →](./site/docs/)**
 
 ---
 
@@ -76,7 +76,7 @@ AuditKit scans your cloud infrastructure for compliance gaps and security miscon
 |-----------|-----|-------|-----|---------|
 | **CIS Benchmarks** | 126+ | ~40+ | 61 | Industry security best practices |
 
-**[Framework Details →](./docs/frameworks/)** • **[What's the difference? →](./docs/frameworks/#compliance-vs-security-hardening)**
+**[Framework Details →](./site/docs/frameworks/)** • **[What's the difference? →](./site/docs/frameworks/#compliance-vs-security-hardening)**
 
 ---
 
@@ -95,7 +95,7 @@ AuditKit scans your cloud infrastructure for compliance gaps and security miscon
 | **Desktop GUI** | - | Web dashboard at localhost:1337 |
 | **Support** | Community (GitHub Issues) | Priority email + 14-day trial |
 
-**[Compare Features →](./docs/pricing.md)** • **[Start Free Trial →](https://auditkit.io/)**
+**[Compare Features →](./site/pricing.md)** • **[Start Free Trial →](https://auditkit.io/)**
 
 ---
 
@@ -125,7 +125,7 @@ Improvements:
 
 **AuditKit customers now get a beautiful web-based dashboard** that runs locally on your machine.
 
-![AuditKit Desktop Dashboard](./docs/examples/screenshots/auditkitwebgui-dashboard.png)
+![AuditKit Desktop Dashboard](./site/examples/screenshots/auditkitwebgui-dashboard.png)
 
 ### Desktop Features
 - **Visual Dashboard** - Real-time compliance scores and trends
@@ -141,7 +141,7 @@ Improvements:
 
 | Dashboard | Findings | Scan History |
 |-----------|----------|--------------|
-| <img src="./docs/examples/screenshots/auditkitwebgui-dashboard.png" width="280" alt="Dashboard"> | <img src="./docs/examples/screenshots/auditkitwebgui-findings.png" width="280" alt="Findings"> | <img src="./docs/examples/screenshots/auditkitwebgui-scanhistory.png" width="280" alt="Scan History"> |
+| <img src="./site/examples/screenshots/auditkitwebgui-dashboard.png" width="280" alt="Dashboard"> | <img src="./site/examples/screenshots/auditkitwebgui-findings.png" width="280" alt="Findings"> | <img src="./site/examples/screenshots/auditkitwebgui-scanhistory.png" width="280" alt="Scan History"> |
 
 ### Quick Start (Desktop)
 ```bash
@@ -202,7 +202,7 @@ go build -o auditkit-gcp ./cmd/auditkit-gcp
 - Cloud credentials configured (AWS CLI, Azure CLI, gcloud CLI)
 - Read-only permissions (no write access needed)
 
-**[Full Installation Guide →](./docs/installation.md)**
+**[Full Installation Guide →](./site/docs/installation.md)**
 
 ---
 
@@ -280,34 +280,34 @@ prowler aws --output-formats json -o prowler-output     # Run Prowler first
 ./auditkit fix -provider gcp      # GCP remediation script
 ```
 
-**[CLI Reference →](./docs/cli-reference.md)**
+**[CLI Reference →](./site/docs/cli-reference.md)**
 
 ---
 
 ## Documentation
 
 ### Getting Started
-- **[Quick Start Guide](./docs/getting-started.md)** - First scan in 5 minutes
-- **[Cloud Provider Setup](./docs/setup/)** - AWS, Azure, GCP, M365 authentication
-- **[Understanding Results](./docs/understanding-results.md)** - Pass/Fail/Info status explained
+- **[Quick Start Guide](./site/docs/getting-started.md)** - First scan in 5 minutes
+- **[Cloud Provider Setup](./site/docs/setup/)** - AWS, Azure, GCP, M365 authentication
+- **[Understanding Results](./site/docs/understanding-results.md)** - Pass/Fail/Info status explained
 
 ### Frameworks
-- **[SOC2 Type II](./docs/frameworks/soc2.md)** - Trust Services Criteria
-- **[PCI-DSS v4.0](./docs/frameworks/pci-dss.md)** - Payment card security
-- **[CMMC](./docs/frameworks/cmmc.md)** - DoD contractor compliance
-- **[CIS Benchmarks](./docs/frameworks/cis-benchmarks.md)** - Security hardening
-- **[NIST 800-53](./docs/frameworks/nist-800-53.md)** - Federal requirements
-- **[All Frameworks →](./docs/frameworks/)**
+- **[SOC2 Type II](./site/docs/frameworks/soc2.md)** - Trust Services Criteria
+- **[PCI-DSS v4.0](./site/docs/frameworks/pci-dss.md)** - Payment card security
+- **[CMMC](./site/docs/frameworks/cmmc.md)** - DoD contractor compliance
+- **[CIS Benchmarks](./site/docs/frameworks/cis-benchmarks.md)** - Security hardening
+- **[NIST 800-53](./site/docs/frameworks/nist-800-53.md)** - Federal requirements
+- **[All Frameworks →](./site/docs/frameworks/)**
 
 ### Examples & Use Cases
-- **[Sample Reports](./docs/examples/)** - See what output looks like
-- **[Remediation Examples](./docs/examples/remediation.md)** - How to fix issues
-- **[CI/CD Integration](./docs/examples/cicd.md)** - Automate compliance checks
+- **[Sample Reports](./site/examples/)** - See what output looks like
+- **[Remediation Examples](./site/examples/remediation.md)** - How to fix issues
+- **[CI/CD Integration](./site/examples/cicd.md)** - Automate compliance checks
 
 ### Reference
-- **[CLI Reference](./docs/cli-reference.md)** - All commands and flags
-- **[FAQ](./docs/faq.md)** - Common questions
-- **[Troubleshooting](./docs/troubleshooting.md)** - Known issues and fixes
+- **[CLI Reference](./site/docs/cli-reference.md)** - All commands and flags
+- **[FAQ](./site/docs/faq.md)** - Common questions
+- **[Troubleshooting](./site/docs/troubleshooting.md)** - Known issues and fixes
 
 ---
 
@@ -342,7 +342,7 @@ prowler aws --output-formats json -o prowler-output     # Run Prowler first
 
 **Example:** Your AWS account might pass SOC2 compliance but still have security gaps that CIS would catch (weak password policies, unnecessary services enabled, missing encryption).
 
-**[Learn more about CIS →](./docs/frameworks/cis-benchmarks.md)**
+**[Learn more about CIS →](./site/docs/frameworks/cis-benchmarks.md)**
 
 ---
 
